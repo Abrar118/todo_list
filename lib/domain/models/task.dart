@@ -18,6 +18,10 @@ import 'subtask.dart';
 /// neglected daily task from piling up hundreds of duplicate rows.
 enum TaskKind { single, seriesTemplate, occurrence }
 
+/// Optional visual treatment for a task card. [automatic] keeps the existing
+/// priority-derived appearance and is the migration default for older data.
+enum TaskBackground { automatic, lime, cyan, sand, coral }
+
 class Task {
   final String id;
   final TaskKind kind;
@@ -53,6 +57,8 @@ class Task {
 
   /// Total focus-timer time accumulated on this task.
   final int timeSpentSeconds;
+
+  final TaskBackground background;
 
   /// Only set on [TaskKind.seriesTemplate] rows (and used transiently when a
   /// single task is converted into a series).
@@ -90,6 +96,7 @@ class Task {
     this.tags = const [],
     this.progressPercent,
     this.timeSpentSeconds = 0,
+    this.background = TaskBackground.automatic,
     this.recurrence,
     this.seriesId,
     this.occurrenceDate,
@@ -156,6 +163,7 @@ class Task {
     int? progressPercent,
     bool clearProgress = false,
     int? timeSpentSeconds,
+    TaskBackground? background,
     RecurrenceRule? recurrence,
     bool clearRecurrence = false,
     String? seriesId,
@@ -187,6 +195,7 @@ class Task {
         ? null
         : (progressPercent ?? this.progressPercent),
     timeSpentSeconds: timeSpentSeconds ?? this.timeSpentSeconds,
+    background: background ?? this.background,
     recurrence: clearRecurrence ? null : (recurrence ?? this.recurrence),
     seriesId: clearSeriesId ? null : (seriesId ?? this.seriesId),
     occurrenceDate: occurrenceDate ?? this.occurrenceDate,
@@ -216,6 +225,7 @@ class Task {
     if (tags.isNotEmpty) 'tags': tags,
     if (progressPercent != null) 'progressPercent': progressPercent,
     if (timeSpentSeconds != 0) 'timeSpentSeconds': timeSpentSeconds,
+    if (background != TaskBackground.automatic) 'background': background.name,
     if (recurrence != null) 'recurrence': recurrence!.toJson(),
     if (seriesId != null) 'seriesId': seriesId,
     if (occurrenceDate != null) 'occurrenceDate': occurrenceDate.toString(),
@@ -258,6 +268,10 @@ class Task {
       ],
       progressPercent: (json['progressPercent'] as num?)?.toInt().clamp(0, 100),
       timeSpentSeconds: (json['timeSpentSeconds'] as num?)?.toInt() ?? 0,
+      background: TaskBackground.values.firstWhere(
+        (value) => value.name == json['background'],
+        orElse: () => TaskBackground.automatic,
+      ),
       recurrence: json['recurrence'] is Map<String, dynamic>
           ? RecurrenceRule.fromJson(json['recurrence'] as Map<String, dynamic>)
           : null,

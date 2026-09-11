@@ -81,6 +81,7 @@ class _FocusScreenState extends State<FocusScreen> {
               spotlight: spotlight,
               compact: compact && !spotlight,
               showOverdue: overdue || spotlight,
+              showTaskBackground: true,
               onTap: () => TaskEditorScreen.open(context, task: task),
               onToggle: () => completeTaskFlow(context, state, task),
               onSnooze: task.hasAlarm || task.hasReminders

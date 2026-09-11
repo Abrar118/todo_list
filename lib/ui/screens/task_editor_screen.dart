@@ -169,6 +169,7 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
           detailsJson: _draft.detailsJson,
           subtasks: _draft.subtasks,
           alarm: _draft.alarm,
+          background: _draft.background,
         );
         _draft = created.copyWith(
           title: _draft.title,
@@ -482,6 +483,8 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 48),
               children: [
                 _titleSection(),
+                SectionHeader('Background', color: colors.accent),
+                _backgroundSection(),
                 SectionHeader('Schedule', color: colors.low),
                 _card([
                   _dateTile(),
@@ -681,7 +684,9 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
 
   Widget _titleSection() {
     return _frostedPanel(
-      tint: priorityColor(context, _draft.priority),
+      tint:
+          _backgroundColor(_draft.background) ??
+          priorityColor(context, _draft.priority),
       padding: const EdgeInsets.fromLTRB(8, 4, 12, 4),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -725,6 +730,77 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
       ),
     );
   }
+
+  Widget _backgroundSection() {
+    final selectedColor = _backgroundColor(_draft.background);
+    return _frostedPanel(
+      tint: selectedColor ?? context.colors.accent,
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Give this task a distinct card treatment on Focus.',
+            style: TextStyle(
+              color: context.colors.textSecondary,
+              fontSize: 12.5,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final background in domain.TaskBackground.values)
+                ChoiceChip(
+                  avatar: background == domain.TaskBackground.automatic
+                      ? Icon(
+                          Icons.auto_awesome_rounded,
+                          size: 16,
+                          color: context.colors.accent,
+                        )
+                      : Icon(
+                          Icons.circle,
+                          size: 16,
+                          color: _backgroundColor(background),
+                        ),
+                  label: Text(_backgroundLabel(background)),
+                  selected: _draft.background == background,
+                  showCheckmark: false,
+                  side: BorderSide.none,
+                  backgroundColor:
+                      (_backgroundColor(background) ?? context.colors.card)
+                          .withValues(alpha: 0.08),
+                  selectedColor:
+                      (_backgroundColor(background) ?? context.colors.accent)
+                          .withValues(alpha: 0.20),
+                  onSelected: (_) =>
+                      _update(_draft.copyWith(background: background)),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color? _backgroundColor(domain.TaskBackground background) =>
+      switch (background) {
+        domain.TaskBackground.automatic => null,
+        domain.TaskBackground.lime => context.colors.accent,
+        domain.TaskBackground.cyan => context.colors.low,
+        domain.TaskBackground.sand => context.colors.medium,
+        domain.TaskBackground.coral => context.colors.overdue,
+      };
+
+  String _backgroundLabel(domain.TaskBackground background) =>
+      switch (background) {
+        domain.TaskBackground.automatic => 'Automatic',
+        domain.TaskBackground.lime => 'Lime',
+        domain.TaskBackground.cyan => 'Cyan',
+        domain.TaskBackground.sand => 'Sand',
+        domain.TaskBackground.coral => 'Coral',
+      };
 
   Widget _dateTile() {
     return ListTile(

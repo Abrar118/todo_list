@@ -31,6 +31,7 @@ Task fullTask(String id) {
     tags: const ['Work', 'errands'],
     progressPercent: 40,
     timeSpentSeconds: 1500,
+    background: TaskBackground.cyan,
     seriesId: 'series-1',
     occurrenceDate: const DateOnly(2026, 7, 15),
     occurrenceIndex: 3,
@@ -71,6 +72,7 @@ void expectTaskEquals(Task a, Task b) {
   expect(a.tags, b.tags);
   expect(a.progressPercent, b.progressPercent);
   expect(a.timeSpentSeconds, b.timeSpentSeconds);
+  expect(a.background, b.background);
   expect(a.seriesId, b.seriesId);
   expect(a.occurrenceDate, b.occurrenceDate);
   expect(a.occurrenceIndex, b.occurrenceIndex);
@@ -141,6 +143,11 @@ void main() {
       expect(decoded.length, 2);
       expectTaskEquals(decoded[0], tasks[0]);
       expectTaskEquals(decoded[1], tasks[1]);
+    });
+
+    test('older task JSON defaults to an automatic background', () {
+      final json = fullTask('legacy').toJson()..remove('background');
+      expect(Task.fromJson(json).background, TaskBackground.automatic);
     });
 
     test('rejects non-JSON', () {

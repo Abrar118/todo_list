@@ -10,6 +10,7 @@ import 'package:todo_list/state/app_state.dart';
 import 'package:todo_list/state/focus_timer_controller.dart';
 import 'package:todo_list/state/habit_controller.dart';
 import 'package:todo_list/state/settings_controller.dart';
+import 'package:todo_list/ui/screens/task_editor_screen.dart';
 
 import 'helpers/fakes.dart';
 
@@ -58,6 +59,39 @@ void main() {
     expect(state.allTasks.single.title, 'Call the plumber');
     expect(state.allTasks.single.dueDate, DateOnly.today());
     expect(find.text('Call the plumber'), findsOneWidget);
+  });
+
+  testWidgets('the center add action opens quick add from Habits', (
+    tester,
+  ) async {
+    await buildApp(tester);
+    await tester.tap(find.text('Habits'));
+    await tester.pumpAndSettle();
+
+    expect(find.byTooltip('Add task'), findsOneWidget);
+    await tester.tap(find.byTooltip('Add task'));
+    await tester.pumpAndSettle();
+    expect(find.text('Add something you cannot forget…'), findsOneWidget);
+  });
+
+  testWidgets('task editor background choice persists on the task', (
+    tester,
+  ) async {
+    final (state, _) = await buildApp(tester);
+    await state.createTask(title: 'Painted card', dueDate: DateOnly.today());
+    await tester.pumpAndSettle();
+
+    TaskEditorScreen.open(
+      tester.element(find.text('Painted card')),
+      task: state.allTasks.single,
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Edit task'), findsOneWidget);
+    expect(find.text('BACKGROUND'), findsOneWidget);
+    await tester.tap(find.widgetWithText(ChoiceChip, 'Cyan'));
+    await tester.pump(const Duration(milliseconds: 600));
+
+    expect(state.allTasks.single.background, TaskBackground.cyan);
   });
 
   testWidgets('editor adds subtasks and completing parent asks about them', (

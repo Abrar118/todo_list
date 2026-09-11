@@ -398,6 +398,7 @@ class AppState extends ChangeNotifier {
     List<Subtask> subtasks = const [],
     AlarmConfig alarm = const AlarmConfig(),
     List<String> tags = const [],
+    TaskBackground background = TaskBackground.automatic,
   }) async {
     final now = DateTime.now();
     final task = Task(
@@ -411,6 +412,7 @@ class AppState extends ChangeNotifier {
       alarm: alarm,
       tags: tags,
       subtasks: subtasks,
+      background: background,
       createdAt: now,
       updatedAt: now,
       sortIndex: _nextSortIndex(),
@@ -525,6 +527,7 @@ class AppState extends ChangeNotifier {
       reminders: edited.reminders,
       alarm: edited.alarm,
       tags: List.of(edited.tags),
+      background: edited.background,
       subtasks: [
         for (final s in edited.subtasks) s.resetForNewOccurrence(s.id, now),
       ],
@@ -543,6 +546,7 @@ class AppState extends ChangeNotifier {
             t.copyWith(
               title: edited.title,
               priority: edited.priority,
+              background: edited.background,
               updatedAt: now,
             ),
           );

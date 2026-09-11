@@ -148,6 +148,7 @@ class TaskMutations {
     reminders: List.of(template.reminders),
     alarm: template.alarm,
     tags: List.of(template.tags),
+    background: template.background,
     seriesId: template.id,
     occurrenceDate: date,
     occurrenceIndex: index,

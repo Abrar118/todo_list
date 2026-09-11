@@ -21,6 +21,7 @@ class TaskRow extends StatelessWidget {
   final bool compact;
   final bool showOverdue;
   final bool isProjection;
+  final bool showTaskBackground;
   final VoidCallback? onTap;
   final VoidCallback? onToggle;
   final VoidCallback? onSnooze;
@@ -33,6 +34,7 @@ class TaskRow extends StatelessWidget {
     this.compact = false,
     this.showOverdue = false,
     this.isProjection = false,
+    this.showTaskBackground = false,
     this.onTap,
     this.onToggle,
     this.onSnooze,
@@ -47,9 +49,18 @@ class TaskRow extends StatelessWidget {
     final severityColor = task.isCompleted
         ? colors.done
         : priorityColor(context, task.priority);
+    final customBackground =
+        showTaskBackground && task.background != TaskBackground.automatic;
+    final surfaceColor = customBackground
+        ? _backgroundColor(colors, task.background)
+        : severityColor;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final radius = spotlight ? 18.0 : 14.0;
-    final tintAmount = task.priority == TaskPriority.none ? 0.05 : 0.20;
+    final tintAmount = customBackground
+        ? (isDark ? 0.32 : 0.22)
+        : task.priority == TaskPriority.none
+        ? 0.05
+        : 0.20;
 
     final chips = <Widget>[];
     if (task.dueDate != null) {
@@ -144,7 +155,7 @@ class TaskRow extends StatelessWidget {
         borderRadius: BorderRadius.circular(radius),
         boxShadow: [
           BoxShadow(
-            color: severityColor.withValues(alpha: spotlight ? 0.14 : 0.08),
+            color: surfaceColor.withValues(alpha: spotlight ? 0.16 : 0.10),
             blurRadius: spotlight ? 24 : 18,
             spreadRadius: -4,
             offset: const Offset(0, 7),
@@ -165,141 +176,196 @@ class TaskRow extends StatelessWidget {
                   colors: [
                     Color.lerp(
                       colors.card,
-                      severityColor,
+                      surfaceColor,
                       tintAmount,
                     )!.withValues(alpha: isDark ? 0.82 : 0.88),
                     Color.lerp(
                       colors.elevated,
-                      severityColor,
+                      surfaceColor,
                       tintAmount * 0.55,
                     )!.withValues(alpha: isDark ? 0.68 : 0.80),
                   ],
                 ),
               ),
-              child: InkWell(
-                onTap: onTap,
-                borderRadius: BorderRadius.circular(radius),
-                highlightColor: colors.pressed,
-                splashColor: severityColor.withValues(alpha: 0.12),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: compact ? 6 : (spotlight ? 14 : 10),
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      if (isProjection)
-                        Padding(
-                          padding: const EdgeInsets.only(right: 10),
-                          child: Icon(
-                            Icons.repeat,
-                            size: 20,
-                            color: colors.textMuted,
-                          ),
-                        )
-                      else
-                        Semantics(
-                          label: task.isCompleted
-                              ? 'Mark ${task.title} as not completed'
-                              : 'Complete ${task.title}',
-                          child: SizedBox(
-                            width: 40,
-                            height: 40,
-                            child: Checkbox(
-                              value: task.isCompleted,
-                              onChanged: onToggle == null
-                                  ? null
-                                  : (_) => onToggle!(),
-                            ),
-                          ),
-                        ),
-                      const SizedBox(width: 2),
-                      Expanded(
-                        child: Semantics(
-                          label: semanticsLabel,
-                          excludeSemantics: true,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                task.title,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: spotlight ? 16 : 15,
-                                  fontWeight: spotlight
-                                      ? FontWeight.w600
-                                      : FontWeight.w500,
-                                  color: muted
-                                      ? colors.textMuted
-                                      : colors.textPrimary,
-                                  decoration: task.isCompleted
-                                      ? TextDecoration.lineThrough
-                                      : null,
-                                  decorationColor: colors.textMuted,
-                                ),
-                              ),
-                              if (chips.isNotEmpty && !compact) ...[
-                                const SizedBox(height: 5),
-                                Wrap(
-                                  spacing: 10,
-                                  runSpacing: 4,
-                                  children: chips,
-                                ),
-                              ],
-                              if (!compact && !task.isCompleted)
-                                if (task.progress case final progress?
-                                    when progress > 0) ...[
-                                  const SizedBox(height: 7),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(
-                                            2,
-                                          ),
-                                          child: LinearProgressIndicator(
-                                            value: progress,
-                                            minHeight: 4,
-                                            color: colors.done,
-                                            backgroundColor: colors.pressed,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        '${(progress * 100).round()}%',
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          color: colors.textMuted,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                            ],
-                          ),
+              child: Stack(
+                children: [
+                  if (customBackground)
+                    Positioned.fill(
+                      child: IgnorePointer(
+                        child: _BackgroundMotif(
+                          background: task.background,
+                          color: surfaceColor,
                         ),
                       ),
-                      if (onSnooze != null && (task.hasAlarm || task.isSnoozed))
-                        IconButton(
-                          tooltip: 'Snooze reminder',
-                          onPressed: onSnooze,
-                          icon: Icon(
-                            Icons.snooze,
-                            size: 20,
-                            color: colors.textSecondary,
+                    ),
+                  InkWell(
+                    onTap: onTap,
+                    borderRadius: BorderRadius.circular(radius),
+                    highlightColor: colors.pressed,
+                    splashColor: surfaceColor.withValues(alpha: 0.12),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: compact ? 6 : (spotlight ? 14 : 10),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          if (isProjection)
+                            Padding(
+                              padding: const EdgeInsets.only(right: 10),
+                              child: Icon(
+                                Icons.repeat,
+                                size: 20,
+                                color: colors.textMuted,
+                              ),
+                            )
+                          else
+                            Semantics(
+                              label: task.isCompleted
+                                  ? 'Mark ${task.title} as not completed'
+                                  : 'Complete ${task.title}',
+                              child: SizedBox(
+                                width: 40,
+                                height: 40,
+                                child: Checkbox(
+                                  value: task.isCompleted,
+                                  onChanged: onToggle == null
+                                      ? null
+                                      : (_) => onToggle!(),
+                                ),
+                              ),
+                            ),
+                          const SizedBox(width: 2),
+                          Expanded(
+                            child: Semantics(
+                              label: semanticsLabel,
+                              excludeSemantics: true,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    task.title,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: spotlight ? 16 : 15,
+                                      fontWeight: spotlight
+                                          ? FontWeight.w600
+                                          : FontWeight.w500,
+                                      color: muted
+                                          ? colors.textMuted
+                                          : colors.textPrimary,
+                                      decoration: task.isCompleted
+                                          ? TextDecoration.lineThrough
+                                          : null,
+                                      decorationColor: colors.textMuted,
+                                    ),
+                                  ),
+                                  if (chips.isNotEmpty && !compact) ...[
+                                    const SizedBox(height: 5),
+                                    Wrap(
+                                      spacing: 10,
+                                      runSpacing: 4,
+                                      children: chips,
+                                    ),
+                                  ],
+                                  if (!compact && !task.isCompleted)
+                                    if (task.progress case final progress?
+                                        when progress > 0) ...[
+                                      const SizedBox(height: 7),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(2),
+                                              child: LinearProgressIndicator(
+                                                value: progress,
+                                                minHeight: 4,
+                                                color: colors.done,
+                                                backgroundColor: colors.pressed,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            '${(progress * 100).round()}%',
+                                            style: TextStyle(
+                                              fontSize: 11,
+                                              color: colors.textMuted,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                ],
+                              ),
+                            ),
                           ),
-                        ),
-                    ],
+                          if (onSnooze != null &&
+                              (task.hasAlarm || task.isSnoozed))
+                            IconButton(
+                              tooltip: 'Snooze reminder',
+                              onPressed: onSnooze,
+                              icon: Icon(
+                                Icons.snooze,
+                                size: 20,
+                                color: colors.textSecondary,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
             ),
           ),
         ),
       ),
+    );
+  }
+}
+
+Color _backgroundColor(AppColors colors, TaskBackground background) =>
+    switch (background) {
+      TaskBackground.automatic => colors.accent,
+      TaskBackground.lime => colors.accent,
+      TaskBackground.cyan => colors.low,
+      TaskBackground.sand => colors.medium,
+      TaskBackground.coral => colors.overdue,
+    };
+
+class _BackgroundMotif extends StatelessWidget {
+  final TaskBackground background;
+  final Color color;
+
+  const _BackgroundMotif({required this.background, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    final icon = switch (background) {
+      TaskBackground.automatic => Icons.auto_awesome_rounded,
+      TaskBackground.lime => Icons.eco_outlined,
+      TaskBackground.cyan => Icons.water_drop_outlined,
+      TaskBackground.sand => Icons.light_mode_outlined,
+      TaskBackground.coral => Icons.favorite_border_rounded,
+    };
+    return Stack(
+      clipBehavior: Clip.hardEdge,
+      children: [
+        Positioned(
+          right: -12,
+          top: -24,
+          child: Icon(icon, size: 104, color: color.withValues(alpha: .075)),
+        ),
+        Positioned(
+          right: 78,
+          bottom: -18,
+          child: Icon(icon, size: 52, color: color.withValues(alpha: .045)),
+        ),
+      ],
     );
   }
 }

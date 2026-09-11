@@ -95,18 +95,24 @@ void main() {
         recurrence: RecurrenceRule.daily(),
       );
       await state.applySeriesEdit(
-        occ.copyWith(title: 'New name', priority: TaskPriority.high),
+        occ.copyWith(
+          title: 'New name',
+          priority: TaskPriority.high,
+          background: TaskBackground.cyan,
+        ),
         SeriesEditScope.thisAndFuture,
       );
       final template = state.templateOf(occ)!;
       expect(template.title, 'New name');
       expect(template.priority, TaskPriority.high);
+      expect(template.background, TaskBackground.cyan);
       // Next occurrence inherits the edit.
       await state.completeTask(state.taskById(occ.id)!);
       final next = state.allTasks.firstWhere(
         (t) => t.kind == TaskKind.occurrence && !t.isCompleted,
       );
       expect(next.title, 'New name');
+      expect(next.background, TaskBackground.cyan);
     });
 
     test('entire-series edit rewrites completed history titles', () async {

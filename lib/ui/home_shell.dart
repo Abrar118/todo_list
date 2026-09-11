@@ -79,16 +79,10 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
           SettingsScreen(),
         ],
       ),
-      floatingActionButton: _index <= 1
-          ? FloatingActionButton(
-              onPressed: () => QuickAddSheet.open(context),
-              tooltip: 'Add task',
-              child: const Icon(Icons.add, size: 28),
-            )
-          : null,
       bottomNavigationBar: FrostedBottomNavigationBar(
         selectedIndex: _index,
         onDestinationSelected: (i) => setState(() => _index = i),
+        onAdd: () => QuickAddSheet.open(context),
         items: [
           FrostedNavigationItem(
             icon: Icons.center_focus_strong_outlined,
