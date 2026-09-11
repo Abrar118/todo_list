@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Nudge widget palette, mirrors lib/core/app_colors.dart -->
+    <color name="widget_background">#0B0B0D</color>
+    <color name="widget_border">#24FFFFFF</color>
+    <color name="widget_text_primary">#F5F5F7</color>
+    <color name="widget_text_secondary">#A0A0A8</color>
+    <color name="widget_text_muted">#6D6D75</color>
+    <color name="widget_accent">#8B7CF8</color>
+    <color name="widget_overdue">#D26666</color>
+    <color name="widget_medium">#D9A554</color>
+    <color name="widget_low">#7FA8D9</color>
+    <color name="widget_on_accent">#0A0A10</color>
+	<color name="ic_launcher_background">#0B0B0D</color>
+</resources>

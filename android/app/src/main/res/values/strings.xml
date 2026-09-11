@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_up_next_label">Nudge · Up next</string>
+    <string name="widget_up_next_description">Your top task with its deadline, priority, and progress.</string>
+    <string name="widget_focus_label">Nudge · Tasks</string>
+    <string name="widget_focus_description">Your focus list with deadlines, priorities, tags, and progress.</string>
+    <string name="widget_empty">You are clear for now.</string>
+    <string name="widget_up_next_header">UP NEXT</string>
+    <string name="widget_focus_header">FOCUS</string>
+    <string name="widget_add_task">Add task</string>
+    <string name="widget_complete_task">Complete task</string>
+</resources>
