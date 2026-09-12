@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:todo_list/domain/models/date_only.dart';
+import 'package:todo_list/domain/models/habit.dart';
 import 'package:todo_list/domain/models/recurrence.dart';
 import 'package:todo_list/domain/models/task.dart';
 import 'package:todo_list/main.dart';
@@ -11,10 +12,14 @@ import 'package:todo_list/state/focus_timer_controller.dart';
 import 'package:todo_list/state/habit_controller.dart';
 import 'package:todo_list/state/settings_controller.dart';
 import 'package:todo_list/ui/screens/task_editor_screen.dart';
+import 'package:todo_list/ui/screens/habit_detail_screen.dart';
 
 import 'helpers/fakes.dart';
 
-Future<(AppState, SettingsController)> buildApp(WidgetTester tester) async {
+Future<(AppState, SettingsController)> buildApp(
+  WidgetTester tester, {
+  HabitController? habitController,
+}) async {
   final repo = InMemoryTaskRepository();
   final notifications = FakeNotificationService();
   final settingsRepo = InMemorySettingsRepository()..permissionRequested = true;
@@ -22,7 +27,7 @@ Future<(AppState, SettingsController)> buildApp(WidgetTester tester) async {
   await settings.load();
   final state = AppState(repo, notifications, settings);
   await state.init();
-  final habits = HabitController(InMemoryHabitRepository());
+  final habits = habitController ?? HabitController(InMemoryHabitRepository());
   await habits.init();
   await tester.pumpWidget(
     NudgeApp(
@@ -98,6 +103,38 @@ void main() {
     await tester.tap(find.text('Create habit'));
     await tester.pumpAndSettle();
     expect(find.text('Pay rent'), findsOneWidget);
+  });
+
+  testWidgets('monthly detail replaces weekly history with progress', (
+    tester,
+  ) async {
+    final repo = InMemoryHabitRepository()
+      ..store = [
+        Habit(
+          id: 'monthly-habit',
+          title: 'Pay rent',
+          color: HabitColor.violet,
+          createdOn: DateOnly.today(),
+          cadence: HabitCadence.monthly,
+        ),
+      ];
+    await buildApp(tester, habitController: HabitController(repo));
+
+    HabitDetailScreen.open(
+      tester.element(find.byType(Scaffold).first),
+      'monthly-habit',
+    );
+    await tester.pumpAndSettle();
+    await tester.drag(find.byType(ListView).last, const Offset(0, -500));
+    await tester.pumpAndSettle();
+    expect(find.text('LAST 7 DAYS'), findsNothing);
+    expect(find.text('MONTHLY PROGRESS'), findsOneWidget);
+    expect(find.text('0%'), findsOneWidget);
+    expect(find.byType(LinearProgressIndicator), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('habit-detail-background')),
+      findsOneWidget,
+    );
   });
 
   testWidgets('center add action sits inside the navigation band', (

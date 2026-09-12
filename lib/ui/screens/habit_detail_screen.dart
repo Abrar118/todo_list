@@ -31,9 +31,19 @@ class HabitDetailScreen extends StatelessWidget {
       );
     }
     final today = DateOnly.today();
+    final activeDate = habit.cadence == HabitCadence.monthly
+        ? DateOnly(
+            today.year,
+            today.month,
+            habit.monthlyDay.clamp(
+              1,
+              DateOnly.daysInMonth(today.year, today.month),
+            ),
+          )
+        : today;
     final color = habitColorOf(context.colors, habit.color);
     final completedCheckpoints = habit.checkpoints
-        .where((checkpoint) => checkpoint.isCompletedOn(today))
+        .where((checkpoint) => checkpoint.isCompletedOn(activeDate))
         .length;
     return Scaffold(
       appBar: AppBar(
@@ -67,7 +77,7 @@ class HabitDetailScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 4, 16, 40),
         children: [
-          _HabitHero(habit: habit, color: color, today: today),
+          _HabitHero(habit: habit, color: color, today: activeDate),
           if (habit.type == HabitType.timer) ...[
             const SizedBox(height: 14),
             _TimerPanel(habit: habit, color: color, today: today),
@@ -90,7 +100,8 @@ class HabitDetailScreen extends StatelessWidget {
                   Text(
                     habit.checkpoints.isEmpty
                         ? 'Break this habit into small steps'
-                        : '$completedCheckpoints of ${habit.checkpoints.length} complete today',
+                        : '$completedCheckpoints of ${habit.checkpoints.length} complete '
+                              '${habit.cadence == HabitCadence.monthly ? 'this month' : 'today'}',
                     style: TextStyle(
                       color: context.colors.textSecondary,
                       fontSize: 12,
@@ -113,9 +124,18 @@ class HabitDetailScreen extends StatelessWidget {
               onAdd: () => CheckpointEditorSheet.open(context, habit.id),
             )
           else
-            _Timeline(habit: habit, color: color, today: today),
+            _Timeline(habit: habit, color: color, today: activeDate),
           const SizedBox(height: 22),
-          _WeekHistory(habit: habit, color: color, today: today),
+          if (habit.cadence == HabitCadence.monthly)
+            _MonthlyProgress(
+              habit: habit,
+              color: color,
+              date: activeDate,
+              completedCheckpoints: completedCheckpoints,
+              timerSeconds: controller.timerSecondsFor(habit.id, today),
+            )
+          else
+            _WeekHistory(habit: habit, color: color, today: today),
         ],
       ),
     );
@@ -150,96 +170,145 @@ class _HabitHero extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final done = habit.isCompletedOn(today);
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [color.withValues(alpha: .20), context.colors.card],
+    final backgroundIcon = habit.type == HabitType.timer
+        ? Icons.timer_rounded
+        : Icons.auto_awesome_rounded;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(24),
+      child: Container(
+        key: const ValueKey('habit-detail-background'),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              color.withValues(alpha: .28),
+              context.colors.card.withValues(alpha: .96),
+            ],
+          ),
         ),
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: .18),
-                  borderRadius: BorderRadius.circular(15),
-                ),
+        child: Stack(
+          children: [
+            Positioned(
+              right: -26,
+              top: -34,
+              child: ExcludeSemantics(
                 child: Icon(
-                  habit.type == HabitType.timer
-                      ? Icons.timer_rounded
-                      : Icons.auto_awesome_rounded,
-                  color: color,
-                  size: 26,
+                  backgroundIcon,
+                  size: 156,
+                  color: color.withValues(alpha: .09),
                 ),
               ),
-              const Spacer(),
-              if (habit.scheduledMinutes != null)
-                _InfoChip(
-                  icon: Icons.notifications_active_outlined,
-                  label: formatHabitTime(context, habit.scheduledMinutes!),
-                  color: color,
-                ),
-            ],
-          ),
-          const SizedBox(height: 18),
-          Text(
-            habit.title,
-            style: const TextStyle(
-              fontSize: 26,
-              fontWeight: FontWeight.w900,
-              letterSpacing: -.7,
             ),
-          ),
-          const SizedBox(height: 7),
-          Text(
-            habit.type == HabitType.timer
-                ? '${habit.timerTargetMinutes} minute daily target'
-                : habit.checkpoints.isEmpty
-                ? 'Daily check-in habit'
-                : '${habit.checkpoints.length} step daily routine',
-            style: TextStyle(color: context.colors.textSecondary),
-          ),
-          const SizedBox(height: 18),
-          Row(
-            children: [
-              _Metric(
-                value: '${habit.currentStreak(today)}',
-                label: 'day streak',
-                color: color,
-              ),
-              const SizedBox(width: 10),
-              _Metric(
-                value: '${habit.completedDates.length}',
-                label: 'total days',
-                color: context.colors.low,
-              ),
-              const Spacer(),
-              if (habit.type == HabitType.checkIn)
-                FilledButton.icon(
-                  style: FilledButton.styleFrom(
-                    backgroundColor: done ? context.colors.pressed : color,
-                    foregroundColor: done
-                        ? context.colors.textPrimary
-                        : context.colors.onAccent,
-                  ),
-                  onPressed: () => context.read<HabitController>().toggleDate(
-                    habit.id,
-                    today,
-                  ),
-                  icon: Icon(done ? Icons.undo_rounded : Icons.check_rounded),
-                  label: Text(done ? 'Undo today' : 'Complete'),
+            Positioned(
+              right: 92,
+              bottom: -25,
+              child: ExcludeSemantics(
+                child: Icon(
+                  backgroundIcon,
+                  size: 62,
+                  color: color.withValues(alpha: .055),
                 ),
-            ],
-          ),
-        ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: color.withValues(alpha: .18),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Icon(
+                          habit.type == HabitType.timer
+                              ? Icons.timer_rounded
+                              : Icons.auto_awesome_rounded,
+                          color: color,
+                          size: 26,
+                        ),
+                      ),
+                      const Spacer(),
+                      if (habit.scheduledMinutes != null)
+                        _InfoChip(
+                          icon: Icons.notifications_active_outlined,
+                          label: formatHabitTime(
+                            context,
+                            habit.scheduledMinutes!,
+                          ),
+                          color: color,
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 18),
+                  Text(
+                    habit.title,
+                    style: const TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: -.7,
+                    ),
+                  ),
+                  const SizedBox(height: 7),
+                  Text(switch ((habit.cadence, habit.type)) {
+                    (HabitCadence.monthly, HabitType.timer) =>
+                      '${habit.timerTargetMinutes} minute monthly target',
+                    (HabitCadence.monthly, HabitType.checkIn) =>
+                      habit.checkpoints.isEmpty
+                          ? 'Monthly check-in habit'
+                          : '${habit.checkpoints.length} step monthly routine',
+                    (HabitCadence.daily, HabitType.timer) =>
+                      '${habit.timerTargetMinutes} minute daily target',
+                    (HabitCadence.daily, HabitType.checkIn) =>
+                      habit.checkpoints.isEmpty
+                          ? 'Daily check-in habit'
+                          : '${habit.checkpoints.length} step daily routine',
+                  }, style: TextStyle(color: context.colors.textSecondary)),
+                  const SizedBox(height: 18),
+                  Row(
+                    children: [
+                      _Metric(
+                        value: '${habit.currentStreak(today)}',
+                        label: 'day streak',
+                        color: color,
+                      ),
+                      const SizedBox(width: 10),
+                      _Metric(
+                        value: '${habit.completedDates.length}',
+                        label: 'total days',
+                        color: context.colors.low,
+                      ),
+                      const Spacer(),
+                      if (habit.type == HabitType.checkIn)
+                        FilledButton.icon(
+                          style: FilledButton.styleFrom(
+                            backgroundColor: done
+                                ? context.colors.pressed
+                                : color,
+                            foregroundColor: done
+                                ? context.colors.textPrimary
+                                : context.colors.onAccent,
+                          ),
+                          onPressed: () => context
+                              .read<HabitController>()
+                              .toggleDate(habit.id, today),
+                          icon: Icon(
+                            done ? Icons.undo_rounded : Icons.check_rounded,
+                          ),
+                          label: Text(done ? 'Undo today' : 'Complete'),
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -692,6 +761,100 @@ class _CheckpointEditorSheetState extends State<CheckpointEditorSheet> {
       ),
     ),
   );
+}
+
+class _MonthlyProgress extends StatelessWidget {
+  final Habit habit;
+  final Color color;
+  final DateOnly date;
+  final int completedCheckpoints;
+  final int timerSeconds;
+
+  const _MonthlyProgress({
+    required this.habit,
+    required this.color,
+    required this.date,
+    required this.completedCheckpoints,
+    required this.timerSeconds,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final double progress;
+    final String detail;
+    if (habit.checkpoints.isNotEmpty) {
+      progress = completedCheckpoints / habit.checkpoints.length;
+      detail =
+          '$completedCheckpoints of ${habit.checkpoints.length} checkpoints';
+    } else if (habit.type == HabitType.timer) {
+      final targetSeconds = habit.timerTargetMinutes * 60;
+      progress = (timerSeconds / targetSeconds).clamp(0.0, 1.0);
+      detail =
+          '${formatDuration(timerSeconds)} of '
+          '${habit.timerTargetMinutes} min';
+    } else {
+      progress = habit.isCompletedOn(date) ? 1 : 0;
+      detail = habit.isCompletedOn(date)
+          ? 'Completed this month'
+          : 'Not completed yet';
+    }
+    final percent = (progress * 100).round();
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            color.withValues(alpha: .14),
+            context.colors.card.withValues(alpha: .96),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Text(
+                'MONTHLY PROGRESS',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                '$percent%',
+                style: TextStyle(
+                  color: color,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(3),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 6,
+              color: color,
+              backgroundColor: context.colors.pressed,
+            ),
+          ),
+          const SizedBox(height: 9),
+          Text(
+            detail,
+            style: TextStyle(color: context.colors.textSecondary, fontSize: 12),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _WeekHistory extends StatelessWidget {
