@@ -100,7 +100,7 @@ void main() {
     expect(find.text('Pay rent'), findsOneWidget);
   });
 
-  testWidgets('center add action does not overlap the Habits destination', (
+  testWidgets('center add action sits inside the navigation band', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(390, 844);
@@ -110,8 +110,11 @@ void main() {
     await buildApp(tester);
 
     final addRect = tester.getRect(find.byType(FloatingActionButton));
+    final focusRect = tester.getRect(find.byTooltip('Focus'));
     final habitsRect = tester.getRect(find.byTooltip('Habits'));
     expect(addRect.overlaps(habitsRect), isFalse);
+    expect(addRect.top, greaterThanOrEqualTo(focusRect.top));
+    expect(addRect.bottom, lessThanOrEqualTo(focusRect.bottom));
   });
 
   testWidgets('settings opens from the Focus app bar', (tester) async {

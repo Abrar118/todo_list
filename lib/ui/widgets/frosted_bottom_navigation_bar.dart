@@ -20,6 +20,29 @@ class FrostedNavigationItem {
 }
 
 class FrostedBottomNavigationBar extends StatelessWidget {
+  static const _frostSaturation = <double>[
+    1.52992,
+    -0.47216,
+    -0.05776,
+    0,
+    0,
+    -0.14008,
+    1.19784,
+    -0.05776,
+    0,
+    0,
+    -0.14008,
+    -0.47216,
+    1.61224,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+  ];
+
   final int selectedIndex;
   final ValueChanged<int> onDestinationSelected;
   final VoidCallback onAdd;
@@ -36,111 +59,113 @@ class FrostedBottomNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     assert(items.length == 4, 'The center action requires two items per side.');
-    final colors = context.colors;
     final bottomInset = MediaQuery.paddingOf(context).bottom;
     final reduceMotion = MediaQuery.disableAnimationsOf(context);
+    final textScaler = MediaQuery.textScalerOf(context);
     return Padding(
-      padding: EdgeInsets.fromLTRB(12, 0, 12, 8 + bottomInset),
-      child: SizedBox(
-        height: 80,
-        child: Stack(
-          clipBehavior: Clip.none,
-          alignment: Alignment.topCenter,
-          children: [
-            Positioned.fill(
-              top: 12,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(27),
-                  boxShadow: [
-                    BoxShadow(
-                      color: colors.background.withValues(alpha: .42),
-                      blurRadius: 26,
-                      offset: const Offset(0, 9),
-                    ),
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(27),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            colors.elevated.withValues(alpha: .72),
-                            colors.card.withValues(alpha: .56),
-                          ],
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(child: _destinations(0, 2, reduceMotion)),
-                          const SizedBox(width: 76),
-                          Expanded(child: _destinations(2, 4, reduceMotion)),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              top: 0,
-              child: Semantics(
-                button: true,
-                label: 'Add task',
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: colors.accent.withValues(alpha: .34),
-                        blurRadius: 24,
-                        spreadRadius: -2,
-                      ),
-                    ],
-                  ),
-                  child: FloatingActionButton(
-                    heroTag: 'nav-add-task',
-                    tooltip: 'Add task',
-                    onPressed: () {
-                      HapticFeedback.mediumImpact();
-                      onAdd();
-                    },
-                    shape: const CircleBorder(),
-                    child: const Icon(Icons.add_rounded, size: 30),
-                  ),
-                ),
-              ),
+      padding: EdgeInsets.fromLTRB(16, 0, 16, 10 + bottomInset),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(28),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x66000000),
+              blurRadius: 28,
+              offset: Offset(0, 10),
+              spreadRadius: -4,
             ),
           ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(28),
+          child: BackdropFilter(
+            filter: ImageFilter.compose(
+              outer: const ColorFilter.matrix(_frostSaturation),
+              inner: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
+            ),
+            child: Container(
+              height: 62 + textScaler.scale(10),
+              padding: const EdgeInsets.symmetric(horizontal: 6),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Color(0x12FFFFFF), Color(0x05FFFFFF)],
+                ),
+              ),
+              child: Row(
+                children: [
+                  _destination(0, reduceMotion),
+                  _destination(1, reduceMotion),
+                  Expanded(child: _addAction(context)),
+                  _destination(2, reduceMotion),
+                  _destination(3, reduceMotion),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );
   }
 
-  Widget _destinations(int start, int end, bool reduceMotion) => Row(
-    children: [
-      for (var index = start; index < end; index++)
-        Expanded(
-          child: _Destination(
-            item: items[index],
-            selected: index == selectedIndex,
-            duration: reduceMotion
-                ? Duration.zero
-                : const Duration(milliseconds: 220),
-            onTap: () {
-              if (index == selectedIndex) return;
-              HapticFeedback.selectionClick();
-              onDestinationSelected(index);
-            },
+  Widget _destination(int index, bool reduceMotion) => Expanded(
+    child: _Destination(
+      item: items[index],
+      selected: index == selectedIndex,
+      duration: reduceMotion
+          ? Duration.zero
+          : const Duration(milliseconds: 220),
+      onTap: () {
+        if (index == selectedIndex) return;
+        HapticFeedback.selectionClick();
+        onDestinationSelected(index);
+      },
+    ),
+  );
+
+  Widget _addAction(BuildContext context) {
+    final colors = context.colors;
+    return Center(
+      child: Semantics(
+        button: true,
+        label: 'Add task',
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [colors.accent, colors.accentDim],
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: colors.accent.withValues(alpha: .34),
+                blurRadius: 18,
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(2),
+            child: FloatingActionButton.small(
+              heroTag: 'nav-add-task',
+              tooltip: 'Add task',
+              elevation: 0,
+              highlightElevation: 0,
+              backgroundColor: Colors.transparent,
+              foregroundColor: colors.onAccent,
+              onPressed: () {
+                HapticFeedback.mediumImpact();
+                onAdd();
+              },
+              shape: const CircleBorder(),
+              child: const Icon(Icons.add_rounded, size: 27),
+            ),
           ),
         ),
-    ],
-  );
+      ),
+    );
+  }
 }
 
 class _Destination extends StatelessWidget {
@@ -169,9 +194,9 @@ class _Destination extends StatelessWidget {
           color: Colors.transparent,
           child: InkWell(
             onTap: onTap,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(16),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 7),
+              padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 6),
               child: AnimatedContainer(
                 duration: duration,
                 curve: Curves.easeOutCubic,
@@ -179,7 +204,7 @@ class _Destination extends StatelessWidget {
                   color: selected
                       ? item.color.withValues(alpha: .16)
                       : Colors.transparent,
-                  borderRadius: BorderRadius.circular(18),
+                  borderRadius: BorderRadius.circular(16),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
