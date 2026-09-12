@@ -10,6 +10,7 @@ import 'package:todo_list/services/home_widget_service.dart';
 import 'package:todo_list/state/app_state.dart';
 import 'package:todo_list/state/focus_timer_controller.dart';
 import 'package:todo_list/state/habit_controller.dart';
+import 'package:todo_list/state/goal_controller.dart';
 import 'package:todo_list/state/settings_controller.dart';
 import 'package:todo_list/ui/screens/task_editor_screen.dart';
 import 'package:todo_list/ui/screens/habit_detail_screen.dart';
@@ -19,6 +20,7 @@ import 'helpers/fakes.dart';
 Future<(AppState, SettingsController)> buildApp(
   WidgetTester tester, {
   HabitController? habitController,
+  GoalController? goalController,
 }) async {
   final repo = InMemoryTaskRepository();
   final notifications = FakeNotificationService();
@@ -29,6 +31,8 @@ Future<(AppState, SettingsController)> buildApp(
   await state.init();
   final habits = habitController ?? HabitController(InMemoryHabitRepository());
   await habits.init();
+  final goals = goalController ?? GoalController(InMemoryGoalRepository());
+  await goals.init();
   await tester.pumpWidget(
     NudgeApp(
       appState: state,
@@ -36,6 +40,7 @@ Future<(AppState, SettingsController)> buildApp(
       homeWidgets: HomeWidgetService(),
       focusTimer: FocusTimerController(state, settings, notifications),
       habitController: habits,
+      goalController: goals,
     ),
   );
   await tester.pumpAndSettle();
@@ -48,6 +53,51 @@ void main() {
   testWidgets('empty Focus shows the calm empty state', (tester) async {
     await buildApp(tester);
     expect(find.text('You are clear for now.'), findsOneWidget);
+  });
+
+  testWidgets('goals replaces completed in bottom navigation', (tester) async {
+    await buildApp(tester);
+
+    expect(find.text('Goals'), findsOneWidget);
+    expect(find.text('Completed'), findsNothing);
+    await tester.tap(find.text('Goals'));
+    await tester.pumpAndSettle();
+    expect(find.text('Set your next direction.'), findsOneWidget);
+  });
+
+  testWidgets('creates a persistent goal with checkpoint progress', (
+    tester,
+  ) async {
+    final repository = InMemoryGoalRepository();
+    await buildApp(tester, goalController: GoalController(repository));
+    await tester.tap(find.text('Goals'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Add goal'));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const ValueKey('goal-title-field')),
+      'Finish a book',
+    );
+    await tester.tap(find.text('Create goal'));
+    await tester.pumpAndSettle();
+
+    expect(repository.store.single.title, 'Finish a book');
+    await tester.tap(find.text('Finish a book'));
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('goal-detail-background')),
+      findsOneWidget,
+    );
+    await tester.tap(find.byTooltip('Add checkpoint'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField).last, 'Read chapter one');
+    await tester.tap(find.text('Add'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byIcon(Icons.circle_outlined));
+    await tester.pumpAndSettle();
+
+    expect(repository.store.single.progress, 1);
+    expect(find.text('100%'), findsOneWidget);
   });
 
   testWidgets('quick add creates a task due today', (tester) async {
@@ -298,7 +348,7 @@ void main() {
     await state.completeTask(task);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Completed'));
+    await tester.tap(find.byTooltip('Completed tasks'));
     await tester.pumpAndSettle();
     expect(find.text('Finished thing'), findsOneWidget);
 

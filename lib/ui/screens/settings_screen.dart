@@ -17,6 +17,7 @@ import '../../services/home_widget_service.dart';
 import '../../services/notification_service.dart';
 import '../../state/app_state.dart';
 import '../../state/habit_controller.dart';
+import '../../state/goal_controller.dart';
 import '../../state/settings_controller.dart';
 import '../widgets/common.dart';
 import '../widgets/task_flows.dart';
@@ -523,6 +524,7 @@ class SettingsScreen extends StatelessWidget {
                       context,
                       state,
                       context.read<HabitController>(),
+                      context.read<GoalController>(),
                     ),
                   ),
                 ],
@@ -754,12 +756,13 @@ class SettingsScreen extends StatelessWidget {
     BuildContext context,
     AppState state,
     HabitController habits,
+    GoalController goals,
   ) async {
     final first = await confirmDialog(
       context,
       title: 'Delete all data?',
       message:
-          'Every task, subtask, habit and setting will be permanently removed '
+          'Every task, subtask, habit, goal and setting will be permanently removed '
           'and all reminders cancelled.',
       confirmLabel: 'Continue',
     );
@@ -773,6 +776,7 @@ class SettingsScreen extends StatelessWidget {
     if (!second || !context.mounted) return;
     await state.deleteAllData();
     await habits.deleteAll();
+    await goals.deleteAll();
     if (context.mounted) {
       showAppSnackBar(context, 'All local data deleted.');
     }

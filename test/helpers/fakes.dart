@@ -1,9 +1,11 @@
 import 'package:todo_list/data/app_settings.dart';
 import 'package:todo_list/data/habit_repository.dart';
+import 'package:todo_list/data/goal_repository.dart';
 import 'package:todo_list/data/settings_repository.dart';
 import 'package:todo_list/data/task_repository.dart';
 import 'package:todo_list/domain/logic/notification_planner.dart';
 import 'package:todo_list/domain/models/habit.dart';
+import 'package:todo_list/domain/models/goal.dart';
 import 'package:todo_list/domain/models/task.dart';
 import 'package:todo_list/services/notification_service.dart';
 
@@ -55,6 +57,19 @@ class InMemoryHabitRepository implements HabitRepository {
 
   @override
   Future<void> saveAll(List<Habit> habits) async => store = List.of(habits);
+
+  @override
+  Future<void> deleteAll() async => store.clear();
+}
+
+class InMemoryGoalRepository implements GoalRepository {
+  List<Goal> store = [];
+
+  @override
+  Future<List<Goal>> loadAll() async => List.of(store);
+
+  @override
+  Future<void> saveAll(List<Goal> goals) async => store = List.of(goals);
 
   @override
   Future<void> deleteAll() async => store.clear();

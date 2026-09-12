@@ -11,6 +11,7 @@ import '../widgets/common.dart';
 import '../widgets/task_row.dart';
 import '../widgets/task_flows.dart';
 import 'focus_timer_screen.dart';
+import 'completed_screen.dart';
 import 'search_screen.dart';
 import 'settings_screen.dart';
 import 'task_editor_screen.dart';
@@ -118,6 +119,13 @@ class _FocusScreenState extends State<FocusScreen> {
             tooltip: 'Search tasks',
             icon: const Icon(Icons.search),
             onPressed: () => SearchScreen.open(context),
+          ),
+          IconButton(
+            tooltip: 'Completed tasks',
+            icon: const Icon(Icons.task_alt_rounded),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => const CompletedScreen()),
+            ),
           ),
           IconButton(
             tooltip: 'Settings',

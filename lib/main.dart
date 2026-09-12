@@ -7,6 +7,7 @@ import 'core/app_theme.dart';
 import 'data/app_database.dart';
 import 'data/app_settings.dart';
 import 'data/habit_repository.dart';
+import 'data/goal_repository.dart';
 import 'data/settings_repository.dart';
 import 'data/task_repository.dart';
 import 'services/home_widget_service.dart';
@@ -14,6 +15,7 @@ import 'services/local_notification_service.dart';
 import 'state/app_state.dart';
 import 'state/focus_timer_controller.dart';
 import 'state/habit_controller.dart';
+import 'state/goal_controller.dart';
 import 'state/settings_controller.dart';
 import 'ui/home_shell.dart';
 
@@ -41,6 +43,9 @@ Future<void> main() async {
   );
   await habitController.init();
 
+  final goalController = GoalController(PrefsGoalRepository());
+  await goalController.init();
+
   if (await settingsRepository.isFirstLaunch()) {
     // Mark first before seeding: deleted samples must never be recreated,
     // even if seeding is interrupted.
@@ -64,6 +69,7 @@ Future<void> main() async {
       homeWidgets: homeWidgets,
       focusTimer: focusTimer,
       habitController: habitController,
+      goalController: goalController,
     ),
   );
 }
@@ -74,6 +80,7 @@ class NudgeApp extends StatelessWidget {
   final HomeWidgetService homeWidgets;
   final FocusTimerController focusTimer;
   final HabitController habitController;
+  final GoalController goalController;
 
   const NudgeApp({
     super.key,
@@ -82,6 +89,7 @@ class NudgeApp extends StatelessWidget {
     required this.homeWidgets,
     required this.focusTimer,
     required this.habitController,
+    required this.goalController,
   });
 
   @override
@@ -93,6 +101,7 @@ class NudgeApp extends StatelessWidget {
         Provider<HomeWidgetService>.value(value: homeWidgets),
         ChangeNotifierProvider<FocusTimerController>.value(value: focusTimer),
         ChangeNotifierProvider<HabitController>.value(value: habitController),
+        ChangeNotifierProvider<GoalController>.value(value: goalController),
       ],
       child: Consumer<SettingsController>(
         builder: (context, settings, _) => MaterialApp(
