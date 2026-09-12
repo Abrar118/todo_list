@@ -74,6 +74,57 @@ void main() {
     expect(find.text('Add something you cannot forget…'), findsOneWidget);
   });
 
+  testWidgets('habit page separates daily and monthly habits', (tester) async {
+    await buildApp(tester);
+    await tester.tap(find.text('Habits'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Daily'), findsOneWidget);
+    expect(find.text('Monthly'), findsOneWidget);
+    expect(find.text('Yearly'), findsNothing);
+    await tester.tap(find.text('Monthly'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Add habit'));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const ValueKey('habit-name-field')),
+      'Pay rent',
+    );
+    await tester.scrollUntilVisible(
+      find.text('Create habit'),
+      160,
+      scrollable: find.byType(Scrollable).last,
+    );
+    await tester.tap(find.text('Create habit'));
+    await tester.pumpAndSettle();
+    expect(find.text('Pay rent'), findsOneWidget);
+  });
+
+  testWidgets('center add action does not overlap the Habits destination', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await buildApp(tester);
+
+    final addRect = tester.getRect(find.byType(FloatingActionButton));
+    final habitsRect = tester.getRect(find.byTooltip('Habits'));
+    expect(addRect.overlaps(habitsRect), isFalse);
+  });
+
+  testWidgets('settings opens from the Focus app bar', (tester) async {
+    await buildApp(tester);
+
+    final settings = find.byTooltip('Settings');
+    expect(settings, findsOneWidget);
+    expect(tester.getCenter(settings).dy, lessThan(100));
+    await tester.tap(settings);
+    await tester.pumpAndSettle();
+    expect(find.text('NOTIFICATIONS'), findsOneWidget);
+  });
+
   testWidgets('task editor background choice persists on the task', (
     tester,
   ) async {
@@ -301,6 +352,11 @@ void main() {
       'Drink water',
     );
     await tester.pump();
+    await tester.scrollUntilVisible(
+      find.text('Create habit'),
+      160,
+      scrollable: find.byType(Scrollable).last,
+    );
     await tester.tap(find.text('Create habit'));
     await tester.pumpAndSettle();
 

@@ -12,6 +12,7 @@ import '../widgets/task_row.dart';
 import '../widgets/task_flows.dart';
 import 'focus_timer_screen.dart';
 import 'search_screen.dart';
+import 'settings_screen.dart';
 import 'task_editor_screen.dart';
 
 class FocusScreen extends StatefulWidget {
@@ -118,9 +119,18 @@ class _FocusScreenState extends State<FocusScreen> {
             icon: const Icon(Icons.search),
             onPressed: () => SearchScreen.open(context),
           ),
+          IconButton(
+            tooltip: 'Settings',
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => const SettingsScreen()),
+            ),
+          ),
+          const SizedBox(width: 4),
         ],
       ),
       body: SafeArea(
+        bottom: false,
         child: Column(
           children: [
             if (tags.isNotEmpty)
@@ -218,7 +228,7 @@ class _FocusScreenState extends State<FocusScreen> {
             );
     }
     return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 4, 16, 120),
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 88),
       children: [
         if (state.hasStorageError) const _StorageErrorBanner(),
         if (sections.spotlight.isNotEmpty) ...[

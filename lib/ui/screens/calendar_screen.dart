@@ -84,6 +84,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
         ],
       ),
       body: SafeArea(
+        bottom: false,
         child: Column(
           children: [
             _MonthGrid(
@@ -120,7 +121,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       ),
                     )
                   : ListView(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 120),
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 88),
                       children: [
                         if (allDay.isNotEmpty) ...[
                           const SectionHeader('All-day'),

@@ -51,6 +51,7 @@ class CompletedScreen extends StatelessWidget {
         ],
       ),
       body: SafeArea(
+        bottom: false,
         child: completed.isEmpty
             ? Center(
                 child: Text(
@@ -62,7 +63,7 @@ class CompletedScreen extends StatelessWidget {
                 ),
               )
             : ListView(
-                padding: const EdgeInsets.fromLTRB(16, 4, 16, 120),
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 88),
                 children: [
                   for (final date in dates) ...[
                     SectionHeader(

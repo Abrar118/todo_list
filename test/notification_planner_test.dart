@@ -2,6 +2,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:todo_list/domain/logic/notification_planner.dart';
 import 'package:todo_list/domain/logic/quiet_hours.dart';
 import 'package:todo_list/domain/models/date_only.dart';
+import 'package:todo_list/domain/models/notification_tone.dart';
+import 'package:todo_list/domain/models/priority.dart';
 import 'package:todo_list/domain/models/reminders.dart';
 import 'package:todo_list/domain/models/task.dart';
 
@@ -14,12 +16,16 @@ Task makeTask({
   DateTime? snoozedUntil,
   bool completed = false,
   TaskKind kind = TaskKind.single,
+  TaskPriority priority = TaskPriority.none,
+  TaskBackground background = TaskBackground.automatic,
 }) {
   final now = DateTime(2026, 7, 11, 8);
   return Task(
     id: id,
     kind: kind,
     title: 'Task $id',
+    priority: priority,
+    background: background,
     dueDate: due,
     dueMinutes: dueMinutes,
     reminders: reminders,
@@ -213,5 +219,25 @@ void main() {
     expect(a, b);
     expect(a, isNot(c));
     expect(a, isNot(d));
+  });
+
+  test('custom task background colors its planned notification', () {
+    final task = makeTask(
+      due: const DateOnly(2026, 7, 12),
+      reminders: const [ReminderEntry.atDeadline()],
+      background: TaskBackground.cyan,
+    );
+
+    expect(planner.plan([task], now).single.tone, NotificationTone.cyan);
+  });
+
+  test('automatic task background follows priority notification tone', () {
+    final task = makeTask(
+      due: const DateOnly(2026, 7, 12),
+      reminders: const [ReminderEntry.atDeadline()],
+      priority: TaskPriority.high,
+    );
+
+    expect(planner.plan([task], now).single.tone, NotificationTone.coral);
   });
 }

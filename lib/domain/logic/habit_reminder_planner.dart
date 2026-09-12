@@ -1,4 +1,5 @@
 import '../models/habit.dart';
+import '../models/notification_tone.dart';
 
 class PlannedHabitReminder {
   final int id;
@@ -7,6 +8,9 @@ class PlannedHabitReminder {
   final int minutesOfDay;
   final String title;
   final String body;
+  final NotificationTone tone;
+  final HabitCadence cadence;
+  final int? dayOfMonth;
 
   const PlannedHabitReminder({
     required this.id,
@@ -15,6 +19,9 @@ class PlannedHabitReminder {
     required this.title,
     required this.body,
     this.checkpointId,
+    required this.tone,
+    required this.cadence,
+    this.dayOfMonth,
   });
 }
 
@@ -35,7 +42,14 @@ class HabitReminderPlanner {
             habitId: habit.id,
             minutesOfDay: minutes,
             title: habit.title,
-            body: 'Time for your daily habit',
+            body: habit.cadence == HabitCadence.daily
+                ? 'Time for your daily habit'
+                : 'Time for your monthly habit',
+            tone: _toneForHabit(habit),
+            cadence: habit.cadence,
+            dayOfMonth: habit.cadence == HabitCadence.monthly
+                ? habit.monthlyDay
+                : null,
           ),
         );
       }
@@ -50,6 +64,11 @@ class HabitReminderPlanner {
             minutesOfDay: checkpointMinutes,
             title: habit.title,
             body: checkpoint.title,
+            tone: _toneForHabit(habit),
+            cadence: habit.cadence,
+            dayOfMonth: habit.cadence == HabitCadence.monthly
+                ? habit.monthlyDay
+                : null,
           ),
         );
       }
@@ -57,6 +76,13 @@ class HabitReminderPlanner {
     result.sort((a, b) => a.minutesOfDay.compareTo(b.minutesOfDay));
     return result;
   }
+
+  NotificationTone _toneForHabit(Habit habit) => switch (habit.color) {
+    HabitColor.violet || HabitColor.green => NotificationTone.lime,
+    HabitColor.blue => NotificationTone.cyan,
+    HabitColor.amber => NotificationTone.sand,
+    HabitColor.rose => NotificationTone.coral,
+  };
 
   static bool ownsId(int id) => (id & 0x70000000) == idPrefix;
 

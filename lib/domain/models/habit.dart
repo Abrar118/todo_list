@@ -4,6 +4,8 @@ enum HabitColor { violet, blue, green, amber, rose }
 
 enum HabitType { checkIn, timer }
 
+enum HabitCadence { daily, monthly }
+
 const _unset = Object();
 
 class HabitCheckpoint {
@@ -88,6 +90,8 @@ class Habit {
   final DateOnly createdOn;
   final Set<DateOnly> completedDates;
   final HabitType type;
+  final HabitCadence cadence;
+  final int monthlyDay;
   final int? scheduledMinutes;
   final int timerTargetMinutes;
   final List<HabitCheckpoint> checkpoints;
@@ -102,6 +106,8 @@ class Habit {
     required this.createdOn,
     this.completedDates = const {},
     this.type = HabitType.checkIn,
+    this.cadence = HabitCadence.daily,
+    this.monthlyDay = 1,
     this.scheduledMinutes,
     this.timerTargetMinutes = 30,
     this.checkpoints = const [],
@@ -158,6 +164,8 @@ class Habit {
     HabitColor? color,
     Set<DateOnly>? completedDates,
     HabitType? type,
+    HabitCadence? cadence,
+    int? monthlyDay,
     Object? scheduledMinutes = _unset,
     int? timerTargetMinutes,
     List<HabitCheckpoint>? checkpoints,
@@ -171,6 +179,8 @@ class Habit {
     createdOn: createdOn,
     completedDates: Set.unmodifiable(completedDates ?? this.completedDates),
     type: type ?? this.type,
+    cadence: cadence ?? this.cadence,
+    monthlyDay: monthlyDay ?? this.monthlyDay,
     scheduledMinutes: identical(scheduledMinutes, _unset)
         ? this.scheduledMinutes
         : scheduledMinutes as int?,
@@ -196,6 +206,8 @@ class Habit {
       'createdOn': createdOn.toString(),
       'completedDates': dates.map((date) => date.toString()).toList(),
       'type': type.name,
+      'cadence': cadence.name,
+      'monthlyDay': monthlyDay,
       'scheduledMinutes': scheduledMinutes,
       'timerTargetMinutes': timerTargetMinutes,
       'checkpoints': checkpoints
@@ -238,6 +250,11 @@ class Habit {
         (type) => type.name == json['type'],
         orElse: () => HabitType.checkIn,
       ),
+      cadence: HabitCadence.values.firstWhere(
+        (cadence) => cadence.name == json['cadence'],
+        orElse: () => HabitCadence.daily,
+      ),
+      monthlyDay: (json['monthlyDay'] as num?)?.toInt().clamp(1, 31) ?? 1,
       scheduledMinutes: json['scheduledMinutes'] as int?,
       timerTargetMinutes: (json['timerTargetMinutes'] as num?)?.toInt() ?? 30,
       checkpoints: List.unmodifiable(
@@ -261,6 +278,8 @@ class Habit {
       other.color == color &&
       other.createdOn == createdOn &&
       other.type == type &&
+      other.cadence == cadence &&
+      other.monthlyDay == monthlyDay &&
       other.scheduledMinutes == scheduledMinutes &&
       other.timerTargetMinutes == timerTargetMinutes &&
       other.timerStartedAt == timerStartedAt &&
@@ -277,6 +296,8 @@ class Habit {
     color,
     createdOn,
     type,
+    cadence,
+    monthlyDay,
     scheduledMinutes,
     timerTargetMinutes,
     timerStartedAt,

@@ -35,6 +35,7 @@ class FrostedBottomNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    assert(items.length == 4, 'The center action requires two items per side.');
     final colors = context.colors;
     final bottomInset = MediaQuery.paddingOf(context).bottom;
     final reduceMotion = MediaQuery.disableAnimationsOf(context);
@@ -69,34 +70,16 @@ class FrostedBottomNavigationBar extends StatelessWidget {
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                           colors: [
-                            colors.elevated.withValues(alpha: .90),
-                            colors.card.withValues(alpha: .76),
+                            colors.elevated.withValues(alpha: .72),
+                            colors.card.withValues(alpha: .56),
                           ],
                         ),
                       ),
                       child: Row(
                         children: [
-                          for (
-                            var index = 0;
-                            index < items.length;
-                            index++
-                          ) ...[
-                            if (index == 2) const SizedBox(width: 68),
-                            Expanded(
-                              child: _Destination(
-                                item: items[index],
-                                selected: index == selectedIndex,
-                                duration: reduceMotion
-                                    ? Duration.zero
-                                    : const Duration(milliseconds: 220),
-                                onTap: () {
-                                  if (index == selectedIndex) return;
-                                  HapticFeedback.selectionClick();
-                                  onDestinationSelected(index);
-                                },
-                              ),
-                            ),
-                          ],
+                          Expanded(child: _destinations(0, 2, reduceMotion)),
+                          const SizedBox(width: 76),
+                          Expanded(child: _destinations(2, 4, reduceMotion)),
                         ],
                       ),
                     ),
@@ -138,6 +121,26 @@ class FrostedBottomNavigationBar extends StatelessWidget {
       ),
     );
   }
+
+  Widget _destinations(int start, int end, bool reduceMotion) => Row(
+    children: [
+      for (var index = start; index < end; index++)
+        Expanded(
+          child: _Destination(
+            item: items[index],
+            selected: index == selectedIndex,
+            duration: reduceMotion
+                ? Duration.zero
+                : const Duration(milliseconds: 220),
+            onTap: () {
+              if (index == selectedIndex) return;
+              HapticFeedback.selectionClick();
+              onDestinationSelected(index);
+            },
+          ),
+        ),
+    ],
+  );
 }
 
 class _Destination extends StatelessWidget {

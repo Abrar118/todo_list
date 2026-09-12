@@ -9,7 +9,6 @@ import 'screens/completed_screen.dart';
 import 'screens/focus_screen.dart';
 import 'screens/habits_screen.dart';
 import 'screens/quick_add_sheet.dart';
-import 'screens/settings_screen.dart';
 import 'screens/task_editor_screen.dart';
 import 'widgets/frosted_bottom_navigation_bar.dart';
 
@@ -76,7 +75,6 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
           CalendarScreen(),
           HabitsScreen(),
           CompletedScreen(),
-          SettingsScreen(),
         ],
       ),
       bottomNavigationBar: FrostedBottomNavigationBar(
@@ -107,12 +105,6 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
             selectedIcon: Icons.check_circle,
             label: 'Completed',
             color: context.colors.done,
-          ),
-          FrostedNavigationItem(
-            icon: Icons.settings_outlined,
-            selectedIcon: Icons.settings,
-            label: 'Settings',
-            color: context.colors.overdue,
           ),
         ],
       ),

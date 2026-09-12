@@ -63,6 +63,8 @@ class HabitController extends ChangeNotifier {
     required HabitColor color,
     DateOnly? createdOn,
     HabitType type = HabitType.checkIn,
+    HabitCadence cadence = HabitCadence.daily,
+    int monthlyDay = 1,
     int? scheduledMinutes,
     int timerTargetMinutes = 30,
   }) async {
@@ -75,6 +77,8 @@ class HabitController extends ChangeNotifier {
         color: color,
         createdOn: createdOn ?? DateOnly.today(),
         type: type,
+        cadence: cadence,
+        monthlyDay: monthlyDay,
         scheduledMinutes: scheduledMinutes,
         timerTargetMinutes: timerTargetMinutes,
       ),
@@ -87,6 +91,8 @@ class HabitController extends ChangeNotifier {
     required String title,
     required HabitColor color,
     required HabitType type,
+    required HabitCadence cadence,
+    required int monthlyDay,
     required int? scheduledMinutes,
     required int timerTargetMinutes,
   }) async {
@@ -97,6 +103,8 @@ class HabitController extends ChangeNotifier {
       title: cleaned,
       color: color,
       type: type,
+      cadence: cadence,
+      monthlyDay: monthlyDay,
       scheduledMinutes: scheduledMinutes,
       timerTargetMinutes: timerTargetMinutes,
     );

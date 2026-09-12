@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:todo_list/data/habit_repository.dart';
 import 'package:todo_list/domain/models/date_only.dart';
 import 'package:todo_list/domain/models/habit.dart';
+import 'package:todo_list/domain/models/notification_tone.dart';
 import 'package:todo_list/domain/logic/habit_reminder_planner.dart';
 import 'package:todo_list/services/habit_reminder_service.dart';
 import 'package:todo_list/state/habit_controller.dart';
@@ -150,6 +151,50 @@ void main() {
     expect(plan.map((item) => item.id).toSet().length, 3);
     expect(plan[1].body, 'Drink water');
     expect(plan[1].checkpointId, 'water');
+    expect(plan.every((item) => item.tone == NotificationTone.cyan), isTrue);
+  });
+
+  test('older habit JSON defaults to daily cadence', () {
+    const habit = Habit(
+      id: 'legacy',
+      title: 'Legacy habit',
+      color: HabitColor.green,
+      createdOn: today,
+    );
+    final json = habit.toJson()..remove('cadence');
+
+    expect(Habit.fromJson(json).cadence, HabitCadence.daily);
+  });
+
+  test('monthly habit JSON preserves cadence and day of month', () {
+    const habit = Habit(
+      id: 'monthly',
+      title: 'Pay rent',
+      color: HabitColor.amber,
+      createdOn: today,
+      cadence: HabitCadence.monthly,
+      monthlyDay: 28,
+    );
+
+    final restored = Habit.fromJson(habit.toJson());
+    expect(restored.cadence, HabitCadence.monthly);
+    expect(restored.monthlyDay, 28);
+  });
+
+  test('monthly reminders retain their day of month', () {
+    const habit = Habit(
+      id: 'monthly',
+      title: 'Review budget',
+      color: HabitColor.rose,
+      createdOn: today,
+      cadence: HabitCadence.monthly,
+      monthlyDay: 12,
+      scheduledMinutes: 20 * 60,
+    );
+
+    final reminder = const HabitReminderPlanner().plan([habit]).single;
+    expect(reminder.cadence, HabitCadence.monthly);
+    expect(reminder.dayOfMonth, 12);
   });
 
   test('controller loads, mutates, and persists habits', () async {

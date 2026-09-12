@@ -10,9 +10,17 @@ import '../../state/habit_controller.dart';
 import '../widgets/task_flows.dart';
 import 'habit_detail_screen.dart';
 
-class HabitsScreen extends StatelessWidget {
+enum _HabitRange { daily, monthly }
+
+class HabitsScreen extends StatefulWidget {
   const HabitsScreen({super.key});
 
+  @override
+  State<HabitsScreen> createState() => _HabitsScreenState();
+}
+
+class _HabitsScreenState extends State<HabitsScreen> {
+  _HabitRange _range = _HabitRange.daily;
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<HabitController>();
@@ -23,55 +31,56 @@ class HabitsScreen extends StatelessWidget {
         actions: [
           IconButton.filled(
             tooltip: 'Add habit',
-            onPressed: () => HabitEditorSheet.open(context),
+            onPressed: () => HabitEditorSheet.open(
+              context,
+              initialCadence: _range == _HabitRange.daily
+                  ? HabitCadence.daily
+                  : HabitCadence.monthly,
+            ),
             icon: const Icon(Icons.add_rounded),
           ),
           const SizedBox(width: 12),
         ],
       ),
       body: SafeArea(
+        bottom: false,
         child: !controller.isLoaded
             ? Center(
                 child: CircularProgressIndicator(color: context.colors.accent),
               )
-            : controller.habits.isEmpty
-            ? _EmptyHabits(onAdd: () => HabitEditorSheet.open(context))
-            : ListView(
-                padding: const EdgeInsets.fromLTRB(16, 4, 16, 120),
+            : Column(
                 children: [
-                  _TodaySummary(controller: controller, today: today),
-                  if (controller.hasStorageError ||
-                      controller.hasNotificationError) ...[
-                    const SizedBox(height: 12),
-                    _StatusWarning(controller: controller),
-                  ],
-                  const SizedBox(height: 24),
-                  Row(
-                    children: [
-                      Text(
-                        'YOUR ROUTINES',
-                        style: TextStyle(
-                          color: context.colors.textMuted,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 1.1,
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                    child: SegmentedButton<_HabitRange>(
+                      showSelectedIcon: false,
+                      segments: const [
+                        ButtonSegment(
+                          value: _HabitRange.daily,
+                          label: Text('Daily'),
                         ),
-                      ),
-                      const Spacer(),
-                      Text(
-                        '${controller.habits.length} active',
-                        style: TextStyle(
-                          color: context.colors.textSecondary,
-                          fontSize: 12,
+                        ButtonSegment(
+                          value: _HabitRange.monthly,
+                          label: Text('Monthly'),
                         ),
-                      ),
-                    ],
+                      ],
+                      selected: {_range},
+                      onSelectionChanged: (value) =>
+                          setState(() => _range = value.single),
+                    ),
                   ),
-                  const SizedBox(height: 10),
-                  for (final habit in controller.habits) ...[
-                    _HabitCard(habit: habit, today: today),
-                    const SizedBox(height: 11),
-                  ],
+                  Expanded(
+                    child: switch (_range) {
+                      _HabitRange.daily => _DailyHabitView(
+                        controller: controller,
+                        today: today,
+                      ),
+                      _HabitRange.monthly => _MonthlyRoutineView(
+                        controller: controller,
+                        today: today,
+                      ),
+                    },
+                  ),
                 ],
               ),
       ),
@@ -79,18 +88,202 @@ class HabitsScreen extends StatelessWidget {
   }
 }
 
+class _DailyHabitView extends StatelessWidget {
+  final HabitController controller;
+  final DateOnly today;
+
+  const _DailyHabitView({required this.controller, required this.today});
+
+  @override
+  Widget build(BuildContext context) {
+    final habits = controller.habits
+        .where((habit) => habit.cadence == HabitCadence.daily)
+        .toList(growable: false);
+    if (habits.isEmpty) {
+      return _EmptyHabits(
+        onAdd: () =>
+            HabitEditorSheet.open(context, initialCadence: HabitCadence.daily),
+      );
+    }
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 88),
+      children: [
+        _TodaySummary(habits: habits, today: today),
+        if (controller.hasStorageError || controller.hasNotificationError) ...[
+          const SizedBox(height: 12),
+          _StatusWarning(controller: controller),
+        ],
+        const SizedBox(height: 24),
+        Row(
+          children: [
+            const _SectionLabel('YOUR ROUTINES'),
+            const Spacer(),
+            Text(
+              '${habits.length} active',
+              style: TextStyle(
+                color: context.colors.textSecondary,
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        for (final habit in habits) ...[
+          _HabitCard(habit: habit, today: today),
+          const SizedBox(height: 11),
+        ],
+      ],
+    );
+  }
+}
+
+class _MonthlyRoutineView extends StatelessWidget {
+  final HabitController controller;
+  final DateOnly today;
+
+  const _MonthlyRoutineView({required this.controller, required this.today});
+
+  @override
+  Widget build(BuildContext context) {
+    final habits = controller.habits
+        .where((habit) => habit.cadence == HabitCadence.monthly)
+        .toList(growable: false);
+    if (habits.isEmpty) {
+      return _EmptyHabits(
+        title: 'No monthly habits yet',
+        message: 'Add something you want to complete once every month.',
+        onAdd: () => HabitEditorSheet.open(
+          context,
+          initialCadence: HabitCadence.monthly,
+        ),
+      );
+    }
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 88),
+      children: [
+        Row(
+          children: [
+            const _SectionLabel('MONTHLY ROUTINES'),
+            const Spacer(),
+            Text(
+              '${habits.length} active',
+              style: TextStyle(
+                color: context.colors.textSecondary,
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        for (final habit in habits) ...[
+          _MonthlyRoutineCard(habit: habit, today: today),
+          const SizedBox(height: 11),
+        ],
+      ],
+    );
+  }
+}
+
+class _MonthlyRoutineCard extends StatelessWidget {
+  final Habit habit;
+  final DateOnly today;
+
+  const _MonthlyRoutineCard({required this.habit, required this.today});
+
+  @override
+  Widget build(BuildContext context) {
+    final color = habitColorOf(context.colors, habit.color);
+    final dueDay = habit.monthlyDay.clamp(
+      1,
+      DateOnly.daysInMonth(today.year, today.month),
+    );
+    final dueDate = DateOnly(today.year, today.month, dueDay);
+    final done = habit.isCompletedOn(dueDate);
+    return Material(
+      color: context.colors.card,
+      borderRadius: BorderRadius.circular(20),
+      child: InkWell(
+        onTap: () => HabitDetailScreen.open(context, habit.id),
+        borderRadius: BorderRadius.circular(20),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: .16),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Icon(Icons.event_repeat_rounded, color: color),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      habit.title,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Every month on day ${habit.monthlyDay}'
+                      '${habit.scheduledMinutes == null ? '' : '  •  ${formatHabitTime(context, habit.scheduledMinutes!)}'}',
+                      style: TextStyle(
+                        color: context.colors.textSecondary,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              IconButton.filledTonal(
+                tooltip: done
+                    ? 'Mark this month incomplete'
+                    : 'Complete this month',
+                onPressed: () => context.read<HabitController>().toggleDate(
+                  habit.id,
+                  dueDate,
+                ),
+                icon: Icon(
+                  done ? Icons.check_rounded : Icons.circle_outlined,
+                  color: color,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class HabitEditorSheet extends StatefulWidget {
   final Habit? habit;
+  final HabitCadence initialCadence;
 
-  const HabitEditorSheet({super.key, this.habit});
+  const HabitEditorSheet({
+    super.key,
+    this.habit,
+    this.initialCadence = HabitCadence.daily,
+  });
 
-  static Future<void> open(BuildContext context, {Habit? habit}) =>
-      showModalBottomSheet<void>(
-        context: context,
-        isScrollControlled: true,
-        useSafeArea: true,
-        builder: (_) => HabitEditorSheet(habit: habit),
-      );
+  static Future<void> open(
+    BuildContext context, {
+    Habit? habit,
+    HabitCadence initialCadence = HabitCadence.daily,
+  }) => showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    useSafeArea: true,
+    builder: (_) =>
+        HabitEditorSheet(habit: habit, initialCadence: initialCadence),
+  );
 
   @override
   State<HabitEditorSheet> createState() => _HabitEditorSheetState();
@@ -100,6 +293,8 @@ class _HabitEditorSheetState extends State<HabitEditorSheet> {
   late final TextEditingController _title;
   late HabitColor _color;
   late HabitType _type;
+  late HabitCadence _cadence;
+  late double _monthlyDay;
   late int? _scheduledMinutes;
   late double _targetMinutes;
 
@@ -110,6 +305,8 @@ class _HabitEditorSheetState extends State<HabitEditorSheet> {
     _title = TextEditingController(text: habit?.title);
     _color = habit?.color ?? HabitColor.green;
     _type = habit?.type ?? HabitType.checkIn;
+    _cadence = habit?.cadence ?? widget.initialCadence;
+    _monthlyDay = (habit?.monthlyDay ?? DateTime.now().day).toDouble();
     _scheduledMinutes = habit?.scheduledMinutes;
     _targetMinutes = (habit?.timerTargetMinutes ?? 30).toDouble();
   }
@@ -127,7 +324,9 @@ class _HabitEditorSheetState extends State<HabitEditorSheet> {
       initialTime: current == null
           ? TimeOfDay.now()
           : TimeOfDay(hour: current ~/ 60, minute: current % 60),
-      helpText: 'Daily reminder',
+      helpText: _cadence == HabitCadence.daily
+          ? 'Daily reminder'
+          : 'Monthly reminder',
     );
     if (picked != null) {
       setState(() => _scheduledMinutes = picked.hour * 60 + picked.minute);
@@ -145,6 +344,8 @@ class _HabitEditorSheetState extends State<HabitEditorSheet> {
         title: _title.text,
         color: _color,
         type: _type,
+        cadence: _cadence,
+        monthlyDay: _monthlyDay.round(),
         scheduledMinutes: _scheduledMinutes,
         timerTargetMinutes: _targetMinutes.round(),
       );
@@ -154,6 +355,8 @@ class _HabitEditorSheetState extends State<HabitEditorSheet> {
         title: _title.text,
         color: _color,
         type: _type,
+        cadence: _cadence,
+        monthlyDay: _monthlyDay.round(),
         scheduledMinutes: _scheduledMinutes,
         timerTargetMinutes: _targetMinutes.round(),
       );
@@ -177,7 +380,9 @@ class _HabitEditorSheetState extends State<HabitEditorSheet> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              widget.habit == null ? 'Create a daily habit' : 'Customize habit',
+              widget.habit == null
+                  ? 'Create a ${_cadence.name} habit'
+                  : 'Customize habit',
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 6),
@@ -201,6 +406,52 @@ class _HabitEditorSheetState extends State<HabitEditorSheet> {
               onChanged: (_) => setState(() {}),
             ),
             const SizedBox(height: 4),
+            _SectionLabel('FREQUENCY'),
+            const SizedBox(height: 8),
+            SegmentedButton<HabitCadence>(
+              showSelectedIcon: false,
+              segments: const [
+                ButtonSegment(
+                  value: HabitCadence.daily,
+                  label: Text('Daily'),
+                  icon: Icon(Icons.today_rounded),
+                ),
+                ButtonSegment(
+                  value: HabitCadence.monthly,
+                  label: Text('Monthly'),
+                  icon: Icon(Icons.event_repeat_rounded),
+                ),
+              ],
+              selected: {_cadence},
+              onSelectionChanged: (value) =>
+                  setState(() => _cadence = value.single),
+            ),
+            if (_cadence == HabitCadence.monthly) ...[
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  const _SectionLabel('DAY OF MONTH'),
+                  const Spacer(),
+                  Text(
+                    '${_monthlyDay.round()}',
+                    style: TextStyle(
+                      color: accent,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ],
+              ),
+              Slider(
+                value: _monthlyDay,
+                min: 1,
+                max: 31,
+                divisions: 30,
+                activeColor: accent,
+                label: '${_monthlyDay.round()}',
+                onChanged: (value) => setState(() => _monthlyDay = value),
+              ),
+            ],
+            const SizedBox(height: 16),
             _SectionLabel('HABIT TYPE'),
             const SizedBox(height: 8),
             Row(
@@ -323,16 +574,18 @@ class _HabitEditorSheetState extends State<HabitEditorSheet> {
 }
 
 class _TodaySummary extends StatelessWidget {
-  final HabitController controller;
+  final List<Habit> habits;
   final DateOnly today;
 
-  const _TodaySummary({required this.controller, required this.today});
+  const _TodaySummary({required this.habits, required this.today});
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final completed = controller.completedCountOn(today);
-    final total = controller.habits.length;
+    final completed = habits
+        .where((habit) => habit.isCompletedOn(today))
+        .length;
+    final total = habits.length;
     final progress = total == 0 ? 0.0 : completed / total;
     return Container(
       padding: const EdgeInsets.all(18),
@@ -826,7 +1079,14 @@ class _StatusWarning extends StatelessWidget {
 
 class _EmptyHabits extends StatelessWidget {
   final VoidCallback onAdd;
-  const _EmptyHabits({required this.onAdd});
+  final String title;
+  final String message;
+  const _EmptyHabits({
+    required this.onAdd,
+    this.title = 'No habits yet',
+    this.message =
+        'Create a repeatable routine, add checkpoints, or track time.',
+  });
 
   @override
   Widget build(BuildContext context) => Center(
@@ -849,13 +1109,13 @@ class _EmptyHabits extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          const Text(
-            'No habits yet',
+          Text(
+            title,
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
           ),
           const SizedBox(height: 8),
           Text(
-            'Create a repeatable routine, add checkpoints, or track time.',
+            message,
             textAlign: TextAlign.center,
             style: TextStyle(color: context.colors.textSecondary, height: 1.4),
           ),

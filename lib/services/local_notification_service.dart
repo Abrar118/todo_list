@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui' show Color;
 
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -7,8 +8,11 @@ import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
 
+import '../core/app_colors.dart';
 import '../domain/logic/notification_planner.dart';
 import '../domain/logic/habit_reminder_planner.dart';
+import '../domain/models/habit.dart';
+import '../domain/models/notification_tone.dart';
 import 'background_action_handler.dart';
 import 'habit_reminder_service.dart';
 import 'notification_service.dart';
@@ -306,12 +310,25 @@ class LocalNotificationService
         tz.local,
         now.year,
         now.month,
-        now.day,
+        item.dayOfMonth?.clamp(1, DateTime(now.year, now.month + 1, 0).day) ??
+            now.day,
         item.minutesOfDay ~/ 60,
         item.minutesOfDay % 60,
       );
       if (!scheduled.isAfter(now)) {
-        scheduled = scheduled.add(const Duration(days: 1));
+        scheduled = item.cadence == HabitCadence.monthly
+            ? tz.TZDateTime(
+                tz.local,
+                now.year,
+                now.month + 1,
+                item.dayOfMonth!.clamp(
+                  1,
+                  DateTime(now.year, now.month + 2, 0).day,
+                ),
+                item.minutesOfDay ~/ 60,
+                item.minutesOfDay % 60,
+              )
+            : scheduled.add(const Duration(days: 1));
       }
       await _plugin.zonedSchedule(
         id: item.id,
@@ -326,6 +343,8 @@ class LocalNotificationService
             importance: Importance.high,
             priority: Priority.high,
             category: AndroidNotificationCategory.reminder,
+            color: _notificationColor(item.tone),
+            colorized: true,
           ),
           iOS: const DarwinNotificationDetails(
             presentAlert: true,
@@ -335,7 +354,9 @@ class LocalNotificationService
           ),
         ),
         androidScheduleMode: mode,
-        matchDateTimeComponents: DateTimeComponents.time,
+        matchDateTimeComponents: item.cadence == HabitCadence.monthly
+            ? DateTimeComponents.dayOfMonthAndTime
+            : DateTimeComponents.time,
         payload: jsonEncode({
           'habitId': item.habitId,
           if (item.checkpointId != null) 'checkpointId': item.checkpointId,
@@ -357,6 +378,8 @@ class LocalNotificationService
         category: isAlarm
             ? AndroidNotificationCategory.alarm
             : AndroidNotificationCategory.reminder,
+        color: _notificationColor(item.tone),
+        colorized: true,
         playSound: item.sound,
         enableVibration: item.vibration,
         actions: const [
@@ -447,6 +470,13 @@ class LocalNotificationService
 
   @override
   Future<void> cancelTimerAlert() => _plugin.cancel(id: timerAlertId);
+
+  Color _notificationColor(NotificationTone tone) => switch (tone) {
+    NotificationTone.lime => AppColors.dark.accent,
+    NotificationTone.cyan => AppColors.dark.low,
+    NotificationTone.sand => AppColors.dark.medium,
+    NotificationTone.coral => AppColors.dark.overdue,
+  };
 
   @override
   Future<void> openSystemNotificationSettings() =>

@@ -1,4 +1,6 @@
 import '../models/date_only.dart';
+import '../models/notification_tone.dart';
+import '../models/priority.dart';
 import '../models/task.dart';
 import 'escalation.dart';
 import 'quiet_hours.dart';
@@ -15,6 +17,7 @@ class PlannedNotification {
   final String body;
   final bool sound;
   final bool vibration;
+  final NotificationTone tone;
 
   const PlannedNotification({
     required this.id,
@@ -25,6 +28,7 @@ class PlannedNotification {
     required this.body,
     this.sound = true,
     this.vibration = true,
+    this.tone = NotificationTone.lime,
   });
 }
 
@@ -214,7 +218,21 @@ class NotificationPlanner {
     body: body,
     sound: sound,
     vibration: vibration,
+    tone: _toneForTask(task),
   );
+
+  NotificationTone _toneForTask(Task task) => switch (task.background) {
+    TaskBackground.lime => NotificationTone.lime,
+    TaskBackground.cyan => NotificationTone.cyan,
+    TaskBackground.sand => NotificationTone.sand,
+    TaskBackground.coral => NotificationTone.coral,
+    TaskBackground.automatic => switch (task.priority) {
+      TaskPriority.high => NotificationTone.coral,
+      TaskPriority.medium => NotificationTone.sand,
+      TaskPriority.low => NotificationTone.cyan,
+      TaskPriority.none => NotificationTone.lime,
+    },
+  };
 
   /// Deterministic 31-bit id from task, kind and fire time so the same
   /// logical notification always maps to the same OS identifier.

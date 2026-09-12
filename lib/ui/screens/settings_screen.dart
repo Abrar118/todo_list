@@ -36,7 +36,7 @@ class SettingsScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('Settings')),
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 4, 16, 120),
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
           children: [
             const SectionHeader('Notifications'),
             Card(
