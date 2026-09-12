@@ -170,6 +170,23 @@ class _HabitHero extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final done = habit.isCompletedOn(today);
+    final currentDate = DateOnly.today();
+    final daysUntilScheduled = today.differenceInDays(currentDate);
+    final monthlyStatus = done
+        ? ('Done', 'this month', context.colors.done)
+        : daysUntilScheduled == 0
+        ? ('Today', 'scheduled', color)
+        : daysUntilScheduled > 0
+        ? (
+            '$daysUntilScheduled',
+            daysUntilScheduled == 1 ? 'day remaining' : 'days remaining',
+            context.colors.low,
+          )
+        : (
+            '${-daysUntilScheduled}',
+            daysUntilScheduled == -1 ? 'day overdue' : 'days overdue',
+            context.colors.overdue,
+          );
     final backgroundIcon = habit.type == HabitType.timer
         ? Icons.timer_rounded
         : Icons.auto_awesome_rounded;
@@ -272,17 +289,31 @@ class _HabitHero extends StatelessWidget {
                   const SizedBox(height: 18),
                   Row(
                     children: [
-                      _Metric(
-                        value: '${habit.currentStreak(today)}',
-                        label: 'day streak',
-                        color: color,
-                      ),
-                      const SizedBox(width: 10),
-                      _Metric(
-                        value: '${habit.completedDates.length}',
-                        label: 'total days',
-                        color: context.colors.low,
-                      ),
+                      if (habit.cadence == HabitCadence.monthly) ...[
+                        _Metric(
+                          value: 'Day ${habit.monthlyDay}',
+                          label: 'monthly date',
+                          color: color,
+                        ),
+                        const SizedBox(width: 10),
+                        _Metric(
+                          value: monthlyStatus.$1,
+                          label: monthlyStatus.$2,
+                          color: monthlyStatus.$3,
+                        ),
+                      ] else ...[
+                        _Metric(
+                          value: '${habit.currentStreak(today)}',
+                          label: 'day streak',
+                          color: color,
+                        ),
+                        const SizedBox(width: 10),
+                        _Metric(
+                          value: '${habit.completedDates.length}',
+                          label: 'total days',
+                          color: context.colors.low,
+                        ),
+                      ],
                       const Spacer(),
                       if (habit.type == HabitType.checkIn)
                         FilledButton.icon(

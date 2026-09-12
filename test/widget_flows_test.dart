@@ -116,6 +116,7 @@ void main() {
           color: HabitColor.violet,
           createdOn: DateOnly.today(),
           cadence: HabitCadence.monthly,
+          monthlyDay: DateOnly.today().day,
         ),
       ];
     await buildApp(tester, habitController: HabitController(repo));
@@ -125,16 +126,20 @@ void main() {
       'monthly-habit',
     );
     await tester.pumpAndSettle();
+    expect(find.text('day streak'), findsNothing);
+    expect(find.text('total days'), findsNothing);
+    expect(find.text('Day ${DateOnly.today().day}'), findsOneWidget);
+    expect(find.text('scheduled'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('habit-detail-background')),
+      findsOneWidget,
+    );
     await tester.drag(find.byType(ListView).last, const Offset(0, -500));
     await tester.pumpAndSettle();
     expect(find.text('LAST 7 DAYS'), findsNothing);
     expect(find.text('MONTHLY PROGRESS'), findsOneWidget);
     expect(find.text('0%'), findsOneWidget);
     expect(find.byType(LinearProgressIndicator), findsOneWidget);
-    expect(
-      find.byKey(const ValueKey('habit-detail-background')),
-      findsOneWidget,
-    );
   });
 
   testWidgets('center add action sits inside the navigation band', (
