@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:todo_list/domain/models/date_only.dart';
 import 'package:todo_list/domain/models/habit.dart';
+import 'package:todo_list/domain/models/goal.dart';
 import 'package:todo_list/domain/models/recurrence.dart';
 import 'package:todo_list/domain/models/task.dart';
 import 'package:todo_list/main.dart';
@@ -88,6 +89,8 @@ void main() {
       find.byKey(const ValueKey('goal-detail-background')),
       findsOneWidget,
     );
+    await tester.drag(find.byType(ListView).last, const Offset(0, -720));
+    await tester.pumpAndSettle();
     await tester.tap(find.byTooltip('Add checkpoint'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField).last, 'Read chapter one');
@@ -97,7 +100,33 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(repository.store.single.progress, 1);
-    expect(find.text('100%'), findsOneWidget);
+    expect(find.text('100'), findsOneWidget);
+  });
+
+  testWidgets('goal detail uses the editorial metric and chart layout', (
+    tester,
+  ) async {
+    final repository = InMemoryGoalRepository()
+      ..store = [
+        Goal(
+          id: 'editorial-goal',
+          title: 'Fix sleep schedule',
+          targetDate: DateOnly.today().addDays(30),
+          createdOn: DateOnly.today(),
+          color: GoalColor.amber,
+          manualProgress: 40,
+        ),
+      ];
+    await buildApp(tester, goalController: GoalController(repository));
+    await tester.tap(find.text('Goals'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Fix sleep schedule'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('40'), findsOneWidget);
+    expect(find.text('Your Goal'), findsOneWidget);
+    expect(find.byKey(const ValueKey('goal-progress-chart')), findsOneWidget);
+    expect(find.text('Tracking progress'), findsOneWidget);
   });
 
   testWidgets('quick add creates a task due today', (tester) async {

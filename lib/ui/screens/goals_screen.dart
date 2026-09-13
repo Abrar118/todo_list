@@ -352,81 +352,184 @@ class GoalDetailScreen extends StatelessWidget {
     final color = goalColorOf(context.colors, goal.color);
     final percent = (goal.progress * 100).round();
     final days = goal.targetDate.differenceInDays(DateOnly.today());
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final heroStart = Color.alphaBlend(
+      color.withValues(alpha: isDark ? .3 : .22),
+      isDark ? const Color(0xFF17160F) : const Color(0xFFFFF1BE),
+    );
+    final heroEnd = isDark ? const Color(0xFF10110D) : const Color(0xFFFFFBEB);
+    final status = goal.isCompleted
+        ? 'Complete'
+        : days < 0
+        ? 'Needs attention'
+        : 'On track';
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Goal'),
-        actions: [
-          IconButton(
-            tooltip: 'Edit goal',
-            onPressed: () => GoalEditorSheet.open(context, goal: goal),
-            icon: const Icon(Icons.tune_rounded),
-          ),
-          PopupMenuButton<String>(
-            onSelected: (value) async {
-              if (value != 'delete') return;
-              final confirmed = await confirmDialog(
-                context,
-                title: 'Delete ${goal.title}?',
-                message: 'Its checkpoints and progress will be removed.',
-                confirmLabel: 'Delete goal',
-              );
-              if (confirmed && context.mounted) {
-                await context.read<GoalController>().deleteGoal(goal.id);
-                if (context.mounted) Navigator.pop(context);
-              }
-            },
-            itemBuilder: (_) => const [
-              PopupMenuItem(value: 'delete', child: Text('Delete goal')),
-            ],
-          ),
-        ],
-      ),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 4, 16, 40),
-        children: [
-          Container(
-            key: const ValueKey('goal-detail-background'),
-            padding: const EdgeInsets.all(22),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(26),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  color.withValues(alpha: .3),
-                  context.colors.card.withValues(alpha: .97),
+      body: SafeArea(
+        bottom: false,
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            Container(
+              key: const ValueKey('goal-detail-background'),
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 42),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [heroStart, heroEnd],
+                ),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      _RoundAction(
+                        tooltip: 'Back',
+                        icon: Icons.arrow_back_rounded,
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                      const Spacer(),
+                      Text(
+                        'GOAL  /  ${days < 0 ? 'OVERDUE' : '$days DAYS'}',
+                        style: TextStyle(
+                          color: context.colors.textSecondary,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 1.1,
+                        ),
+                      ),
+                      const Spacer(),
+                      _RoundAction(
+                        tooltip: 'Edit goal',
+                        icon: Icons.tune_rounded,
+                        onPressed: () =>
+                            GoalEditorSheet.open(context, goal: goal),
+                      ),
+                      PopupMenuButton<String>(
+                        tooltip: 'More options',
+                        icon: const Icon(Icons.more_horiz_rounded),
+                        onSelected: (value) =>
+                            _handleMenu(context, goal, value),
+                        itemBuilder: (_) => const [
+                          PopupMenuItem(
+                            value: 'delete',
+                            child: Text('Delete goal'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 34),
+                  Semantics(
+                    label: '$percent percent complete',
+                    child: Text(
+                      '$percent',
+                      style: TextStyle(
+                        color: context.colors.textPrimary,
+                        fontSize: 118,
+                        height: .82,
+                        fontWeight: FontWeight.w200,
+                        letterSpacing: -8,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 22),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        '%',
+                        style: TextStyle(
+                          color: context.colors.textSecondary,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      const Text(
+                        'complete',
+                        style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.w300,
+                          letterSpacing: -1,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        width: 28,
+                        height: 28,
+                        decoration: BoxDecoration(
+                          color: color.withValues(alpha: .24),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.trending_up_rounded,
+                          color: color,
+                          size: 18,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 38),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _TargetMetric(
+                        value: goal.checkpoints.isEmpty
+                            ? '$percent%'
+                            : '${goal.completedCheckpointCount}/${goal.checkpoints.length}',
+                        label: goal.checkpoints.isEmpty
+                            ? 'Progress'
+                            : 'Checkpoints',
+                      ),
+                      _TargetMetric(
+                        value: days < 0
+                            ? '${-days}'
+                            : days == 0
+                            ? 'Today'
+                            : '$days',
+                        label: days < 0 ? 'Days overdue' : 'Days remaining',
+                        alignEnd: true,
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
-            child: Stack(
-              children: [
-                Positioned(
-                  right: -30,
-                  top: -35,
-                  child: Icon(
-                    Icons.track_changes_rounded,
-                    size: 170,
-                    color: color.withValues(alpha: .07),
+            Transform.translate(
+              offset: const Offset(0, -20),
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(20, 30, 20, 28),
+                decoration: BoxDecoration(
+                  color: context.colors.background,
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(34),
                   ),
                 ),
-                Column(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      '$percent%',
-                      style: const TextStyle(
-                        fontSize: 68,
-                        height: .95,
-                        fontWeight: FontWeight.w300,
-                        letterSpacing: -4,
-                      ),
+                    Row(
+                      children: [
+                        const Text(
+                          'Your Goal',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: -.7,
+                          ),
+                        ),
+                        const SizedBox(width: 9),
+                        Text('·  $status', style: TextStyle(color: color)),
+                      ],
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 22),
                     Text(
                       goal.title,
                       style: const TextStyle(
-                        fontSize: 25,
+                        fontSize: 27,
                         fontWeight: FontWeight.w700,
+                        letterSpacing: -.8,
                       ),
                     ),
                     if (goal.description.isNotEmpty) ...[
@@ -435,134 +538,156 @@ class GoalDetailScreen extends StatelessWidget {
                         goal.description,
                         style: TextStyle(
                           color: context.colors.textSecondary,
-                          height: 1.4,
+                          fontSize: 15,
+                          height: 1.45,
                         ),
                       ),
                     ],
-                    const SizedBox(height: 20),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: LinearProgressIndicator(
-                        value: goal.progress,
-                        minHeight: 9,
-                        color: color,
-                        backgroundColor: color.withValues(alpha: .14),
+                    const SizedBox(height: 10),
+                    Text(
+                      'Target  ${MaterialLocalizations.of(context).formatMediumDate(goal.targetDate.toDateTime())}',
+                      style: TextStyle(
+                        color: context.colors.textSecondary,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 28),
+                    Semantics(
+                      label:
+                          'Progress chart. Current progress is $percent percent.',
+                      child: SizedBox(
+                        key: const ValueKey('goal-progress-chart'),
+                        height: 150,
+                        width: double.infinity,
+                        child: CustomPaint(
+                          painter: _GoalProgressPainter(
+                            progress: goal.progress,
+                            color: color,
+                            gridColor: context.colors.borderStrong,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    const Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _ChartLabel('START'),
+                        _ChartLabel('NOW'),
+                        _ChartLabel('TARGET'),
+                      ],
+                    ),
+                    const SizedBox(height: 32),
                     Row(
                       children: [
-                        Icon(Icons.event_rounded, size: 17, color: color),
-                        const SizedBox(width: 7),
-                        Text(
-                          MaterialLocalizations.of(
-                            context,
-                          ).formatMediumDate(goal.targetDate.toDateTime()),
-                          style: const TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                        const Spacer(),
-                        Text(
-                          days < 0
-                              ? '${-days} days overdue'
-                              : days == 0
-                              ? 'Today'
-                              : '$days days left',
-                          style: TextStyle(
-                            color: days < 0
-                                ? context.colors.overdue
-                                : context.colors.textSecondary,
-                            fontSize: 12.5,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Tracking progress',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 3),
+                              Text(
+                                goal.checkpoints.isEmpty
+                                    ? 'Update the percentage as you move'
+                                    : '${goal.completedCheckpointCount} of ${goal.checkpoints.length} checkpoints complete',
+                                style: TextStyle(
+                                  color: context.colors.textSecondary,
+                                  fontSize: 12.5,
+                                ),
+                              ),
+                            ],
                           ),
+                        ),
+                        IconButton.filled(
+                          tooltip: 'Add checkpoint',
+                          style: IconButton.styleFrom(
+                            backgroundColor: color,
+                            foregroundColor: context.colors.onAccent,
+                          ),
+                          onPressed: () => _addCheckpoint(context, goal.id),
+                          icon: const Icon(Icons.add_rounded),
                         ),
                       ],
                     ),
+                    const SizedBox(height: 18),
+                    if (goal.checkpoints.isEmpty)
+                      Container(
+                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
+                        decoration: BoxDecoration(
+                          color: color.withValues(alpha: .09),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                const Text('Manual progress'),
+                                const Spacer(),
+                                Text(
+                                  '$percent%',
+                                  style: TextStyle(
+                                    color: color,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Slider(
+                              value: goal.manualProgress.toDouble(),
+                              min: 0,
+                              max: 100,
+                              divisions: 20,
+                              activeColor: color,
+                              label: '$percent%',
+                              onChanged: (value) => controller.updateProgress(
+                                goal.id,
+                                value.round(),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    else
+                      for (var i = 0; i < goal.checkpoints.length; i++)
+                        _CheckpointRow(
+                          goalId: goal.id,
+                          checkpoint: goal.checkpoints[i],
+                          color: color,
+                          isLast: i == goal.checkpoints.length - 1,
+                        ),
                   ],
                 ),
-              ],
+              ),
             ),
-          ),
-          const SizedBox(height: 26),
-          Row(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'CHECKPOINTS',
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 1,
-                    ),
-                  ),
-                  const SizedBox(height: 3),
-                  Text(
-                    goal.checkpoints.isEmpty
-                        ? 'Add milestones or track progress manually'
-                        : '${goal.completedCheckpointCount} of ${goal.checkpoints.length} complete',
-                    style: TextStyle(
-                      color: context.colors.textSecondary,
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
-              const Spacer(),
-              IconButton.filledTonal(
-                tooltip: 'Add checkpoint',
-                onPressed: () => _addCheckpoint(context, goal.id),
-                icon: const Icon(Icons.add_rounded),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          if (goal.checkpoints.isEmpty)
-            Container(
-              padding: const EdgeInsets.fromLTRB(18, 16, 18, 12),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: .09),
-                borderRadius: BorderRadius.circular(18),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Text('Manual progress'),
-                      const Spacer(),
-                      Text(
-                        '$percent%',
-                        style: TextStyle(
-                          color: color,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Slider(
-                    value: goal.manualProgress.toDouble(),
-                    min: 0,
-                    max: 100,
-                    divisions: 20,
-                    activeColor: color,
-                    label: '$percent%',
-                    onChanged: (value) =>
-                        controller.updateProgress(goal.id, value.round()),
-                  ),
-                ],
-              ),
-            )
-          else
-            for (var i = 0; i < goal.checkpoints.length; i++)
-              _CheckpointRow(
-                goalId: goal.id,
-                checkpoint: goal.checkpoints[i],
-                color: color,
-                isLast: i == goal.checkpoints.length - 1,
-              ),
-        ],
+          ],
+        ),
       ),
     );
+  }
+
+  Future<void> _handleMenu(
+    BuildContext context,
+    Goal goal,
+    String value,
+  ) async {
+    if (value != 'delete') return;
+    final confirmed = await confirmDialog(
+      context,
+      title: 'Delete ${goal.title}?',
+      message: 'Its checkpoints and progress will be removed.',
+      confirmLabel: 'Delete goal',
+    );
+    if (confirmed && context.mounted) {
+      await context.read<GoalController>().deleteGoal(goal.id);
+      if (context.mounted) Navigator.pop(context);
+    }
   }
 
   Future<void> _addCheckpoint(BuildContext context, String goalId) async {
@@ -594,6 +719,166 @@ class GoalDetailScreen extends StatelessWidget {
       await context.read<GoalController>().addCheckpoint(goalId, title: title);
     }
   }
+}
+
+class _RoundAction extends StatelessWidget {
+  final String tooltip;
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  const _RoundAction({
+    required this.tooltip,
+    required this.icon,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) => IconButton(
+    tooltip: tooltip,
+    onPressed: onPressed,
+    style: IconButton.styleFrom(
+      backgroundColor: context.colors.elevated.withValues(alpha: .62),
+      minimumSize: const Size(48, 48),
+    ),
+    icon: Icon(icon),
+  );
+}
+
+class _TargetMetric extends StatelessWidget {
+  final String value;
+  final String label;
+  final bool alignEnd;
+
+  const _TargetMetric({
+    required this.value,
+    required this.label,
+    this.alignEnd = false,
+  });
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: alignEnd
+        ? CrossAxisAlignment.end
+        : CrossAxisAlignment.start,
+    children: [
+      Text(
+        value,
+        style: const TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.w700,
+          letterSpacing: -.5,
+        ),
+      ),
+      const SizedBox(height: 3),
+      Text(
+        label,
+        style: TextStyle(color: context.colors.textSecondary, fontSize: 12),
+      ),
+    ],
+  );
+}
+
+class _ChartLabel extends StatelessWidget {
+  final String label;
+
+  const _ChartLabel(this.label);
+
+  @override
+  Widget build(BuildContext context) => Text(
+    label,
+    style: TextStyle(
+      color: context.colors.textMuted,
+      fontSize: 10,
+      fontWeight: FontWeight.w700,
+      letterSpacing: .8,
+    ),
+  );
+}
+
+class _GoalProgressPainter extends CustomPainter {
+  final double progress;
+  final Color color;
+  final Color gridColor;
+
+  const _GoalProgressPainter({
+    required this.progress,
+    required this.color,
+    required this.gridColor,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final top = size.height * .16;
+    final bottom = size.height * .86;
+    final gridPaint = Paint()
+      ..color = gridColor
+      ..strokeWidth = 1;
+    for (var i = 0; i < 3; i++) {
+      final y = top + ((bottom - top) / 2 * i);
+      const dash = 6.0;
+      for (var x = 0.0; x < size.width; x += dash * 2) {
+        canvas.drawLine(
+          Offset(x, y),
+          Offset((x + dash).clamp(0, size.width), y),
+          gridPaint,
+        );
+      }
+    }
+
+    final forecast = Path()
+      ..moveTo(0, bottom)
+      ..cubicTo(
+        size.width * .34,
+        bottom - 4,
+        size.width * .7,
+        size.height * .54,
+        size.width,
+        top,
+      )
+      ..lineTo(size.width, bottom)
+      ..close();
+    canvas.drawPath(forecast, Paint()..color = color.withValues(alpha: .1));
+
+    final clamped = progress.clamp(0.0, 1.0);
+    final x = size.width * clamped;
+    final y = bottom - (bottom - top) * (.2 * clamped + .8 * clamped * clamped);
+    final completed = Path()
+      ..moveTo(0, bottom)
+      ..cubicTo(x * .28, bottom, x * .66, y + 10, x, y)
+      ..lineTo(x, bottom)
+      ..close();
+    canvas.drawPath(completed, Paint()..color = color.withValues(alpha: .26));
+    final line = Path()
+      ..moveTo(0, bottom)
+      ..cubicTo(x * .28, bottom, x * .66, y + 10, x, y);
+    canvas.drawPath(
+      line,
+      Paint()
+        ..color = color
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 4
+        ..strokeCap = StrokeCap.round,
+    );
+    canvas.drawLine(
+      Offset(x, y),
+      Offset(x, bottom),
+      Paint()
+        ..color = color.withValues(alpha: .58)
+        ..strokeWidth = 1,
+    );
+    canvas.drawCircle(Offset(x, y), 9, Paint()..color = color);
+    canvas.drawCircle(
+      Offset(x, y),
+      3.5,
+      Paint()..color = const Color(0xFF171A14),
+    );
+  }
+
+  @override
+  bool shouldRepaint(_GoalProgressPainter oldDelegate) =>
+      oldDelegate.progress != progress ||
+      oldDelegate.color != color ||
+      oldDelegate.gridColor != gridColor;
 }
 
 class _CheckpointRow extends StatelessWidget {
