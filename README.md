@@ -4,6 +4,15 @@ A minimal, local-first task manager for Android and iOS. The central promise:
 **important tasks remain visible and continue reminding you until they are
 handled.**
 
+## Screenshots
+
+The demonstration data in these screenshots has been redacted.
+
+<p align="center">
+  <img src="assets/readme/goals-overview.png" alt="Goals overview" width="260">
+  <img src="assets/readme/goal-detail.png" alt="Goal detail" width="260">
+</p>
+
 ## Features
 
 - **Focus screen** — priority spotlight (max 3), overdue, today, and a short
@@ -80,3 +89,7 @@ flutter pub get
 flutter test
 flutter run          # on an Android or iOS device/simulator
 ```
+
+## License
+
+Licensed under the [Apache License 2.0](LICENSE).
