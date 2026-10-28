@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'app_colors.dart';
+import 'app_tokens.dart';
 
 abstract final class AppTheme {
   static ThemeData dark() => _build(AppColors.dark, Brightness.dark);
@@ -9,7 +10,6 @@ abstract final class AppTheme {
   static ThemeData light() => _build(AppColors.light, Brightness.light);
 
   static ThemeData _build(AppColors c, Brightness brightness) {
-    const radius = 14.0;
     final base = ThemeData(
       brightness: brightness,
       useMaterial3: true,
@@ -39,19 +39,56 @@ abstract final class AppTheme {
       displayColor: c.textPrimary,
     );
 
+    TextStyle? styled(
+      TextStyle? from,
+      double size, {
+      FontWeight? weight,
+      Color? color,
+      double? height,
+    }) => from?.copyWith(
+      fontSize: size,
+      fontWeight: weight,
+      color: color,
+      height: height,
+      letterSpacing: AppTypography.trackingFor(size),
+    );
+
     return base.copyWith(
       extensions: [c],
       textTheme: textTheme.copyWith(
-        titleLarge: textTheme.titleLarge?.copyWith(
-          fontWeight: FontWeight.w600,
-          letterSpacing: -0.3,
+        titleLarge: styled(
+          textTheme.titleLarge,
+          AppTypography.title3,
+          weight: FontWeight.w600,
         ),
-        titleMedium: textTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.w600,
-          letterSpacing: -0.2,
+        titleMedium: styled(
+          textTheme.titleMedium,
+          AppTypography.callout,
+          weight: FontWeight.w600,
         ),
-        bodyMedium: textTheme.bodyMedium?.copyWith(height: 1.35),
-        labelMedium: textTheme.labelMedium?.copyWith(color: c.textSecondary),
+        titleSmall: styled(
+          textTheme.titleSmall,
+          AppTypography.body,
+          weight: FontWeight.w600,
+        ),
+        bodyLarge: styled(textTheme.bodyLarge, AppTypography.callout),
+        bodyMedium: styled(
+          textTheme.bodyMedium,
+          AppTypography.body,
+          height: 1.35,
+        ),
+        bodySmall: styled(textTheme.bodySmall, AppTypography.footnote),
+        labelLarge: styled(
+          textTheme.labelLarge,
+          AppTypography.body,
+          weight: FontWeight.w600,
+        ),
+        labelMedium: styled(
+          textTheme.labelMedium,
+          AppTypography.footnote,
+          color: c.textSecondary,
+        ),
+        labelSmall: styled(textTheme.labelSmall, AppTypography.caption),
       ),
       appBarTheme: AppBarTheme(
         backgroundColor: c.background,
@@ -60,9 +97,9 @@ abstract final class AppTheme {
         centerTitle: false,
         titleTextStyle: TextStyle(
           color: c.textPrimary,
-          fontSize: 22,
+          fontSize: AppTypography.title3,
           fontWeight: FontWeight.w600,
-          letterSpacing: -0.4,
+          letterSpacing: AppTypography.trackingFor(AppTypography.title3),
         ),
         systemOverlayStyle: brightness == Brightness.dark
             ? SystemUiOverlayStyle.light
@@ -75,7 +112,7 @@ abstract final class AppTheme {
         height: 64,
         labelTextStyle: WidgetStateProperty.resolveWith(
           (states) => TextStyle(
-            fontSize: 11.5,
+            fontSize: AppTypography.caption,
             fontWeight: FontWeight.w500,
             color: states.contains(WidgetState.selected)
                 ? c.textPrimary
@@ -96,9 +133,7 @@ abstract final class AppTheme {
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         margin: EdgeInsets.zero,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radius),
-        ),
+        shape: AppRadii.mediumShape,
       ),
       dividerTheme: DividerThemeData(color: c.border, thickness: 1, space: 1),
       bottomSheetTheme: BottomSheetThemeData(
@@ -106,22 +141,20 @@ abstract final class AppTheme {
         surfaceTintColor: Colors.transparent,
         showDragHandle: true,
         dragHandleColor: c.textMuted,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
+        shape: AppRadii.sheetShape,
       ),
       dialogTheme: DialogThemeData(
         backgroundColor: c.card,
         surfaceTintColor: Colors.transparent,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: AppRadii.mediumShape,
         titleTextStyle: TextStyle(
           color: c.textPrimary,
-          fontSize: 18,
+          fontSize: AppTypography.callout,
           fontWeight: FontWeight.w600,
         ),
         contentTextStyle: TextStyle(
           color: c.textSecondary,
-          fontSize: 14.5,
+          fontSize: AppTypography.body,
           height: 1.4,
         ),
       ),
@@ -130,15 +163,13 @@ abstract final class AppTheme {
         contentTextStyle: TextStyle(color: c.textPrimary),
         actionTextColor: c.accent,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: AppRadii.mediumShape,
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: c.accent,
         foregroundColor: c.onAccent,
         elevation: 2,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(18)),
-        ),
+        shape: AppRadii.mediumShape,
       ),
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith(
@@ -153,7 +184,7 @@ abstract final class AppTheme {
         trackOutlineColor: WidgetStatePropertyAll(c.borderStrong),
       ),
       checkboxTheme: CheckboxThemeData(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+        shape: AppRadii.smallShape,
         side: BorderSide(color: c.textMuted, width: 1.6),
         fillColor: WidgetStateProperty.resolveWith(
           (states) => states.contains(WidgetState.selected)
@@ -167,19 +198,19 @@ abstract final class AppTheme {
         fillColor: c.card,
         hintStyle: TextStyle(color: c.textMuted),
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: 14,
-          vertical: 13,
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.md,
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: AppRadii.smallRadius,
           borderSide: BorderSide(color: c.border),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: AppRadii.smallRadius,
           borderSide: BorderSide(color: c.border),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: AppRadii.smallRadius,
           borderSide: BorderSide(color: c.accentDim),
         ),
       ),
@@ -195,9 +226,7 @@ abstract final class AppTheme {
           foregroundColor: c.onAccent,
           minimumSize: const Size(44, 48),
           textStyle: const TextStyle(fontWeight: FontWeight.w600),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+          shape: AppRadii.mediumShape,
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
@@ -206,23 +235,27 @@ abstract final class AppTheme {
           backgroundColor: c.pressed.withValues(alpha: 0.72),
           side: BorderSide.none,
           minimumSize: const Size(44, 48),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+          shape: AppRadii.mediumShape,
         ),
       ),
       listTileTheme: ListTileThemeData(
         iconColor: c.textSecondary,
         textColor: c.textPrimary,
-        minVerticalPadding: 12,
+        minVerticalPadding: AppSpacing.md,
       ),
       chipTheme: ChipThemeData(
         backgroundColor: c.card,
         selectedColor: c.accent.withValues(alpha: 0.18),
-        labelStyle: TextStyle(color: c.textSecondary, fontSize: 13),
+        labelStyle: TextStyle(
+          color: c.textSecondary,
+          fontSize: AppTypography.footnote,
+        ),
         side: BorderSide.none,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        shape: AppRadii.smallShape,
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.sm,
+          vertical: AppSpacing.xs,
+        ),
       ),
       timePickerTheme: TimePickerThemeData(backgroundColor: c.card),
       datePickerTheme: DatePickerThemeData(
@@ -230,7 +263,9 @@ abstract final class AppTheme {
         surfaceTintColor: Colors.transparent,
         headerBackgroundColor: c.elevated,
       ),
-      splashFactory: InkSparkle.splashFactory,
+      // iOS does not ripple. Widgets keep their highlight fade, which reads
+      // as a native press without the Material splash.
+      splashFactory: NoSplash.splashFactory,
     );
   }
 }

@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/app_colors.dart';
+import '../../core/app_tokens.dart';
 import '../../core/formats.dart';
 import '../../domain/models/date_only.dart';
 import '../../state/app_state.dart';
 import '../../state/settings_controller.dart';
 import '../widgets/common.dart';
+import '../widgets/frosted_bottom_navigation_bar.dart';
 import '../widgets/task_row.dart';
 import '../widgets/task_flows.dart';
 import 'quick_add_sheet.dart';
@@ -65,29 +67,52 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
     final done = agenda.where((i) => i.task.isCompleted);
 
+    final entries = <Widget Function()>[];
+    void group(String title, Iterable<AgendaItem> items) {
+      if (items.isEmpty) return;
+      final first = entries.isEmpty;
+      entries.add(() => SectionHeader(title, tight: first));
+      for (final item in items) {
+        entries.add(() => _agendaRow(state, item));
+      }
+    }
+
+    group('All-day', allDay);
+    group('Scheduled', timed);
+    group('Completed', done);
+    if (entries.isNotEmpty) {
+      entries.add(
+        () => Padding(
+          padding: const EdgeInsets.only(top: AppSpacing.sm),
+          child: _addForDayButton(),
+        ),
+      );
+    }
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text(Formats.monthTitle(_year, _month)),
-        actions: [
-          if (!showingToday || _selected != today)
-            TextButton(onPressed: _goToday, child: const Text('Today')),
-          IconButton(
-            tooltip: 'Previous month',
-            icon: const Icon(Icons.chevron_left),
-            onPressed: () => _shiftMonth(-1),
+      // The shell's MeshBackdrop paints the background for all tabs.
+      backgroundColor: Colors.transparent,
+      body: CustomScrollView(
+        slivers: [
+          largeTitleAppBar(
+            title: Text(Formats.monthTitle(_year, _month)),
+            actions: [
+              if (!showingToday || _selected != today)
+                TextButton(onPressed: _goToday, child: const Text('Today')),
+              IconButton(
+                tooltip: 'Previous month',
+                icon: const Icon(Icons.chevron_left),
+                onPressed: () => _shiftMonth(-1),
+              ),
+              IconButton(
+                tooltip: 'Next month',
+                icon: const Icon(Icons.chevron_right),
+                onPressed: () => _shiftMonth(1),
+              ),
+            ],
           ),
-          IconButton(
-            tooltip: 'Next month',
-            icon: const Icon(Icons.chevron_right),
-            onPressed: () => _shiftMonth(1),
-          ),
-        ],
-      ),
-      body: SafeArea(
-        bottom: false,
-        child: Column(
-          children: [
-            _MonthGrid(
+          SliverToBoxAdapter(
+            child: _MonthGrid(
               year: _year,
               month: _month,
               selected: _selected,
@@ -95,65 +120,48 @@ class _CalendarScreenState extends State<CalendarScreen> {
               markers: markers,
               onSelect: (d) => setState(() => _selected = d),
             ),
-            const Divider(),
-            Expanded(
-              child: agenda.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'Nothing on ${Formats.relativeDate(_selected)}',
-                            style: TextStyle(
-                              color: context.colors.textSecondary,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          TextButton.icon(
-                            onPressed: () => QuickAddSheet.open(
-                              context,
-                              initialDate: _selected,
-                            ),
-                            icon: const Icon(Icons.add, size: 18),
-                            label: const Text('Add task for this day'),
-                          ),
-                        ],
-                      ),
-                    )
-                  : ListView(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 88),
-                      children: [
-                        if (allDay.isNotEmpty) ...[
-                          const SectionHeader('All-day'),
-                          for (final item in allDay) _agendaRow(state, item),
-                        ],
-                        if (timed.isNotEmpty) ...[
-                          const SectionHeader('Scheduled'),
-                          for (final item in timed) _agendaRow(state, item),
-                        ],
-                        if (done.isNotEmpty) ...[
-                          const SectionHeader('Completed'),
-                          for (final item in done) _agendaRow(state, item),
-                        ],
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: TextButton.icon(
-                            onPressed: () => QuickAddSheet.open(
-                              context,
-                              initialDate: _selected,
-                            ),
-                            icon: const Icon(Icons.add, size: 18),
-                            label: const Text('Add task for this day'),
-                          ),
-                        ),
-                      ],
+          ),
+          const SliverToBoxAdapter(child: Divider()),
+          if (entries.isEmpty)
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Nothing on ${Formats.relativeDate(_selected)}',
+                      style: TextStyle(color: context.colors.textSecondary),
                     ),
+                    const SizedBox(height: AppSpacing.sm),
+                    _addForDayButton(),
+                  ],
+                ),
+              ),
+            )
+          else
+            SliverPadding(
+              padding: EdgeInsets.fromLTRB(
+                AppSpacing.lg,
+                0,
+                AppSpacing.lg,
+                FrostedBottomNavigationBar.heightOf(context) + AppSpacing.sm,
+              ),
+              sliver: SliverList.builder(
+                itemCount: entries.length,
+                itemBuilder: (context, index) => entries[index](),
+              ),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }
+
+  Widget _addForDayButton() => TextButton.icon(
+    onPressed: () => QuickAddSheet.open(context, initialDate: _selected),
+    icon: const Icon(Icons.add, size: 18),
+    label: const Text('Add task for this day'),
+  );
 
   Widget _agendaRow(AppState state, AgendaItem item) {
     final task = item.task;

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/app_colors.dart';
+import '../../core/app_tokens.dart';
 import '../../core/formats.dart';
 import '../../domain/models/date_only.dart';
 import '../../domain/models/task.dart';
@@ -63,7 +64,12 @@ class CompletedScreen extends StatelessWidget {
                 ),
               )
             : ListView(
-                padding: const EdgeInsets.fromLTRB(16, 4, 16, 88),
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.lg,
+                  AppSpacing.xs,
+                  AppSpacing.lg,
+                  AppSpacing.xxl,
+                ),
                 children: [
                   for (final date in dates) ...[
                     SectionHeader(

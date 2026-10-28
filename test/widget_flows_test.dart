@@ -241,10 +241,14 @@ void main() {
   testWidgets('settings opens from the Focus app bar', (tester) async {
     await buildApp(tester);
 
-    final settings = find.byTooltip('Settings');
-    expect(settings, findsOneWidget);
-    expect(tester.getCenter(settings).dy, lessThan(100));
-    await tester.tap(settings);
+    // Settings is a destination, not an action, so it sits in the Focus
+    // app bar's overflow menu rather than taking a permanent slot.
+    final more = find.byTooltip('More');
+    expect(more, findsOneWidget);
+    expect(tester.getCenter(more).dy, lessThan(100));
+    await tester.tap(more);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Settings'));
     await tester.pumpAndSettle();
     expect(find.text('NOTIFICATIONS'), findsOneWidget);
   });
@@ -263,7 +267,9 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Edit task'), findsOneWidget);
     expect(find.text('BACKGROUND'), findsOneWidget);
-    await tester.tap(find.widgetWithText(ChoiceChip, 'Cyan'));
+    // The swatch is labelled from the decorative palette; the persisted enum
+    // value keeps its original name so stored task JSON stays readable.
+    await tester.tap(find.widgetWithText(ChoiceChip, 'Mist'));
     await tester.pump(const Duration(milliseconds: 600));
 
     expect(state.allTasks.single.background, TaskBackground.cyan);
@@ -377,7 +383,9 @@ void main() {
     await state.completeTask(task);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byTooltip('Completed tasks'));
+    await tester.tap(find.byTooltip('More'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Completed'));
     await tester.pumpAndSettle();
     expect(find.text('Finished thing'), findsOneWidget);
 

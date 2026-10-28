@@ -1,12 +1,13 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/app_colors.dart';
+import '../../core/app_tokens.dart';
 import '../../domain/models/date_only.dart';
 import '../../domain/models/habit.dart';
 import '../../state/habit_controller.dart';
+import '../widgets/common.dart';
+import '../widgets/frosted_bottom_navigation_bar.dart';
 import '../widgets/task_flows.dart';
 import 'habit_detail_screen.dart';
 
@@ -26,63 +27,72 @@ class _HabitsScreenState extends State<HabitsScreen> {
     final controller = context.watch<HabitController>();
     final today = DateOnly.today();
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Habits'),
-        actions: [
-          IconButton.filled(
-            tooltip: 'Add habit',
-            onPressed: () => HabitEditorSheet.open(
-              context,
-              initialCadence: _range == _HabitRange.daily
-                  ? HabitCadence.daily
-                  : HabitCadence.monthly,
-            ),
-            icon: const Icon(Icons.add_rounded),
-          ),
-          const SizedBox(width: 12),
-        ],
-      ),
-      body: SafeArea(
-        bottom: false,
-        child: !controller.isLoaded
-            ? Center(
-                child: CircularProgressIndicator(color: context.colors.accent),
-              )
-            : Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                    child: SegmentedButton<_HabitRange>(
-                      showSelectedIcon: false,
-                      segments: const [
-                        ButtonSegment(
-                          value: _HabitRange.daily,
-                          label: Text('Daily'),
-                        ),
-                        ButtonSegment(
-                          value: _HabitRange.monthly,
-                          label: Text('Monthly'),
-                        ),
-                      ],
-                      selected: {_range},
-                      onSelectionChanged: (value) =>
-                          setState(() => _range = value.single),
-                    ),
-                  ),
-                  Expanded(
-                    child: switch (_range) {
-                      _HabitRange.daily => _DailyHabitView(
-                        controller: controller,
-                        today: today,
-                      ),
-                      _HabitRange.monthly => _MonthlyRoutineView(
-                        controller: controller,
-                        today: today,
-                      ),
-                    },
-                  ),
-                ],
+      // The shell's MeshBackdrop paints the background for all tabs.
+      backgroundColor: Colors.transparent,
+      body: CustomScrollView(
+        slivers: [
+          largeTitleAppBar(
+            title: const Text('Habits'),
+            actions: [
+              IconButton.filled(
+                tooltip: 'Add habit',
+                onPressed: () => HabitEditorSheet.open(
+                  context,
+                  initialCadence: _range == _HabitRange.daily
+                      ? HabitCadence.daily
+                      : HabitCadence.monthly,
+                ),
+                icon: const Icon(Icons.add_rounded),
               ),
+              const SizedBox(width: AppSpacing.md),
+            ],
+          ),
+          if (!controller.isLoaded)
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Center(
+                child: CircularProgressIndicator(color: context.colors.accent),
+              ),
+            )
+          else ...[
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.lg,
+                  0,
+                  AppSpacing.lg,
+                  AppSpacing.md,
+                ),
+                child: SegmentedButton<_HabitRange>(
+                  showSelectedIcon: false,
+                  segments: const [
+                    ButtonSegment(
+                      value: _HabitRange.daily,
+                      label: Text('Daily'),
+                    ),
+                    ButtonSegment(
+                      value: _HabitRange.monthly,
+                      label: Text('Monthly'),
+                    ),
+                  ],
+                  selected: {_range},
+                  onSelectionChanged: (value) =>
+                      setState(() => _range = value.single),
+                ),
+              ),
+            ),
+            switch (_range) {
+              _HabitRange.daily => _DailyHabitView(
+                controller: controller,
+                today: today,
+              ),
+              _HabitRange.monthly => _MonthlyRoutineView(
+                controller: controller,
+                today: today,
+              ),
+            },
+          ],
+        ],
       ),
     );
   }
@@ -100,39 +110,52 @@ class _DailyHabitView extends StatelessWidget {
         .where((habit) => habit.cadence == HabitCadence.daily)
         .toList(growable: false);
     if (habits.isEmpty) {
-      return _EmptyHabits(
-        onAdd: () =>
-            HabitEditorSheet.open(context, initialCadence: HabitCadence.daily),
+      return SliverFillRemaining(
+        hasScrollBody: false,
+        child: _EmptyHabits(
+          onAdd: () => HabitEditorSheet.open(
+            context,
+            initialCadence: HabitCadence.daily,
+          ),
+        ),
       );
     }
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 4, 16, 88),
-      children: [
-        _TodaySummary(habits: habits, today: today),
-        if (controller.hasStorageError || controller.hasNotificationError) ...[
-          const SizedBox(height: 12),
-          _StatusWarning(controller: controller),
-        ],
-        const SizedBox(height: 24),
-        Row(
-          children: [
-            const _SectionLabel('YOUR ROUTINES'),
-            const Spacer(),
-            Text(
-              '${habits.length} active',
-              style: TextStyle(
-                color: context.colors.textSecondary,
-                fontSize: 12,
-              ),
-            ),
+    return SliverPadding(
+      padding: EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        AppSpacing.xs,
+        AppSpacing.lg,
+        FrostedBottomNavigationBar.heightOf(context) + AppSpacing.sm,
+      ),
+      sliver: SliverList.list(
+        children: [
+          _TodaySummary(habits: habits, today: today),
+          if (controller.hasStorageError ||
+              controller.hasNotificationError) ...[
+            const SizedBox(height: AppSpacing.md),
+            _StatusWarning(controller: controller),
           ],
-        ),
-        const SizedBox(height: 10),
-        for (final habit in habits) ...[
-          _HabitCard(habit: habit, today: today),
-          const SizedBox(height: 11),
+          const SizedBox(height: AppSpacing.xl),
+          Row(
+            children: [
+              const _SectionLabel('YOUR ROUTINES'),
+              const Spacer(),
+              Text(
+                '${habits.length} active',
+                style: TextStyle(
+                  color: context.colors.textSecondary,
+                  fontSize: AppTypography.footnote,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.md),
+          for (final habit in habits) ...[
+            _HabitCard(habit: habit, today: today),
+            const SizedBox(height: AppSpacing.md),
+          ],
         ],
-      ],
+      ),
     );
   }
 }
@@ -149,37 +172,47 @@ class _MonthlyRoutineView extends StatelessWidget {
         .where((habit) => habit.cadence == HabitCadence.monthly)
         .toList(growable: false);
     if (habits.isEmpty) {
-      return _EmptyHabits(
-        title: 'No monthly habits yet',
-        message: 'Add something you want to complete once every month.',
-        onAdd: () => HabitEditorSheet.open(
-          context,
-          initialCadence: HabitCadence.monthly,
+      return SliverFillRemaining(
+        hasScrollBody: false,
+        child: _EmptyHabits(
+          title: 'No monthly habits yet',
+          message: 'Add something you want to complete once every month.',
+          onAdd: () => HabitEditorSheet.open(
+            context,
+            initialCadence: HabitCadence.monthly,
+          ),
         ),
       );
     }
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 4, 16, 88),
-      children: [
-        Row(
-          children: [
-            const _SectionLabel('MONTHLY ROUTINES'),
-            const Spacer(),
-            Text(
-              '${habits.length} active',
-              style: TextStyle(
-                color: context.colors.textSecondary,
-                fontSize: 12,
+    return SliverPadding(
+      padding: EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        AppSpacing.xs,
+        AppSpacing.lg,
+        FrostedBottomNavigationBar.heightOf(context) + AppSpacing.sm,
+      ),
+      sliver: SliverList.list(
+        children: [
+          Row(
+            children: [
+              const _SectionLabel('MONTHLY ROUTINES'),
+              const Spacer(),
+              Text(
+                '${habits.length} active',
+                style: TextStyle(
+                  color: context.colors.textSecondary,
+                  fontSize: AppTypography.footnote,
+                ),
               ),
-            ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.md),
+          for (final habit in habits) ...[
+            _MonthlyRoutineCard(habit: habit, today: today),
+            const SizedBox(height: AppSpacing.md),
           ],
-        ),
-        const SizedBox(height: 10),
-        for (final habit in habits) ...[
-          _MonthlyRoutineCard(habit: habit, today: today),
-          const SizedBox(height: 11),
         ],
-      ],
+      ),
     );
   }
 }
@@ -667,12 +700,19 @@ class _HabitCard extends StatelessWidget {
       habit.id,
       today,
     );
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+    // Not glass: the card sits on the flat scaffold background, so the blur
+    // sampled a flat colour and returned it unchanged, per row, every frame.
+    return ClipRSuperellipse(
+      borderRadius: AppRadii.mediumRadius,
+      child: DecoratedBox(
+        decoration: ShapeDecoration(
+          shape: RoundedSuperellipseBorder(
+            borderRadius: AppRadii.mediumRadius,
+            side: BorderSide(color: colors.borderStrong),
+          ),
+        ),
         child: Material(
-          color: colors.card.withValues(alpha: 0.88),
+          color: colors.card,
           child: Column(
             children: [
               InkWell(
@@ -1131,20 +1171,22 @@ class _EmptyHabits extends StatelessWidget {
   );
 }
 
+/// Decorative, not semantic: a habit's colour is identity, and must not read
+/// as a priority. Enum values stay as stored; only hue and label changed.
 Color habitColorOf(AppColors colors, HabitColor color) => switch (color) {
-  HabitColor.violet => colors.accent,
-  HabitColor.blue => colors.low,
-  HabitColor.green => colors.done,
-  HabitColor.amber => colors.medium,
-  HabitColor.rose => colors.overdue,
+  HabitColor.violet => colors.decorative[0], // sage
+  HabitColor.blue => colors.decorative[1], // mist
+  HabitColor.green => colors.decorative[6], // moss
+  HabitColor.amber => colors.decorative[4], // sand
+  HabitColor.rose => colors.decorative[5], // rose
 };
 
 String habitColorName(HabitColor color) => switch (color) {
-  HabitColor.violet => 'Lime',
-  HabitColor.blue => 'Cyan',
-  HabitColor.green => 'Green',
+  HabitColor.violet => 'Sage',
+  HabitColor.blue => 'Mist',
+  HabitColor.green => 'Moss',
   HabitColor.amber => 'Sand',
-  HabitColor.rose => 'Coral',
+  HabitColor.rose => 'Rose',
 };
 
 String formatHabitTime(BuildContext context, int minutes) =>
