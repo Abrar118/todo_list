@@ -32,9 +32,10 @@ flutter build apk --debug             # Android build check (also compiles the K
 - The user's phone is an **iPhone 17 (base model)**; there is no longer an
   Android device on hand (previously a Galaxy S25). So nothing Android-only is
   user-testable right now — don't ask the user to confirm Android behaviour on
-  a device. The iOS widget extension target still has to be created in Xcode
-  (`ios/NudgeWidgets/README.md`) before iOS widgets work at all; it is
-  deliberately not hand-written into `project.pbxproj`.
+  a device. The `NudgeWidgets` iOS widget extension target exists in
+  `project.pbxproj` (bundle ID `com.abrar118.nudge.NudgeWidgets`, iOS 17,
+  embedded in Runner before the "Thin Binary" phase to avoid a build cycle).
+  The Mac itself can run `flutter build ios` and install to the iPhone.
 - Dart analysis excludes `android/**` and `ios/**` (`analysis_options.yaml`),
   so native mistakes surface only at build time.
 
