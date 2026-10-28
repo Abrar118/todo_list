@@ -24,14 +24,17 @@ flutter build apk --debug             # Android build check (also compiles the K
 
 - Dev machine is **Windows**. `flutter test`, `flutter analyze`,
   `dart format` and `flutter build apk` are the only checks runnable here.
-- **iOS cannot be built or verified from this machine.** It needs macOS +
-  Xcode. Swift under `ios/NudgeWidgets/` is compiled by nobody locally — treat
-  edits there as unverified until the user reports otherwise.
+- **iOS cannot be built from this machine** (needs macOS + Xcode), but the
+  user has Mac access, so iOS changes do get a real compile check — write
+  them, then ask the user to run `flutter build ios` / open Xcode and report
+  errors back. Until they do, treat Swift and `.pbxproj` edits as unverified
+  and say so.
 - The user's phone is an **iPhone 17 (base model)**; there is no longer an
-  Android device on hand (previously a Galaxy S25). So: nothing Android-only
-  is user-testable right now, and the iOS widget extension still has to be
-  created in Xcode (`ios/NudgeWidgets/README.md`) before iOS widgets work at
-  all. Don't ask the user to confirm Android behaviour on a device.
+  Android device on hand (previously a Galaxy S25). So nothing Android-only is
+  user-testable right now — don't ask the user to confirm Android behaviour on
+  a device. The iOS widget extension target still has to be created in Xcode
+  (`ios/NudgeWidgets/README.md`) before iOS widgets work at all; it is
+  deliberately not hand-written into `project.pbxproj`.
 - Dart analysis excludes `android/**` and `ios/**` (`analysis_options.yaml`),
   so native mistakes surface only at build time.
 
@@ -159,10 +162,32 @@ compute relative labels at render time. Keys, provider class names
 (`NudgeUpNextWidget`, `NudgeFocusWidget`), deep-link URIs (`nudge://task/<id>`,
 `nudge://quickadd`, `nudge://focus`, `nudge://complete/<id>`), and the App Group
 id (`group.com.example.todoList`) must stay in sync across all three languages.
+Deep links are parsed by `WidgetDeepLink` (pure, tested) — route new ones
+there, not in the service.
 The Android focus-list widget builds rows statically (no ListView) on purpose: a
 collection widget has a single PendingIntent template, which can't mix
 open-activity row taps with background-broadcast complete buttons. The complete
 button is Android-only.
+
+**iOS needs four things Android doesn't, and fails silently without them.**
+Each is already in the repo; don't drop them when touching the iOS target.
+
+1. `Runner/Info.plist` registers the `nudge` scheme under `CFBundleURLTypes`.
+   Android gets the URI straight off the launch intent; on iOS an
+   unregistered scheme never reaches the app.
+2. Widget links must carry a `homeWidget` query item — the plugin's iOS
+   `isWidgetUrl` drops anything else. `NudgeWidgets.swift` builds every link
+   through its `deepLink(_:)` helper for this reason; `WidgetDeepLink` ignores
+   the marker so both platforms route identically.
+3. `Runner/Runner.entitlements` (wired via `CODE_SIGN_ENTITLEMENTS` in all
+   three Runner configs) declares the App Group — without it the widget
+   extension reads an empty container — and
+   `com.apple.developer.usernotifications.time-sensitive`, without which iOS
+   quietly downgrades alarm notifications from `.timeSensitive` to `.active`.
+4. `IPHONEOS_DEPLOYMENT_TARGET` is **15.0**: `home_widget` requires ≥14 and
+   `InterruptionLevel.timeSensitive` requires ≥15. It also matches the
+   Flutter 3.47 Podfile template. The widget extension target itself needs
+   iOS 17 for `containerBackground`.
 
 ### Behavioral rules from the spec (do not regress)
 

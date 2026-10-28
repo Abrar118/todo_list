@@ -34,6 +34,9 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
       onQuickAdd: () {
         if (mounted) QuickAddSheet.open(context);
       },
+      onShowFocus: () {
+        if (mounted) setState(() => _index = 0);
+      },
     );
   }
 

@@ -12,6 +12,18 @@ private let appGroup = "group.com.example.todoList"
 private let upNextKey = "widget_up_next"
 private let focusKey = "widget_focus"
 
+/// Builds a deep link the home_widget plugin will actually forward to Dart.
+///
+/// Its iOS side ignores any incoming URL without a `homeWidget` query item
+/// (`isWidgetUrl` in HomeWidgetPlugin.swift), unlike Android, which passes the
+/// launch intent's data through untouched. The `nudge` scheme also has to be
+/// registered under `CFBundleURLTypes` in Runner/Info.plist or the URL never
+/// reaches the app at all. Dart routes on host + path segments, so both stay
+/// as `lib/services/home_widget_service.dart` expects.
+private func deepLink(_ path: String) -> URL {
+    URL(string: "nudge://\(path)?homeWidget=true")!
+}
+
 // MARK: - Shared data
 
 struct WidgetTask: Decodable, Identifiable {
@@ -262,7 +274,7 @@ struct UpNextView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-        .widgetURL(entry.upNext.map { URL(string: "nudge://task/\($0.id)")! })
+        .widgetURL(entry.upNext.map { deepLink("task/\($0.id)") })
         .containerBackground(nudgeBackground, for: .widget)
     }
 }
@@ -294,7 +306,7 @@ struct FocusListView: View {
                         .font(.system(size: 11))
                         .foregroundColor(nudgeSecondary)
                 }
-                Link(destination: URL(string: "nudge://quickadd")!) {
+                Link(destination: deepLink("quickadd")) {
                     Image(systemName: "plus")
                         .font(.system(size: 12, weight: .bold))
                         .foregroundColor(.black)
@@ -311,7 +323,7 @@ struct FocusListView: View {
                 Spacer()
             } else {
                 ForEach(entry.items.prefix(rowLimit)) { task in
-                    Link(destination: URL(string: "nudge://task/\(task.id)")!) {
+                    Link(destination: deepLink("task/\(task.id)")) {
                         HStack(spacing: 8) {
                             Circle()
                                 .fill(task.priorityColor)
@@ -353,7 +365,7 @@ struct FocusListView: View {
                 Spacer(minLength: 0)
             }
         }
-        .widgetURL(URL(string: "nudge://focus"))
+        .widgetURL(deepLink("focus"))
         .containerBackground(nudgeBackground, for: .widget)
     }
 }

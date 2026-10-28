@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:home_widget/home_widget.dart';
 
+import '../domain/logic/widget_deep_link.dart';
 import '../state/app_state.dart';
 import '../domain/models/task.dart';
 import 'widget_action_handler.dart';
@@ -82,20 +83,27 @@ class HomeWidgetService {
     );
   }
 
-  /// Routes widget taps: `nudge://task/<id>` opens the task, anything else
-  /// (the add button) opens quick add. Handles both a cold start from a tap
-  /// and taps while the app is alive.
+  /// Routes widget taps, per [WidgetDeepLink]: `nudge://task/<id>` opens the
+  /// task, `nudge://quickadd` opens quick add, `nudge://focus` (the iOS
+  /// focus-list widget's background tap) shows the Focus screen. Handles both
+  /// a cold start from a tap and taps while the app is alive.
   Future<void> handleClicks({
     required void Function(String taskId) onOpenTask,
     required void Function() onQuickAdd,
+    required void Function() onShowFocus,
   }) async {
     if (!_supported) return;
     void route(Uri? uri) {
-      if (uri == null) return;
-      if (uri.host == 'task' && uri.pathSegments.isNotEmpty) {
-        onOpenTask(uri.pathSegments.first);
-      } else if (uri.host == 'quickadd') {
-        onQuickAdd();
+      final link = WidgetDeepLink.parse(uri);
+      switch (link?.kind) {
+        case WidgetDeepLinkKind.openTask:
+          onOpenTask(link!.taskId!);
+        case WidgetDeepLinkKind.quickAdd:
+          onQuickAdd();
+        case WidgetDeepLinkKind.focus:
+          onShowFocus();
+        case null:
+          break;
       }
     }
 

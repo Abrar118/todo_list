@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Shared container the widget extension reads WidgetSnapshot JSON from.
+	     Must match HomeWidgetService.iosAppGroup and the appGroup constant in
+	     NudgeWidgets/NudgeWidgets.swift, and be enabled on both targets in
+	     the Apple developer portal. -->
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.com.example.todoList</string>
+	</array>
+	<!-- Persistent alarms schedule with InterruptionLevel.timeSensitive so
+	     they break through Focus modes. Without this entitlement iOS silently
+	     downgrades them to .active, which is exactly the "never claim a
+	     notification was delivered when it wasn't" failure the app avoids
+	     elsewhere. Freely available; unlike critical alerts it needs no
+	     special entitlement request from Apple. -->
+	<key>com.apple.developer.usernotifications.time-sensitive</key>
+	<true/>
+</dict>
+</plist>
