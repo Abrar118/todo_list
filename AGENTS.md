@@ -192,9 +192,10 @@ Each is already in the repo; don't drop them when touching the iOS target.
    the marker so both platforms route identically.
 3. `Runner/Runner.entitlements` (wired via `CODE_SIGN_ENTITLEMENTS` in all
    three Runner configs) declares the App Group — without it the widget
-   extension reads an empty container — and
-   `com.apple.developer.usernotifications.time-sensitive`, without which iOS
-   quietly downgrades alarm notifications from `.timeSensitive` to `.active`.
+   extension reads an empty container. It deliberately does **not** declare
+   `com.apple.developer.usernotifications.time-sensitive`: the user signs with
+   a free Personal Team, which can't include it, so iOS delivers alarms as
+   `.active` (no Focus breakthrough). Re-add it only on a paid team.
 4. `IPHONEOS_DEPLOYMENT_TARGET` is **15.0**: `home_widget` requires ≥14 and
    `InterruptionLevel.timeSensitive` requires ≥15. It also matches the
    Flutter 3.47 Podfile template. The widget extension target itself needs

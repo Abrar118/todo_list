@@ -10,13 +10,10 @@
 	<array>
 		<string>group.com.example.todoList</string>
 	</array>
-	<!-- Persistent alarms schedule with InterruptionLevel.timeSensitive so
-	     they break through Focus modes. Without this entitlement iOS silently
-	     downgrades them to .active, which is exactly the "never claim a
-	     notification was delivered when it wasn't" failure the app avoids
-	     elsewhere. Freely available; unlike critical alerts it needs no
-	     special entitlement request from Apple. -->
-	<key>com.apple.developer.usernotifications.time-sensitive</key>
-	<true/>
+	<!-- com.apple.developer.usernotifications.time-sensitive is deliberately
+	     omitted: free Personal Teams can't sign it. Alarms still request
+	     InterruptionLevel.timeSensitive and iOS delivers them as .active (no
+	     Focus breakthrough). Re-add <key>…time-sensitive</key><true/> once on
+	     a paid Apple Developer Program team. -->
 </dict>
 </plist>
