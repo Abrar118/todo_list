@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:todo_list/domain/models/swatch.dart';
 import 'package:todo_list/domain/logic/notification_planner.dart';
 import 'package:todo_list/domain/logic/quiet_hours.dart';
 import 'package:todo_list/domain/models/date_only.dart';
@@ -17,7 +18,7 @@ Task makeTask({
   bool completed = false,
   TaskKind kind = TaskKind.single,
   TaskPriority priority = TaskPriority.none,
-  TaskBackground background = TaskBackground.automatic,
+  Swatch? background,
 }) {
   final now = DateTime(2026, 7, 11, 8);
   return Task(
@@ -225,7 +226,7 @@ void main() {
     final task = makeTask(
       due: const DateOnly(2026, 7, 12),
       reminders: const [ReminderEntry.atDeadline()],
-      background: TaskBackground.cyan,
+      background: Swatch.mist,
     );
 
     expect(planner.plan([task], now).single.tone, NotificationTone.cyan);

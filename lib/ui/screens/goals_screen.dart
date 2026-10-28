@@ -5,20 +5,10 @@ import '../../core/app_colors.dart';
 import '../../core/app_tokens.dart';
 import '../../domain/models/date_only.dart';
 import '../../domain/models/goal.dart';
+import '../../domain/models/swatch.dart';
 import '../../state/goal_controller.dart';
 import '../widgets/common.dart';
 import '../widgets/frosted_bottom_navigation_bar.dart';
-
-/// Decorative, not semantic — and theme-resolved: the violet used to be a
-/// hardcoded hex that stayed light in both themes and failed contrast on
-/// paper. Enum values stay as stored; only hue and label changed.
-Color goalColorOf(AppColors colors, GoalColor color) => switch (color) {
-  GoalColor.lime => colors.decorative[0], // sage
-  GoalColor.cyan => colors.decorative[1], // mist
-  GoalColor.amber => colors.decorative[4], // sand
-  GoalColor.coral => colors.decorative[5], // rose
-  GoalColor.violet => colors.decorative[2], // lilac
-};
 
 class GoalsScreen extends StatelessWidget {
   const GoalsScreen({super.key});
@@ -39,7 +29,7 @@ class GoalsScreen extends StatelessWidget {
       backgroundColor: Colors.transparent,
       body: CustomScrollView(
         slivers: [
-          largeTitleAppBar(
+          rootAppBar(
             title: const Text('Goals'),
             actions: [
               IconButton(
@@ -192,7 +182,7 @@ class _GoalCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = goalColorOf(context.colors, goal.color);
+    final color = swatchColor(context.colors, goal.color);
     final percent = (goal.progress * 100).round();
     final days = goal.targetDate.differenceInDays(DateOnly.today());
     final dateLabel = MaterialLocalizations.of(
@@ -374,7 +364,7 @@ class GoalDetailScreen extends StatelessWidget {
     if (goal == null) {
       return const Scaffold(body: Center(child: Text('Goal no longer exists')));
     }
-    final color = goalColorOf(context.colors, goal.color);
+    final color = swatchColor(context.colors, goal.color);
     final percent = (goal.progress * 100).round();
     final days = goal.targetDate.differenceInDays(DateOnly.today());
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -1019,7 +1009,7 @@ class _GoalEditorSheetState extends State<GoalEditorSheet> {
   late final TextEditingController _title;
   late final TextEditingController _description;
   late DateOnly _targetDate;
-  late GoalColor _color;
+  late Swatch _color;
 
   @override
   void initState() {
@@ -1028,7 +1018,7 @@ class _GoalEditorSheetState extends State<GoalEditorSheet> {
     _description = TextEditingController(text: widget.goal?.description);
     _targetDate =
         widget.goal?.targetDate ?? DateOnly.today().addMonthsClamped(1);
-    _color = widget.goal?.color ?? GoalColor.lime;
+    _color = widget.goal?.color ?? Swatch.sage;
   }
 
   @override
@@ -1089,7 +1079,7 @@ class _GoalEditorSheetState extends State<GoalEditorSheet> {
               contentPadding: EdgeInsets.zero,
               leading: Icon(
                 Icons.event_rounded,
-                color: goalColorOf(context.colors, _color),
+                color: swatchColor(context.colors, _color),
               ),
               title: const Text('Target date'),
               subtitle: Text(
@@ -1111,32 +1101,9 @@ class _GoalEditorSheetState extends State<GoalEditorSheet> {
               ),
             ),
             const SizedBox(height: 10),
-            Wrap(
-              spacing: 12,
-              children: [
-                for (final choice in GoalColor.values)
-                  Semantics(
-                    label: '${choice.name} goal color',
-                    selected: _color == choice,
-                    child: InkResponse(
-                      onTap: () => setState(() => _color = choice),
-                      child: Container(
-                        width: 42,
-                        height: 42,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: goalColorOf(context.colors, choice),
-                        ),
-                        child: _color == choice
-                            ? Icon(
-                                Icons.check_rounded,
-                                color: context.colors.onAccent,
-                              )
-                            : null,
-                      ),
-                    ),
-                  ),
-              ],
+            SwatchPicker(
+              selected: _color,
+              onPick: (choice) => setState(() => _color = choice!),
             ),
             const SizedBox(height: 24),
             SizedBox(

@@ -1,6 +1,5 @@
 import 'date_only.dart';
-
-enum HabitColor { violet, blue, green, amber, rose }
+import 'swatch.dart';
 
 enum HabitType { checkIn, timer }
 
@@ -86,7 +85,7 @@ class HabitCheckpoint {
 class Habit {
   final String id;
   final String title;
-  final HabitColor color;
+  final Swatch color;
   final DateOnly createdOn;
   final Set<DateOnly> completedDates;
   final HabitType type;
@@ -161,7 +160,7 @@ class Habit {
 
   Habit copyWith({
     String? title,
-    HabitColor? color,
+    Swatch? color,
     Set<DateOnly>? completedDates,
     HabitType? type,
     HabitCadence? cadence,
@@ -240,10 +239,7 @@ class Habit {
     return Habit(
       id: json['id'] as String,
       title: json['title'] as String,
-      color: HabitColor.values.firstWhere(
-        (color) => color.name == json['color'],
-        orElse: () => HabitColor.violet,
-      ),
+      color: swatchFromJson(json['color'], legacyHabitSwatches) ?? Swatch.moss,
       createdOn: DateOnly.parse(json['createdOn'] as String),
       completedDates: Set.unmodifiable(completed),
       type: HabitType.values.firstWhere(

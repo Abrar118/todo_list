@@ -5,6 +5,7 @@ import '../../core/app_colors.dart';
 import '../../core/app_tokens.dart';
 import '../../domain/models/date_only.dart';
 import '../../domain/models/habit.dart';
+import '../../domain/models/swatch.dart';
 import '../../state/habit_controller.dart';
 import '../widgets/common.dart';
 import '../widgets/frosted_bottom_navigation_bar.dart';
@@ -31,7 +32,7 @@ class _HabitsScreenState extends State<HabitsScreen> {
       backgroundColor: Colors.transparent,
       body: CustomScrollView(
         slivers: [
-          largeTitleAppBar(
+          rootAppBar(
             title: const Text('Habits'),
             actions: [
               IconButton.filled(
@@ -225,7 +226,7 @@ class _MonthlyRoutineCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = habitColorOf(context.colors, habit.color);
+    final color = swatchColor(context.colors, habit.color);
     final dueDay = habit.monthlyDay.clamp(
       1,
       DateOnly.daysInMonth(today.year, today.month),
@@ -324,7 +325,7 @@ class HabitEditorSheet extends StatefulWidget {
 
 class _HabitEditorSheetState extends State<HabitEditorSheet> {
   late final TextEditingController _title;
-  late HabitColor _color;
+  late Swatch _color;
   late HabitType _type;
   late HabitCadence _cadence;
   late double _monthlyDay;
@@ -336,7 +337,7 @@ class _HabitEditorSheetState extends State<HabitEditorSheet> {
     super.initState();
     final habit = widget.habit;
     _title = TextEditingController(text: habit?.title);
-    _color = habit?.color ?? HabitColor.green;
+    _color = habit?.color ?? Swatch.moss;
     _type = habit?.type ?? HabitType.checkIn;
     _cadence = habit?.cadence ?? widget.initialCadence;
     _monthlyDay = (habit?.monthlyDay ?? DateTime.now().day).toDouble();
@@ -400,7 +401,7 @@ class _HabitEditorSheetState extends State<HabitEditorSheet> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final accent = habitColorOf(colors, _color);
+    final accent = swatchColor(colors, _color);
     return AnimatedPadding(
       duration: MediaQuery.disableAnimationsOf(context)
           ? Duration.zero
@@ -575,17 +576,9 @@ class _HabitEditorSheetState extends State<HabitEditorSheet> {
             const SizedBox(height: 18),
             _SectionLabel('COLOR'),
             const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                for (final color in HabitColor.values)
-                  _ColorChip(
-                    color: color,
-                    selected: color == _color,
-                    onTap: () => setState(() => _color = color),
-                  ),
-              ],
+            SwatchPicker(
+              selected: _color,
+              onPick: (color) => setState(() => _color = color!),
             ),
             const SizedBox(height: 24),
             FilledButton.icon(
@@ -693,7 +686,7 @@ class _HabitCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final color = habitColorOf(colors, habit.color);
+    final color = swatchColor(colors, habit.color);
     final days = List.generate(7, (index) => today.addDays(index - 6));
     final isTimer = habit.type == HabitType.timer;
     final seconds = context.watch<HabitController>().timerSecondsFor(
@@ -1019,40 +1012,6 @@ class _TypeCard extends StatelessWidget {
   }
 }
 
-class _ColorChip extends StatelessWidget {
-  final HabitColor color;
-  final bool selected;
-  final VoidCallback onTap;
-
-  const _ColorChip({
-    required this.color,
-    required this.selected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final value = habitColorOf(context.colors, color);
-    return ChoiceChip(
-      label: Text(habitColorName(color)),
-      selected: selected,
-      showCheckmark: false,
-      avatar: Icon(
-        selected ? Icons.check_circle_rounded : Icons.circle,
-        size: 17,
-        color: value,
-      ),
-      backgroundColor: value.withValues(alpha: .08),
-      selectedColor: value.withValues(alpha: .18),
-      side: BorderSide.none,
-      labelStyle: TextStyle(
-        color: selected ? value : context.colors.textSecondary,
-      ),
-      onSelected: (_) => onTap(),
-    );
-  }
-}
-
 class _Pill extends StatelessWidget {
   final String label;
   final Color color;
@@ -1170,24 +1129,6 @@ class _EmptyHabits extends StatelessWidget {
     ),
   );
 }
-
-/// Decorative, not semantic: a habit's colour is identity, and must not read
-/// as a priority. Enum values stay as stored; only hue and label changed.
-Color habitColorOf(AppColors colors, HabitColor color) => switch (color) {
-  HabitColor.violet => colors.decorative[0], // sage
-  HabitColor.blue => colors.decorative[1], // mist
-  HabitColor.green => colors.decorative[6], // moss
-  HabitColor.amber => colors.decorative[4], // sand
-  HabitColor.rose => colors.decorative[5], // rose
-};
-
-String habitColorName(HabitColor color) => switch (color) {
-  HabitColor.violet => 'Sage',
-  HabitColor.blue => 'Mist',
-  HabitColor.green => 'Moss',
-  HabitColor.amber => 'Sand',
-  HabitColor.rose => 'Rose',
-};
 
 String formatHabitTime(BuildContext context, int minutes) =>
     TimeOfDay(hour: minutes ~/ 60, minute: minutes % 60).format(context);

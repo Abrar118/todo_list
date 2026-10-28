@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:todo_list/domain/models/swatch.dart';
 import 'package:todo_list/data/task_json_codec.dart';
 import 'package:todo_list/data/task_repository.dart';
 import 'package:todo_list/domain/models/date_only.dart';
@@ -31,7 +32,7 @@ Task fullTask(String id) {
     tags: const ['Work', 'errands'],
     progressPercent: 40,
     timeSpentSeconds: 1500,
-    background: TaskBackground.cyan,
+    background: Swatch.mist,
     seriesId: 'series-1',
     occurrenceDate: const DateOnly(2026, 7, 15),
     occurrenceIndex: 3,
@@ -147,7 +148,7 @@ void main() {
 
     test('older task JSON defaults to an automatic background', () {
       final json = fullTask('legacy').toJson()..remove('background');
-      expect(Task.fromJson(json).background, TaskBackground.automatic);
+      expect(Task.fromJson(json).background, null);
     });
 
     test('rejects non-JSON', () {

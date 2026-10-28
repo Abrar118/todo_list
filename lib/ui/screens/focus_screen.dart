@@ -106,7 +106,7 @@ class _FocusScreenState extends State<FocusScreen> {
       backgroundColor: Colors.transparent,
       body: CustomScrollView(
         slivers: [
-          largeTitleAppBar(
+          rootAppBar(
             title: const Text('Focus'),
             actions: [
               if (timer.isActive)

@@ -1,6 +1,5 @@
 import 'date_only.dart';
-
-enum GoalColor { lime, cyan, amber, coral, violet }
+import 'swatch.dart';
 
 class GoalCheckpoint {
   final String id;
@@ -48,7 +47,7 @@ class Goal {
   final String description;
   final DateOnly targetDate;
   final DateOnly createdOn;
-  final GoalColor color;
+  final Swatch color;
   final int manualProgress;
   final List<GoalCheckpoint> checkpoints;
 
@@ -76,7 +75,7 @@ class Goal {
     String? title,
     String? description,
     DateOnly? targetDate,
-    GoalColor? color,
+    Swatch? color,
     int? manualProgress,
     List<GoalCheckpoint>? checkpoints,
   }) => Goal(
@@ -109,10 +108,7 @@ class Goal {
     description: json['description'] as String? ?? '',
     targetDate: DateOnly.parse(json['targetDate'] as String),
     createdOn: DateOnly.parse(json['createdOn'] as String),
-    color: GoalColor.values.firstWhere(
-      (color) => color.name == json['color'],
-      orElse: () => GoalColor.lime,
-    ),
+    color: swatchFromJson(json['color'], legacyGoalSwatches) ?? Swatch.sage,
     manualProgress: (json['manualProgress'] as num?)?.toInt() ?? 0,
     checkpoints: List.unmodifiable(
       (json['checkpoints'] as List<dynamic>? ?? const []).whereType<Map>().map(

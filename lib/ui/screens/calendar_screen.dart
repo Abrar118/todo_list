@@ -94,7 +94,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       backgroundColor: Colors.transparent,
       body: CustomScrollView(
         slivers: [
-          largeTitleAppBar(
+          rootAppBar(
             title: Text(Formats.monthTitle(_year, _month)),
             actions: [
               if (!showingToday || _selected != today)

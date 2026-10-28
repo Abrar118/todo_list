@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:todo_list/domain/models/swatch.dart';
 import 'package:todo_list/domain/models/date_only.dart';
 import 'package:todo_list/domain/models/habit.dart';
 import 'package:todo_list/domain/models/goal.dart';
@@ -113,7 +114,7 @@ void main() {
           title: 'Fix sleep schedule',
           targetDate: DateOnly.today().addDays(30),
           createdOn: DateOnly.today(),
-          color: GoalColor.amber,
+          color: Swatch.sand,
           manualProgress: 40,
         ),
       ];
@@ -192,7 +193,7 @@ void main() {
         Habit(
           id: 'monthly-habit',
           title: 'Pay rent',
-          color: HabitColor.violet,
+          color: Swatch.sage,
           createdOn: DateOnly.today(),
           cadence: HabitCadence.monthly,
           monthlyDay: DateOnly.today().day,
@@ -267,12 +268,11 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Edit task'), findsOneWidget);
     expect(find.text('BACKGROUND'), findsOneWidget);
-    // The swatch is labelled from the decorative palette; the persisted enum
-    // value keeps its original name so stored task JSON stays readable.
-    await tester.tap(find.widgetWithText(ChoiceChip, 'Mist'));
+    // Swatches carry their palette name as tooltip and semantics label.
+    await tester.tap(find.byTooltip('Mist'));
     await tester.pump(const Duration(milliseconds: 600));
 
-    expect(state.allTasks.single.background, TaskBackground.cyan);
+    expect(state.allTasks.single.background, Swatch.mist);
   });
 
   testWidgets('editor adds subtasks and completing parent asks about them', (

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 
 import '../data/goal_repository.dart';
+import '../domain/models/swatch.dart';
 import '../domain/models/date_only.dart';
 import '../domain/models/goal.dart';
 
@@ -43,7 +44,7 @@ class GoalController extends ChangeNotifier {
     required String title,
     String description = '',
     required DateOnly targetDate,
-    required GoalColor color,
+    required Swatch color,
     DateOnly? createdOn,
   }) async {
     final cleaned = title.trim();
@@ -66,7 +67,7 @@ class GoalController extends ChangeNotifier {
     required String title,
     required String description,
     required DateOnly targetDate,
-    required GoalColor color,
+    required Swatch color,
   }) async {
     final index = _indexOf(id);
     final cleaned = title.trim();

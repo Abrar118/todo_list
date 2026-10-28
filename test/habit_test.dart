@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:todo_list/domain/models/swatch.dart';
 import 'package:todo_list/data/habit_repository.dart';
 import 'package:todo_list/domain/models/date_only.dart';
 import 'package:todo_list/domain/models/habit.dart';
@@ -42,7 +43,7 @@ void main() {
     const habit = Habit(
       id: 'habit-1',
       title: 'Drink water',
-      color: HabitColor.blue,
+      color: Swatch.mist,
       createdOn: today,
     );
 
@@ -58,7 +59,7 @@ void main() {
         const Habit(
               id: 'habit-1',
               title: 'Read',
-              color: HabitColor.violet,
+              color: Swatch.sage,
               createdOn: DateOnly(2026, 9, 1),
             )
             .toggle(today.addDays(-3))
@@ -73,7 +74,7 @@ void main() {
     final habit = const Habit(
       id: 'habit-1',
       title: 'Stretch',
-      color: HabitColor.green,
+      color: Swatch.moss,
       createdOn: DateOnly(2026, 9, 1),
     ).toggle(today).toggle(today.addDays(-1));
 
@@ -84,7 +85,7 @@ void main() {
     final habit = Habit(
       id: 'habit-rich',
       title: 'Daily workout',
-      color: HabitColor.green,
+      color: Swatch.moss,
       createdOn: const DateOnly(2026, 9, 1),
       type: HabitType.timer,
       scheduledMinutes: 7 * 60,
@@ -109,7 +110,7 @@ void main() {
     final habit = Habit(
       id: 'routine',
       title: 'Morning routine',
-      color: HabitColor.amber,
+      color: Swatch.sand,
       createdOn: today,
       checkpoints: const [
         HabitCheckpoint(id: 'one', title: 'First'),
@@ -128,7 +129,7 @@ void main() {
     final habit = Habit(
       id: 'routine',
       title: 'Morning routine',
-      color: HabitColor.blue,
+      color: Swatch.mist,
       createdOn: today,
       scheduledMinutes: 7 * 60,
       checkpoints: const [
@@ -158,7 +159,7 @@ void main() {
     const habit = Habit(
       id: 'legacy',
       title: 'Legacy habit',
-      color: HabitColor.green,
+      color: Swatch.moss,
       createdOn: today,
     );
     final json = habit.toJson()..remove('cadence');
@@ -170,7 +171,7 @@ void main() {
     const habit = Habit(
       id: 'monthly',
       title: 'Pay rent',
-      color: HabitColor.amber,
+      color: Swatch.sand,
       createdOn: today,
       cadence: HabitCadence.monthly,
       monthlyDay: 28,
@@ -185,7 +186,7 @@ void main() {
     const habit = Habit(
       id: 'monthly',
       title: 'Review budget',
-      color: HabitColor.rose,
+      color: Swatch.rose,
       createdOn: today,
       cadence: HabitCadence.monthly,
       monthlyDay: 12,
@@ -204,7 +205,7 @@ void main() {
 
     await controller.addHabit(
       title: 'Morning walk',
-      color: HabitColor.amber,
+      color: Swatch.sand,
       createdOn: today,
     );
     final id = controller.habits.single.id;
@@ -223,7 +224,7 @@ void main() {
 
     await controller.addHabit(
       title: 'Take vitamins',
-      color: HabitColor.green,
+      color: Swatch.moss,
       scheduledMinutes: 8 * 60,
       createdOn: today,
     );
@@ -238,7 +239,7 @@ void main() {
     await controller.init();
     await controller.addHabit(
       title: 'Workout',
-      color: HabitColor.green,
+      color: Swatch.moss,
       type: HabitType.timer,
       timerTargetMinutes: 1,
       createdOn: today,
