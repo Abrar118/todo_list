@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:todo_list/domain/models/swatch.dart';
 import 'package:todo_list/data/goal_repository.dart';
 import 'package:todo_list/domain/models/date_only.dart';
 import 'package:todo_list/domain/models/goal.dart';
@@ -26,7 +27,7 @@ void main() {
       title: 'Finish a book',
       targetDate: DateOnly(2026, 10, 1),
       createdOn: today,
-      color: GoalColor.lime,
+      color: Swatch.sage,
       manualProgress: 80,
       checkpoints: [
         GoalCheckpoint(id: 'one', title: 'Read part one', isCompleted: true),
@@ -45,7 +46,7 @@ void main() {
       description: 'Complete the first public release.',
       targetDate: DateOnly(2026, 11, 10),
       createdOn: today,
-      color: GoalColor.cyan,
+      color: Swatch.mist,
       manualProgress: 35,
       checkpoints: [GoalCheckpoint(id: 'one', title: 'Build MVP')],
     );
@@ -60,7 +61,7 @@ void main() {
     await controller.addGoal(
       title: 'Fix sleep schedule',
       targetDate: const DateOnly(2026, 10, 1),
-      color: GoalColor.violet,
+      color: Swatch.lilac,
       createdOn: today,
     );
     final goalId = controller.goals.single.id;

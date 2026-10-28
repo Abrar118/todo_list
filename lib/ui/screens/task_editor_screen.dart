@@ -14,6 +14,7 @@ import '../../domain/models/date_only.dart';
 import '../../domain/models/priority.dart';
 import '../../domain/models/recurrence.dart';
 import '../../domain/models/subtask.dart';
+import '../../domain/models/swatch.dart' as domain;
 import '../../domain/models/task.dart' as domain;
 import '../../services/calendar_export.dart';
 import '../../state/app_state.dart';
@@ -748,58 +749,23 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
             ),
           ),
           const SizedBox(height: 10),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              for (final background in domain.TaskBackground.values)
-                ChoiceChip(
-                  avatar: background == domain.TaskBackground.automatic
-                      ? Icon(
-                          Icons.auto_awesome_rounded,
-                          size: 16,
-                          color: context.colors.accent,
-                        )
-                      : Icon(
-                          Icons.circle,
-                          size: 16,
-                          color: _backgroundColor(background),
-                        ),
-                  label: Text(_backgroundLabel(background)),
-                  selected: _draft.background == background,
-                  showCheckmark: false,
-                  side: BorderSide.none,
-                  backgroundColor:
-                      (_backgroundColor(background) ?? context.colors.card)
-                          .withValues(alpha: 0.08),
-                  selectedColor:
-                      (_backgroundColor(background) ?? context.colors.accent)
-                          .withValues(alpha: 0.20),
-                  onSelected: (_) =>
-                      _update(_draft.copyWith(background: background)),
-                ),
-            ],
+          SwatchPicker(
+            selected: _draft.background,
+            allowAutomatic: true,
+            onPick: (swatch) => _update(
+              _draft.copyWith(
+                background: swatch,
+                clearBackground: swatch == null,
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Color? _backgroundColor(domain.TaskBackground background) =>
-      background == domain.TaskBackground.automatic
-      ? null
-      : taskBackgroundColor(context.colors, background);
-
-  /// Labels name the decorative palette, not the old semantic colours. The
-  /// enum values stay as they are — they are persisted in task JSON.
-  String _backgroundLabel(domain.TaskBackground background) =>
-      switch (background) {
-        domain.TaskBackground.automatic => 'Automatic',
-        domain.TaskBackground.lime => 'Sage',
-        domain.TaskBackground.cyan => 'Mist',
-        domain.TaskBackground.sand => 'Sand',
-        domain.TaskBackground.coral => 'Rose',
-      };
+  Color? _backgroundColor(domain.Swatch? background) =>
+      background == null ? null : swatchColor(context.colors, background);
 
   Widget _dateTile() {
     return ListTile(

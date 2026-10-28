@@ -79,26 +79,6 @@ abstract final class AppTypography {
   };
 }
 
-/// Screen chrome measurements.
-abstract final class AppLayout {
-  /// Expanded height of a root screen's large title: the toolbar row (56)
-  /// plus the title's own line box and its bottom padding.
-  ///
-  /// `SliverAppBar.large` is not used for this. Its layout is fixed at 152
-  /// with a 28pt gap under the title, which no parameter can reach, and it
-  /// renders the title twice — once in the collapsed bar and once in the
-  /// flexible space. A plain [FlexibleSpaceBar] gives one title widget and a
-  /// bottom padding we control.
-  static const largeTitleHeight = 104.0;
-
-  /// Collapsed title size (`titleLarge`, 20) × this = the expanded size.
-  static const largeTitleScale = 1.6;
-
-  /// Gap under the large title. Also centres the title when collapsed, so it
-  /// is half the toolbar's leftover height, not a free choice.
-  static const largeTitleGap = AppSpacing.lg;
-}
-
 /// The two glass tiers. Glass is only worth its cost where content actually
 /// passes behind it — chrome and sheets. A surface sitting on the flat
 /// scaffold background has nothing to refract, and a blur of a flat colour is

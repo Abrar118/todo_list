@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:todo_list/domain/models/swatch.dart';
 import 'package:todo_list/data/app_settings.dart';
 import 'package:todo_list/domain/logic/notification_planner.dart';
 import 'package:todo_list/domain/logic/quiet_hours.dart';
@@ -98,21 +99,21 @@ void main() {
         occ.copyWith(
           title: 'New name',
           priority: TaskPriority.high,
-          background: TaskBackground.cyan,
+          background: Swatch.mist,
         ),
         SeriesEditScope.thisAndFuture,
       );
       final template = state.templateOf(occ)!;
       expect(template.title, 'New name');
       expect(template.priority, TaskPriority.high);
-      expect(template.background, TaskBackground.cyan);
+      expect(template.background, Swatch.mist);
       // Next occurrence inherits the edit.
       await state.completeTask(state.taskById(occ.id)!);
       final next = state.allTasks.firstWhere(
         (t) => t.kind == TaskKind.occurrence && !t.isCompleted,
       );
       expect(next.title, 'New name');
-      expect(next.background, TaskBackground.cyan);
+      expect(next.background, Swatch.mist);
     });
 
     test('entire-series edit rewrites completed history titles', () async {

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 import '../../core/app_tokens.dart';
 import '../../domain/models/priority.dart';
-import '../../domain/models/task.dart';
+import '../../domain/models/swatch.dart';
 import 'glass_surface.dart';
 
 Color priorityColor(BuildContext context, TaskPriority priority) {
@@ -19,17 +19,113 @@ Color priorityColor(BuildContext context, TaskPriority priority) {
   };
 }
 
-/// The colour behind a task card. Decorative, never semantic — a task tinted
-/// "Rose" must not be mistaken for a high-priority one. Shared by the row and
-/// the editor's swatches so the two can never drift apart.
-Color taskBackgroundColor(AppColors colors, TaskBackground background) =>
-    switch (background) {
-      TaskBackground.automatic => colors.decorative[0],
-      TaskBackground.lime => colors.decorative[0], // sage
-      TaskBackground.cyan => colors.decorative[1], // mist
-      TaskBackground.sand => colors.decorative[4], // sand
-      TaskBackground.coral => colors.decorative[5], // rose
-    };
+/// Resolves a [Swatch] against the active theme. Decorative, never semantic —
+/// a task tinted "Rose" must not be mistaken for a high-priority one. Shared
+/// by task rows, habits, goals and every picker, so they cannot drift apart.
+Color swatchColor(AppColors colors, Swatch swatch) =>
+    colors.decorative[swatch.index];
+
+/// The grid of colour choices used by the task, habit and goal editors.
+/// [onPick] receives null when the user taps the optional automatic cell.
+class SwatchPicker extends StatelessWidget {
+  final Swatch? selected;
+
+  /// Adds a leading "automatic" cell that selects no swatch. Tasks use it for
+  /// their priority-derived card treatment; habits and goals always have one.
+  final bool allowAutomatic;
+  final ValueChanged<Swatch?> onPick;
+
+  const SwatchPicker({
+    super.key,
+    required this.selected,
+    required this.onPick,
+    this.allowAutomatic = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    return Wrap(
+      spacing: 10,
+      runSpacing: 10,
+      children: [
+        if (allowAutomatic)
+          _SwatchCell(
+            color: colors.textMuted,
+            label: 'Automatic',
+            selected: selected == null,
+            icon: Icons.auto_awesome_rounded,
+            onTap: () => onPick(null),
+          ),
+        for (final swatch in Swatch.values)
+          _SwatchCell(
+            color: swatchColor(colors, swatch),
+            label: swatch.label,
+            selected: selected == swatch,
+            onTap: () => onPick(swatch),
+          ),
+      ],
+    );
+  }
+}
+
+class _SwatchCell extends StatelessWidget {
+  final Color color;
+  final String label;
+  final bool selected;
+  final IconData? icon;
+  final VoidCallback onTap;
+
+  const _SwatchCell({
+    required this.color,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+    this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    return Semantics(
+      label: label,
+      button: true,
+      selected: selected,
+      child: Tooltip(
+        message: label,
+        child: InkResponse(
+          onTap: onTap,
+          radius: 24,
+          child: Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: icon == null ? color : color.withValues(alpha: 0.18),
+              border: Border.all(
+                color: selected ? colors.textPrimary : colors.border,
+                width: selected ? 2 : 1,
+              ),
+            ),
+            child: selected
+                ? Icon(
+                    Icons.check_rounded,
+                    size: 20,
+                    // On a filled swatch the glyph sits on the colour; the
+                    // automatic cell is only tinted, so it needs ink.
+                    color: icon == null
+                        ? colors.background
+                        : colors.textPrimary,
+                  )
+                : icon == null
+                ? null
+                : Icon(icon, size: 18, color: color),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 /// Small text+shape chip used in task rows. Never relies on color alone —
 /// each chip carries a label or icon.
@@ -63,28 +159,20 @@ class MetaChip extends StatelessWidget {
   }
 }
 
-/// A root screen's header: an iOS-style large title that collapses to inline
-/// on scroll. Pushed screens keep a plain inline [AppBar], as iOS does.
-SliverAppBar largeTitleAppBar({required Widget title, List<Widget>? actions}) =>
+/// A root screen's header. The title sits inline in the toolbar row next to
+/// the actions. An iOS large title puts it in a 104pt header below that row,
+/// which leaves the toolbar visibly empty on the left until the page is
+/// scrolled, so the pattern is deliberately not used here. Pushed screens use
+/// a plain [AppBar], which already looks like this.
+SliverAppBar rootAppBar({required Widget title, List<Widget>? actions}) =>
     SliverAppBar(
       pinned: true,
-      expandedHeight: AppLayout.largeTitleHeight,
-      // Transparent so the shell's backdrop runs behind the title instead of
-      // stopping at a seam along the app bar's bottom edge.
+      title: title,
+      // Transparent so the shell's backdrop runs behind the bar instead of
+      // stopping at a seam along its bottom edge.
       backgroundColor: Colors.transparent,
       scrolledUnderElevation: 0,
       actions: actions,
-      // The title lives only here, so it is one widget in the tree rather
-      // than the two SliverAppBar.large builds, and the gap below it is ours
-      // to set instead of the framework's fixed 28.
-      flexibleSpace: FlexibleSpaceBar(
-        titlePadding: const EdgeInsetsDirectional.only(
-          start: AppSpacing.lg,
-          bottom: AppLayout.largeTitleGap,
-        ),
-        expandedTitleScale: AppLayout.largeTitleScale,
-        title: title,
-      ),
     );
 
 class SectionHeader extends StatelessWidget {

@@ -7,6 +7,7 @@ import '../../domain/logic/escalation.dart';
 import '../../domain/logic/focus_arranger.dart';
 import '../../domain/models/priority.dart';
 import '../../domain/models/recurrence.dart';
+import '../../domain/models/swatch.dart';
 import '../../domain/models/task.dart';
 import 'common.dart';
 
@@ -53,10 +54,9 @@ class TaskRow extends StatelessWidget {
     final severityColor = task.isCompleted
         ? colors.done
         : priorityColor(context, task.priority);
-    final customBackground =
-        showTaskBackground && task.background != TaskBackground.automatic;
+    final customBackground = showTaskBackground && task.background != null;
     final surfaceColor = customBackground
-        ? taskBackgroundColor(colors, task.background)
+        ? swatchColor(colors, task.background!)
         : severityColor;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final radius = spotlight ? AppRadii.md : AppRadii.sm + 2;
@@ -188,7 +188,7 @@ class TaskRow extends StatelessWidget {
                   Positioned.fill(
                     child: IgnorePointer(
                       child: _BackgroundMotif(
-                        background: task.background,
+                        background: task.background!,
                         color: surfaceColor,
                       ),
                     ),
@@ -352,19 +352,36 @@ class TaskRow extends StatelessWidget {
 }
 
 class _BackgroundMotif extends StatelessWidget {
-  final TaskBackground background;
+  final Swatch background;
   final Color color;
 
   const _BackgroundMotif({required this.background, required this.color});
 
   @override
   Widget build(BuildContext context) {
+    // One motif per colour family rather than per swatch, so the twenty
+    // choices stay four recognisable card treatments.
     final icon = switch (background) {
-      TaskBackground.automatic => Icons.auto_awesome_rounded,
-      TaskBackground.lime => Icons.eco_outlined,
-      TaskBackground.cyan => Icons.water_drop_outlined,
-      TaskBackground.sand => Icons.light_mode_outlined,
-      TaskBackground.coral => Icons.favorite_border_rounded,
+      Swatch.sage ||
+      Swatch.moss ||
+      Swatch.fern ||
+      Swatch.olive ||
+      Swatch.seafoam => Icons.eco_outlined,
+      Swatch.mist ||
+      Swatch.teal ||
+      Swatch.sky ||
+      Swatch.denim => Icons.water_drop_outlined,
+      Swatch.sand ||
+      Swatch.ochre ||
+      Swatch.apricot ||
+      Swatch.clay ||
+      Swatch.stone => Icons.light_mode_outlined,
+      Swatch.rose ||
+      Swatch.lilac ||
+      Swatch.iris ||
+      Swatch.plum ||
+      Swatch.berry ||
+      Swatch.brick => Icons.favorite_border_rounded,
     };
     return Stack(
       clipBehavior: Clip.hardEdge,

@@ -41,7 +41,7 @@ class HabitDetailScreen extends StatelessWidget {
             ),
           )
         : today;
-    final color = habitColorOf(context.colors, habit.color);
+    final color = swatchColor(context.colors, habit.color);
     final completedCheckpoints = habit.checkpoints
         .where((checkpoint) => checkpoint.isCompletedOn(activeDate))
         .length;

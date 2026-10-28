@@ -6,6 +6,7 @@ import 'package:uuid/uuid.dart';
 
 import '../data/habit_repository.dart';
 import '../domain/logic/habit_reminder_planner.dart';
+import '../domain/models/swatch.dart';
 import '../domain/models/date_only.dart';
 import '../domain/models/habit.dart';
 import '../services/habit_reminder_service.dart';
@@ -60,7 +61,7 @@ class HabitController extends ChangeNotifier {
 
   Future<void> addHabit({
     required String title,
-    required HabitColor color,
+    required Swatch color,
     DateOnly? createdOn,
     HabitType type = HabitType.checkIn,
     HabitCadence cadence = HabitCadence.daily,
@@ -89,7 +90,7 @@ class HabitController extends ChangeNotifier {
   Future<void> updateHabit(
     String id, {
     required String title,
-    required HabitColor color,
+    required Swatch color,
     required HabitType type,
     required HabitCadence cadence,
     required int monthlyDay,

@@ -77,12 +77,8 @@ class HabitReminderPlanner {
     return result;
   }
 
-  NotificationTone _toneForHabit(Habit habit) => switch (habit.color) {
-    HabitColor.violet || HabitColor.green => NotificationTone.lime,
-    HabitColor.blue => NotificationTone.cyan,
-    HabitColor.amber => NotificationTone.sand,
-    HabitColor.rose => NotificationTone.coral,
-  };
+  NotificationTone _toneForHabit(Habit habit) =>
+      NotificationTone.forSwatch(habit.color);
 
   static bool ownsId(int id) => (id & 0x70000000) == idPrefix;
 

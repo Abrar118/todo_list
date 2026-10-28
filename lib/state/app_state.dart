@@ -12,6 +12,7 @@ import '../domain/models/priority.dart';
 import '../domain/models/recurrence.dart';
 import '../domain/models/reminders.dart';
 import '../domain/models/subtask.dart';
+import '../domain/models/swatch.dart';
 import '../domain/models/task.dart';
 import '../services/notification_service.dart';
 import 'settings_controller.dart';
@@ -398,7 +399,7 @@ class AppState extends ChangeNotifier {
     List<Subtask> subtasks = const [],
     AlarmConfig alarm = const AlarmConfig(),
     List<String> tags = const [],
-    TaskBackground background = TaskBackground.automatic,
+    Swatch? background,
   }) async {
     final now = DateTime.now();
     final task = Task(

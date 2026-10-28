@@ -149,7 +149,18 @@ read/sync without revisiting the local-first decision.
 **Colors are theme-resolved, never static.** `AppColors` is a `ThemeExtension`
 with `dark`/`light` palettes; always use `context.colors.x` (and
 `priorityColor(context, p)`), never a hardcoded palette constant, or the light
-theme breaks. The theme choice is `AppSettings.themeMode` (default dark).
+theme breaks. Tasks, habits and goals share one user-pickable identity enum,
+`Swatch` (`lib/domain/models/swatch.dart`), whose declaration order is parallel
+to `AppColors.decorative` — a swatch resolves by index via
+`swatchColor(colors, s)`, so the enum and both palettes must be reordered
+together (`test/swatch_test.dart` pins their lengths). All three editors use the
+one `SwatchPicker`. A task's `background` is `Swatch?`, where null means
+automatic (priority-derived). The per-subsystem legacy name maps in
+`swatch.dart` exist because the old enums collided — `violet` rendered sage on a
+habit but lilac on a goal — so don't merge them. New swatches need a hex in both
+palettes (contrast- and saturation-checked by `test/design_tokens_test.dart`),
+a `NotificationTone.forSwatch` group and a motif group in `task_row.dart`; both
+switches are exhaustive so the compiler will say so. The theme choice is `AppSettings.themeMode` (default dark).
 `AppSettings.reduceMotion` is honored app-wide in `main.dart` by reporting
 `disableAnimations` through `MediaQuery`.
 
