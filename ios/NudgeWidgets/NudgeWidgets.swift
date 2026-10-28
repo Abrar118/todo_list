@@ -8,7 +8,7 @@
 import SwiftUI
 import WidgetKit
 
-private let appGroup = "group.com.example.todoList"
+private let appGroup = "group.com.abrar118.nudge"
 private let upNextKey = "widget_up_next"
 private let focusKey = "widget_focus"
 

@@ -172,7 +172,7 @@ compute relative labels at render time. Keys, provider class names
 (`UpNextWidgetProvider`, `FocusListWidgetProvider`), iOS kinds
 (`NudgeUpNextWidget`, `NudgeFocusWidget`), deep-link URIs (`nudge://task/<id>`,
 `nudge://quickadd`, `nudge://focus`, `nudge://complete/<id>`), and the App Group
-id (`group.com.example.todoList`) must stay in sync across all three languages.
+id (`group.com.abrar118.nudge`) must stay in sync across all three languages.
 Deep links are parsed by `WidgetDeepLink` (pure, tested) — route new ones
 there, not in the service.
 The Android focus-list widget builds rows statically (no ListView) on purpose: a

@@ -8,7 +8,7 @@
 	     the Apple developer portal. -->
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.com.example.todoList</string>
+		<string>group.com.abrar118.nudge</string>
 	</array>
 	<!-- com.apple.developer.usernotifications.time-sensitive is deliberately
 	     omitted: free Personal Teams can't sign it. Alarms still request

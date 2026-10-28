@@ -22,7 +22,7 @@ class HomeWidgetService {
 
   /// iOS app group shared with the widget extension. Must match the App
   /// Group configured on the Runner and widget-extension targets in Xcode.
-  static const iosAppGroup = 'group.com.example.todoList';
+  static const iosAppGroup = 'group.com.abrar118.nudge';
 
   static bool get _supported => Platform.isAndroid || Platform.isIOS;
 

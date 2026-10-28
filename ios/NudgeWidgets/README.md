@@ -25,7 +25,7 @@ Steps:
 
 2. **Share the App Group.** The `Runner` target already carries the
    entitlement; add the *App Groups* capability to the new `NudgeWidgets`
-   target too, with the id `group.com.example.todoList`. It must match
+   target too, with the id `group.com.abrar118.nudge`. It must match
    `HomeWidgetService.iosAppGroup` in
    `lib/services/home_widget_service.dart` and the `appGroup` constant in
    `NudgeWidgets.swift` — change all three together if you use a different

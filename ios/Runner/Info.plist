@@ -28,7 +28,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>com.example.todoList.widgets</string>
+			<string>com.abrar118.nudge.widgets</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>nudge</string>
