@@ -2,17 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/app_colors.dart';
+import '../../core/app_tokens.dart';
 import '../../domain/models/date_only.dart';
 import '../../domain/models/goal.dart';
 import '../../state/goal_controller.dart';
 import '../widgets/common.dart';
+import '../widgets/frosted_bottom_navigation_bar.dart';
 
+/// Decorative, not semantic — and theme-resolved: the violet used to be a
+/// hardcoded hex that stayed light in both themes and failed contrast on
+/// paper. Enum values stay as stored; only hue and label changed.
 Color goalColorOf(AppColors colors, GoalColor color) => switch (color) {
-  GoalColor.lime => colors.accent,
-  GoalColor.cyan => colors.low,
-  GoalColor.amber => colors.medium,
-  GoalColor.coral => colors.overdue,
-  GoalColor.violet => const Color(0xFFA991F4),
+  GoalColor.lime => colors.decorative[0], // sage
+  GoalColor.cyan => colors.decorative[1], // mist
+  GoalColor.amber => colors.decorative[4], // sand
+  GoalColor.coral => colors.decorative[5], // rose
+  GoalColor.violet => colors.decorative[2], // lilac
 };
 
 class GoalsScreen extends StatelessWidget {
@@ -30,48 +35,68 @@ class GoalsScreen extends StatelessWidget {
               .round();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Goals'),
-        actions: [
-          IconButton(
-            tooltip: 'Add goal',
-            onPressed: () => GoalEditorSheet.open(context),
-            icon: const Icon(Icons.add_rounded),
+      // The shell's MeshBackdrop paints the background for all tabs.
+      backgroundColor: Colors.transparent,
+      body: CustomScrollView(
+        slivers: [
+          largeTitleAppBar(
+            title: const Text('Goals'),
+            actions: [
+              IconButton(
+                tooltip: 'Add goal',
+                onPressed: () => GoalEditorSheet.open(context),
+                icon: const Icon(Icons.add_rounded),
+              ),
+              const SizedBox(width: AppSpacing.xs),
+            ],
           ),
-          const SizedBox(width: 4),
+          if (!controller.isLoaded)
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Center(
+                child: CircularProgressIndicator(color: context.colors.accent),
+              ),
+            )
+          else if (goals.isEmpty)
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: _EmptyGoals(onAdd: () => GoalEditorSheet.open(context)),
+            )
+          else
+            SliverPadding(
+              padding: EdgeInsets.fromLTRB(
+                AppSpacing.lg,
+                AppSpacing.xs,
+                AppSpacing.lg,
+                FrostedBottomNavigationBar.heightOf(context) + AppSpacing.sm,
+              ),
+              sliver: SliverList.list(
+                children: [
+                  _GoalsSummary(
+                    active: goals.where((goal) => !goal.isCompleted).length,
+                    completed: goals.where((goal) => goal.isCompleted).length,
+                    average: average,
+                  ),
+                  const SizedBox(height: AppSpacing.xl),
+                  Text(
+                    'YOUR GOALS',
+                    style: TextStyle(
+                      color: context.colors.textSecondary,
+                      fontSize: AppTypography.caption,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1.1,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  for (final goal in goals) ...[
+                    _GoalCard(goal: goal),
+                    const SizedBox(height: AppSpacing.md),
+                  ],
+                ],
+              ),
+            ),
         ],
       ),
-      body: !controller.isLoaded
-          ? Center(
-              child: CircularProgressIndicator(color: context.colors.accent),
-            )
-          : goals.isEmpty
-          ? _EmptyGoals(onAdd: () => GoalEditorSheet.open(context))
-          : ListView(
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 124),
-              children: [
-                _GoalsSummary(
-                  active: goals.where((goal) => !goal.isCompleted).length,
-                  completed: goals.where((goal) => goal.isCompleted).length,
-                  average: average,
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  'YOUR GOALS',
-                  style: TextStyle(
-                    color: context.colors.textSecondary,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 1.1,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                for (final goal in goals) ...[
-                  _GoalCard(goal: goal),
-                  const SizedBox(height: 10),
-                ],
-              ],
-            ),
     );
   }
 }

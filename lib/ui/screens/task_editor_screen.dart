@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
@@ -9,6 +8,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../core/app_colors.dart';
+import '../../core/app_tokens.dart';
 import '../../core/formats.dart';
 import '../../domain/models/date_only.dart';
 import '../../domain/models/priority.dart';
@@ -637,7 +637,7 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return DecoratedBox(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppRadii.mediumRadius,
         boxShadow: [
           BoxShadow(
             color: panelTint.withValues(alpha: 0.08),
@@ -647,28 +647,29 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
-          child: Container(
-            padding: padding,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color.lerp(
-                    colors.card,
-                    panelTint,
-                    0.12,
-                  )!.withValues(alpha: isDark ? 0.84 : 0.90),
-                  colors.elevated.withValues(alpha: isDark ? 0.70 : 0.82),
-                ],
-              ),
+      // Not glass: the editor's panels sit on the flat scaffold background,
+      // so the blur returned that same colour at the cost of a saveLayer.
+      child: ClipRSuperellipse(
+        borderRadius: AppRadii.mediumRadius,
+        child: Container(
+          padding: padding,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color.lerp(colors.card, panelTint, isDark ? 0.12 : 0.08)!,
+                colors.elevated,
+              ],
             ),
-            child: child,
           ),
+          foregroundDecoration: ShapeDecoration(
+            shape: RoundedSuperellipseBorder(
+              borderRadius: AppRadii.mediumRadius,
+              side: BorderSide(color: colors.borderStrong),
+            ),
+          ),
+          child: child,
         ),
       ),
     );
@@ -785,21 +786,19 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
   }
 
   Color? _backgroundColor(domain.TaskBackground background) =>
-      switch (background) {
-        domain.TaskBackground.automatic => null,
-        domain.TaskBackground.lime => context.colors.accent,
-        domain.TaskBackground.cyan => context.colors.low,
-        domain.TaskBackground.sand => context.colors.medium,
-        domain.TaskBackground.coral => context.colors.overdue,
-      };
+      background == domain.TaskBackground.automatic
+      ? null
+      : taskBackgroundColor(context.colors, background);
 
+  /// Labels name the decorative palette, not the old semantic colours. The
+  /// enum values stay as they are — they are persisted in task JSON.
   String _backgroundLabel(domain.TaskBackground background) =>
       switch (background) {
         domain.TaskBackground.automatic => 'Automatic',
-        domain.TaskBackground.lime => 'Lime',
-        domain.TaskBackground.cyan => 'Cyan',
+        domain.TaskBackground.lime => 'Sage',
+        domain.TaskBackground.cyan => 'Mist',
         domain.TaskBackground.sand => 'Sand',
-        domain.TaskBackground.coral => 'Coral',
+        domain.TaskBackground.coral => 'Rose',
       };
 
   Widget _dateTile() {

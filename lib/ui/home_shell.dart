@@ -11,6 +11,7 @@ import 'screens/habits_screen.dart';
 import 'screens/quick_add_sheet.dart';
 import 'screens/task_editor_screen.dart';
 import 'widgets/frosted_bottom_navigation_bar.dart';
+import 'widgets/mesh_backdrop.dart';
 
 class HomeShell extends StatefulWidget {
   const HomeShell({super.key});
@@ -71,14 +72,18 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      body: IndexedStack(
-        index: _index,
-        children: const [
-          FocusScreen(),
-          CalendarScreen(),
-          HabitsScreen(),
-          GoalsScreen(),
-        ],
+      // The backdrop paints the background for all four tabs, so each tab's
+      // own Scaffold is transparent (see their `backgroundColor`).
+      body: MeshBackdrop(
+        child: IndexedStack(
+          index: _index,
+          children: const [
+            FocusScreen(),
+            CalendarScreen(),
+            HabitsScreen(),
+            GoalsScreen(),
+          ],
+        ),
       ),
       bottomNavigationBar: FrostedBottomNavigationBar(
         selectedIndex: _index,

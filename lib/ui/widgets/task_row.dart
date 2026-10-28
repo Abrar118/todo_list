@@ -1,8 +1,7 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 import '../../core/app_colors.dart';
+import '../../core/app_tokens.dart';
 import '../../core/formats.dart';
 import '../../domain/logic/escalation.dart';
 import '../../domain/logic/focus_arranger.dart';
@@ -14,6 +13,11 @@ import 'common.dart';
 /// The shared task row used by Focus, Calendar and Completed. The
 /// [spotlight] variant gets a stronger card treatment with a very subtle
 /// accent glow.
+///
+/// Deliberately not a glass surface: rows sit directly on the scaffold
+/// background, so a blur would sample a flat colour and return it unchanged
+/// while costing a `saveLayer` per row on every frame. The tinted fill plus
+/// the hairline does the same visual job for free.
 class TaskRow extends StatelessWidget {
   final Task task;
   final RecurrenceRule? rule;
@@ -52,15 +56,16 @@ class TaskRow extends StatelessWidget {
     final customBackground =
         showTaskBackground && task.background != TaskBackground.automatic;
     final surfaceColor = customBackground
-        ? _backgroundColor(colors, task.background)
+        ? taskBackgroundColor(colors, task.background)
         : severityColor;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final radius = spotlight ? 18.0 : 14.0;
+    final radius = spotlight ? AppRadii.md : AppRadii.sm + 2;
+    final borderRadius = BorderRadius.circular(radius);
     final tintAmount = customBackground
-        ? (isDark ? 0.32 : 0.22)
+        ? (isDark ? 0.26 : 0.18)
         : task.priority == TaskPriority.none
-        ? 0.05
-        : 0.20;
+        ? 0.04
+        : 0.16;
 
     final chips = <Widget>[];
     if (task.dueDate != null) {
@@ -93,7 +98,7 @@ class TaskRow extends StatelessWidget {
     }
     if (task.tags.isNotEmpty) {
       for (final tag in task.tags.take(3)) {
-        chips.add(MetaChip(label: '#$tag'));
+        chips.add(MetaChip(label: '#$tag', color: colors.decorativeFor(tag)));
       }
       if (task.tags.length > 3) {
         chips.add(MetaChip(label: '+${task.tags.length - 3}'));
@@ -152,7 +157,7 @@ class TaskRow extends StatelessWidget {
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(radius),
+        borderRadius: borderRadius,
         boxShadow: [
           BoxShadow(
             color: surfaceColor.withValues(alpha: spotlight ? 0.16 : 0.10),
@@ -162,164 +167,182 @@ class TaskRow extends StatelessWidget {
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(radius),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
-          child: Material(
-            color: Colors.transparent,
-            child: Ink(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color.lerp(
-                      colors.card,
-                      surfaceColor,
-                      tintAmount,
-                    )!.withValues(alpha: isDark ? 0.82 : 0.88),
-                    Color.lerp(
-                      colors.elevated,
-                      surfaceColor,
-                      tintAmount * 0.55,
-                    )!.withValues(alpha: isDark ? 0.68 : 0.80),
-                  ],
-                ),
+      child: ClipRSuperellipse(
+        borderRadius: borderRadius,
+        child: Material(
+          color: Colors.transparent,
+          child: Ink(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color.lerp(colors.card, surfaceColor, tintAmount)!,
+                  Color.lerp(colors.elevated, surfaceColor, tintAmount * 0.55)!,
+                ],
               ),
-              child: Stack(
-                children: [
-                  if (customBackground)
-                    Positioned.fill(
-                      child: IgnorePointer(
-                        child: _BackgroundMotif(
-                          background: task.background,
-                          color: surfaceColor,
-                        ),
-                      ),
-                    ),
-                  InkWell(
-                    onTap: onTap,
-                    borderRadius: BorderRadius.circular(radius),
-                    highlightColor: colors.pressed,
-                    splashColor: surfaceColor.withValues(alpha: 0.12),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: compact ? 6 : (spotlight ? 14 : 10),
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          if (isProjection)
-                            Padding(
-                              padding: const EdgeInsets.only(right: 10),
-                              child: Icon(
-                                Icons.repeat,
-                                size: 20,
-                                color: colors.textMuted,
-                              ),
-                            )
-                          else
-                            Semantics(
-                              label: task.isCompleted
-                                  ? 'Mark ${task.title} as not completed'
-                                  : 'Complete ${task.title}',
-                              child: SizedBox(
-                                width: 40,
-                                height: 40,
-                                child: Checkbox(
-                                  value: task.isCompleted,
-                                  onChanged: onToggle == null
-                                      ? null
-                                      : (_) => onToggle!(),
-                                ),
-                              ),
-                            ),
-                          const SizedBox(width: 2),
-                          Expanded(
-                            child: Semantics(
-                              label: semanticsLabel,
-                              excludeSemantics: true,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    task.title,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontSize: spotlight ? 16 : 15,
-                                      fontWeight: spotlight
-                                          ? FontWeight.w600
-                                          : FontWeight.w500,
-                                      color: muted
-                                          ? colors.textMuted
-                                          : colors.textPrimary,
-                                      decoration: task.isCompleted
-                                          ? TextDecoration.lineThrough
-                                          : null,
-                                      decorationColor: colors.textMuted,
-                                    ),
-                                  ),
-                                  if (chips.isNotEmpty && !compact) ...[
-                                    const SizedBox(height: 5),
-                                    Wrap(
-                                      spacing: 10,
-                                      runSpacing: 4,
-                                      children: chips,
-                                    ),
-                                  ],
-                                  if (!compact && !task.isCompleted)
-                                    if (task.progress case final progress?
-                                        when progress > 0) ...[
-                                      const SizedBox(height: 7),
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(2),
-                                              child: LinearProgressIndicator(
-                                                value: progress,
-                                                minHeight: 4,
-                                                color: colors.done,
-                                                backgroundColor: colors.pressed,
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Text(
-                                            '${(progress * 100).round()}%',
-                                            style: TextStyle(
-                                              fontSize: 11,
-                                              color: colors.textMuted,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                ],
-                              ),
-                            ),
-                          ),
-                          if (onSnooze != null &&
-                              (task.hasAlarm || task.isSnoozed))
-                            IconButton(
-                              tooltip: 'Snooze reminder',
-                              onPressed: onSnooze,
-                              icon: Icon(
-                                Icons.snooze,
-                                size: 20,
-                                color: colors.textSecondary,
-                              ),
-                            ),
-                        ],
+            ),
+            child: Stack(
+              children: [
+                if (customBackground)
+                  Positioned.fill(
+                    child: IgnorePointer(
+                      child: _BackgroundMotif(
+                        background: task.background,
+                        color: surfaceColor,
                       ),
                     ),
                   ),
-                ],
-              ),
+                InkWell(
+                  onTap: onTap,
+                  borderRadius: borderRadius,
+                  highlightColor: colors.pressed,
+                  splashColor: surfaceColor.withValues(alpha: 0.12),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: AppSpacing.md,
+                      vertical: compact
+                          ? AppSpacing.xs
+                          : (spotlight ? AppSpacing.md : AppSpacing.sm),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        if (isProjection)
+                          const Padding(
+                            padding: EdgeInsets.only(right: AppSpacing.sm),
+                            child: SizedBox(
+                              width: 44,
+                              height: 44,
+                              child: Icon(Icons.repeat, size: 20),
+                            ),
+                          )
+                        else
+                          Semantics(
+                            label: task.isCompleted
+                                ? 'Mark ${task.title} as not completed'
+                                : 'Complete ${task.title}',
+                            child: SizedBox(
+                              // 44pt: the iOS minimum. The box is the tap
+                              // target; the checkbox itself draws smaller.
+                              width: 44,
+                              height: 44,
+                              child: Checkbox(
+                                value: task.isCompleted,
+                                onChanged: onToggle == null
+                                    ? null
+                                    : (_) => onToggle!(),
+                              ),
+                            ),
+                          ),
+                        const SizedBox(width: AppSpacing.xs),
+                        Expanded(
+                          child: Semantics(
+                            label: semanticsLabel,
+                            excludeSemantics: true,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  task.title,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: spotlight
+                                        ? AppTypography.callout
+                                        : AppTypography.body,
+                                    fontWeight: spotlight
+                                        ? FontWeight.w600
+                                        : FontWeight.w500,
+                                    letterSpacing: AppTypography.trackingFor(
+                                      spotlight
+                                          ? AppTypography.callout
+                                          : AppTypography.body,
+                                    ),
+                                    color: muted
+                                        ? colors.textMuted
+                                        : colors.textPrimary,
+                                    decoration: task.isCompleted
+                                        ? TextDecoration.lineThrough
+                                        : null,
+                                    decorationColor: colors.textMuted,
+                                  ),
+                                ),
+                                if (chips.isNotEmpty && !compact) ...[
+                                  const SizedBox(height: AppSpacing.xs),
+                                  Wrap(
+                                    spacing: AppSpacing.sm,
+                                    runSpacing: AppSpacing.xs,
+                                    children: chips,
+                                  ),
+                                ],
+                                if (!compact && !task.isCompleted)
+                                  if (task.progress case final progress?
+                                      when progress > 0) ...[
+                                    const SizedBox(height: AppSpacing.sm),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                              2,
+                                            ),
+                                            child: LinearProgressIndicator(
+                                              value: progress,
+                                              minHeight: 4,
+                                              color: colors.done,
+                                              backgroundColor: colors.pressed,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: AppSpacing.sm),
+                                        Text(
+                                          '${(progress * 100).round()}%',
+                                          style: TextStyle(
+                                            fontSize: AppTypography.caption,
+                                            color: colors.textMuted,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                              ],
+                            ),
+                          ),
+                        ),
+                        if (onSnooze != null &&
+                            (task.hasAlarm || task.isSnoozed))
+                          IconButton(
+                            tooltip: 'Snooze reminder',
+                            onPressed: onSnooze,
+                            icon: Icon(
+                              Icons.snooze,
+                              size: 20,
+                              color: colors.textSecondary,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+                // The lit edge. Without it a light-mode card sits at ~1:1
+                // against the page and is held up only by its shadow.
+                Positioned.fill(
+                  child: IgnorePointer(
+                    child: DecoratedBox(
+                      decoration: ShapeDecoration(
+                        shape: RoundedSuperellipseBorder(
+                          borderRadius: borderRadius,
+                          side: BorderSide(
+                            color: colors.borderStrong,
+                            width: AppGlass.hairlineWidth,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -327,15 +350,6 @@ class TaskRow extends StatelessWidget {
     );
   }
 }
-
-Color _backgroundColor(AppColors colors, TaskBackground background) =>
-    switch (background) {
-      TaskBackground.automatic => colors.accent,
-      TaskBackground.lime => colors.accent,
-      TaskBackground.cyan => colors.low,
-      TaskBackground.sand => colors.medium,
-      TaskBackground.coral => colors.overdue,
-    };
 
 class _BackgroundMotif extends StatelessWidget {
   final TaskBackground background;

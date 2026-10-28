@@ -1,7 +1,12 @@
+import 'dart:async';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/app_colors.dart';
+import '../../core/app_tokens.dart';
 import '../../core/formats.dart';
 import '../../domain/models/date_only.dart';
 import '../../domain/models/task.dart';
@@ -27,29 +32,28 @@ Future<void> completeTaskFlow(
   var completeSubtasks = false;
   final incomplete = task.subtasks.where((s) => !s.isCompleted).length;
   if (incomplete > 0) {
-    final choice = await showDialog<String>(
+    final choice = await showCupertinoDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
+      barrierDismissible: true,
+      builder: (context) => CupertinoAlertDialog(
         title: const Text('Incomplete subtasks'),
-        content: const Text(
-          'This task still has incomplete subtasks. Complete everything?',
+        content: const Padding(
+          padding: EdgeInsets.only(top: AppSpacing.sm),
+          child: Text(
+            'This task still has incomplete subtasks. Complete everything?',
+          ),
         ),
         actions: [
-          TextButton(
+          CupertinoDialogAction(
             onPressed: () => Navigator.pop(context),
-            child: Text(
-              'Cancel',
-              style: TextStyle(color: context.colors.textSecondary),
-            ),
+            child: const Text('Cancel'),
           ),
-          TextButton(
+          CupertinoDialogAction(
             onPressed: () => Navigator.pop(context, 'parent'),
-            child: Text(
-              'Only this task',
-              style: TextStyle(color: context.colors.textPrimary),
-            ),
+            child: const Text('Only this task'),
           ),
-          TextButton(
+          CupertinoDialogAction(
+            isDefaultAction: true,
             onPressed: () => Navigator.pop(context, 'all'),
             child: const Text('Complete everything'),
           ),
@@ -61,6 +65,9 @@ Future<void> completeTaskFlow(
   }
 
   await state.completeTask(task, completeSubtasks: completeSubtasks);
+  // Completion is the app's core moment and was silent. Here rather than at
+  // each call site so every path — row, editor, calendar — feels the same.
+  unawaited(HapticFeedback.lightImpact());
   if (context.mounted) {
     showAppSnackBar(
       context,
