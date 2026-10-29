@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../core/app_colors.dart';
+import '../../domain/models/swatch.dart';
+import 'common.dart';
 
 /// A quiet, fixed colour field behind the whole app.
 ///
@@ -10,8 +12,9 @@ import '../../core/app_colors.dart';
 /// tuned. Three very low-saturation fields fix that at the cost of one paint.
 ///
 /// Deliberately static and very subtle: this is a backdrop, not decoration.
-/// It draws from [AppColors.decorative] so it follows the theme, and it never
-/// animates — motion here would pull attention away from the task list.
+/// It draws from the theme (cool teal and sky against the slate, one warm
+/// accent field low down by the add button) and it never animates — motion
+/// here would pull attention away from the task list.
 class MeshBackdrop extends StatelessWidget {
   final Widget child;
 
@@ -35,9 +38,17 @@ class MeshBackdrop extends StatelessWidget {
                 painter: _MeshPainter(
                   background: colors.background,
                   fields: [
-                    (colors.decorative[1], const Alignment(-0.8, -0.9), 1.1),
-                    (colors.decorative[0], const Alignment(1.0, -0.2), 0.9),
-                    (colors.decorative[2], const Alignment(-0.4, 0.95), 1.0),
+                    (
+                      swatchColor(colors, Swatch.teal),
+                      const Alignment(-0.8, -0.9),
+                      1.1,
+                    ),
+                    (
+                      swatchColor(colors, Swatch.sky),
+                      const Alignment(1.0, -0.2),
+                      0.9,
+                    ),
+                    (colors.accent, const Alignment(-0.4, 0.95), 1.0),
                   ],
                   strength: strength,
                 ),
