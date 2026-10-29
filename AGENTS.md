@@ -167,15 +167,24 @@ follow the system, as an adaptive native app should).
 `AppSettings.reduceMotion` is honored app-wide in `main.dart` by reporting
 `disableAnimations` through `MediaQuery`.
 
-**The visual world is the ticket rail; colour means heat.** See `DESIGN.md`
-and `PRODUCT.md`. The ground is steel, surfaces are white ticket paper, and
-`accent` is print-black ink, so chrome and actions carry no hue. Colour has one
-job on Focus: heat, from `TicketAge.heat` (`lib/domain/logic/ticket_age.dart`,
-pure and tested) — ink when cold, `medium` (heat lamp) when warming,
-`overdue` (thermal red) when critical. Don't reintroduce glass, gradients,
-background washes, watermark motifs, uppercase tracked labels or hero
-numbers; `impeccable` flags all of them. Font sizes come from `AppTypography`,
-never literals.
+**The visual world is the meadow: bright, colourful, chunky.** See
+`DESIGN.md` and `PRODUCT.md`. The user rejected a quiet grey direction as
+generic, so don't pull the look back toward restraint. Each root tab opens
+under `rootAppBar` + `MeadowHeader` (`lib/ui/widgets/meadow.dart`), painted in
+`meadowTop`; cards, stat tiles, buttons and the floating tab bar are chunky
+blocks with a solid bottom lip (`ChunkyBorder` in `lib/core/chunky_border.dart`
+— the filled/outlined button themes and `chunkyCard` apply it, so don't
+hand-roll shadows for it). The font is bundled Nunito (`AppTheme.fontFamily`);
+sizes come from `AppTypography`, never literals. Colour families stay apart:
+`accentFill` (leaf green) is a fill only and always carries the dark
+`onAccentFill` — white on it fails contrast; `streak` and the `tint*` colours
+are fills, never text; lateness is still heat from `TicketAge.heat`
+(`lib/domain/logic/ticket_age.dart`, pure and tested) — `medium` when warming,
+`overdue` when critical, and `heroWarm`/`heroHot` on the dark-forest `hero`
+card; priority speaks in ink, never red. 3D illustrations (`Art` /
+`Illustration`, Fluent Emoji, MIT, `assets/illustrations/README.md`) decorate
+stat tiles, the hero card and empty states; they never replace an icon, which
+stays Material/Cupertino.
 
 **Chrome adapts per OS** (`PRODUCT.md` records the platform as `adaptive`).
 `isCupertino(context)` in `common.dart` picks the form: on iOS a large-title

@@ -8,6 +8,7 @@ import '../../domain/models/date_only.dart';
 import '../../state/app_state.dart';
 import '../../state/settings_controller.dart';
 import '../widgets/common.dart';
+import '../widgets/meadow.dart';
 import '../widgets/task_row.dart';
 import '../widgets/task_flows.dart';
 import '../widgets/ticket.dart';
@@ -55,6 +56,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     final state = context.watch<AppState>();
     final settings = context.watch<SettingsController>().settings;
     final markers = state.monthMarkers(_year, _month);
+    final colors = context.colors;
     final agenda = state.agendaFor(_selected);
     final today = DateOnly.today();
     final showingToday = _year == today.year && _month == today.month;
@@ -73,14 +75,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
       final first = entries.isEmpty;
       entries.add(() => SectionHeader(title, tight: first));
       final list = items.toList();
-      for (final (i, item) in list.indexed) {
-        entries.add(
-          () => RailTile(
-            first: i == 0,
-            last: i == list.length - 1,
-            child: _agendaRow(state, item),
-          ),
-        );
+      for (final item in list) {
+        entries.add(() => TaskCard(child: _agendaRow(state, item)));
       }
     }
 
@@ -120,21 +116,31 @@ class _CalendarScreenState extends State<CalendarScreen> {
               ),
             ],
           ),
+          // The month sits on the grass as one chunky white block.
           SliverToBoxAdapter(
-            child: _MonthGrid(
-              year: _year,
-              month: _month,
-              selected: _selected,
-              startOfWeek: settings.startOfWeek,
-              markers: markers,
-              onSelect: (d) => setState(() => _selected = d),
+            child: MeadowHeader(
+              child: Material(
+                color: colors.card,
+                shape: chunkyCard(colors, radius: AppRadii.lg, depth: 4),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(0, AppSpacing.md, 0, 16),
+                  child: _MonthGrid(
+                    year: _year,
+                    month: _month,
+                    selected: _selected,
+                    startOfWeek: settings.startOfWeek,
+                    markers: markers,
+                    onSelect: (d) => setState(() => _selected = d),
+                  ),
+                ),
+              ),
             ),
           ),
-          const SliverToBoxAdapter(child: Divider()),
           if (entries.isEmpty)
             SliverFillRemaining(
               hasScrollBody: false,
               child: EmptyState(
+                art: Art.calendar,
                 title: 'Nothing due ${_dayPhrase(_selected)}',
                 message:
                     'Tasks due on a day show here, along with the next '
@@ -235,7 +241,7 @@ class _MonthGrid extends StatelessWidget {
                       dayLetters[(startOfWeek - 1 + i) % 7],
                       style: TextStyle(
                         fontSize: AppTypography.caption,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w800,
                         color: context.colors.textSecondary,
                       ),
                     ),
@@ -285,12 +291,13 @@ class _MonthGrid extends StatelessWidget {
           duration: AppMotion.quick,
           height: 46,
           decoration: BoxDecoration(
-            // The selected day is punched in ink; today is ringed.
-            color: isSelected ? colors.textPrimary : Colors.transparent,
+            // The selected day is a leaf-green block; today is ringed.
+            color: isSelected ? colors.accentFill : Colors.transparent,
             borderRadius: AppRadii.smallRadius,
             border: Border.all(
+              width: 2,
               color: isToday && !isSelected
-                  ? colors.textPrimary
+                  ? colors.accentFill
                   : Colors.transparent,
             ),
           ),
@@ -302,10 +309,10 @@ class _MonthGrid extends StatelessWidget {
                 style: TextStyle(
                   fontSize: AppTypography.body,
                   fontWeight: isToday || isSelected
-                      ? FontWeight.w700
-                      : FontWeight.w400,
+                      ? FontWeight.w900
+                      : FontWeight.w600,
                   color: isSelected
-                      ? colors.background
+                      ? colors.onAccentFill
                       : isToday
                       ? colors.textPrimary
                       : colors.textSecondary,
@@ -325,7 +332,7 @@ class _MonthGrid extends StatelessWidget {
                           else if (!m.allCompleted)
                             _dot(
                               isSelected
-                                  ? colors.background
+                                  ? colors.onAccentFill
                                   : colors.textPrimary,
                             ),
                           if (m.hasRecurring) _dot(colors.textMuted),

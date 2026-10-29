@@ -1,0 +1,255 @@
+import 'package:flutter/material.dart';
+
+import '../../core/app_colors.dart';
+import '../../core/app_tokens.dart';
+import '../../core/chunky_border.dart';
+
+/// The bundled 3D illustrations (`assets/illustrations/`, Fluent Emoji, MIT).
+/// They decorate stat tiles, the hero card and empty states; they are never a
+/// stand-in for an icon, which stays a Material or Cupertino glyph.
+enum Art {
+  fire('fire'),
+  seedling('seedling'),
+  trophy('trophy'),
+  alarmClock('alarm_clock'),
+  bullseye('bullseye'),
+  checkMark('check_mark_button'),
+  calendar('spiral_calendar'),
+  partyPopper('party_popper'),
+  hourglass('hourglass_not_done'),
+  sparkles('sparkles');
+
+  final String file;
+  const Art(this.file);
+
+  String get asset => 'assets/illustrations/$file.png';
+}
+
+/// One illustration at [size]. Decorative: the words beside it carry the
+/// meaning, so it is hidden from screen readers.
+class Illustration extends StatelessWidget {
+  final Art art;
+  final double size;
+
+  const Illustration(this.art, {super.key, this.size = 40});
+
+  @override
+  Widget build(BuildContext context) => Image.asset(
+    art.asset,
+    width: size,
+    height: size,
+    filterQuality: FilterQuality.medium,
+    excludeFromSemantics: true,
+    // Widget tests have no asset bundle for images; draw nothing rather
+    // than an error box.
+    errorBuilder: (_, _, _) => SizedBox.square(dimension: size),
+  );
+}
+
+/// The grass band every root tab opens under: [AppColors.meadowTop] rolling
+/// down over a far hill into the page. The root app bar is painted the same
+/// green, so the band reads as one field from the status bar down. [child]
+/// sits on the grass, above the hills.
+class MeadowHeader extends StatelessWidget {
+  final Widget? child;
+
+  const MeadowHeader({super.key, this.child});
+
+  /// How much of the band's bottom the hills take.
+  static const hillHeight = 40.0;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    return CustomPaint(
+      painter: _MeadowPainter(
+        grass: colors.meadowTop,
+        hill: colors.meadowHill,
+        ground: colors.background,
+        flower: colors.card,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.lg,
+          AppSpacing.xs,
+          AppSpacing.lg,
+          hillHeight,
+        ),
+        child: child ?? const SizedBox(width: double.infinity),
+      ),
+    );
+  }
+}
+
+class _MeadowPainter extends CustomPainter {
+  final Color grass;
+  final Color hill;
+  final Color ground;
+  final Color flower;
+
+  const _MeadowPainter({
+    required this.grass,
+    required this.hill,
+    required this.ground,
+    required this.flower,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    canvas.drawRect(Offset.zero & size, Paint()..color = grass);
+
+    // The far hill: one long swell, a little higher on the right.
+    final farTop = h - MeadowHeader.hillHeight + 6;
+    final far = Path()
+      ..moveTo(0, farTop + 14)
+      ..cubicTo(w * 0.28, farTop - 8, w * 0.5, farTop + 22, w * 0.72, farTop)
+      ..cubicTo(w * 0.84, farTop - 10, w * 0.94, farTop - 4, w, farTop + 4)
+      ..lineTo(w, h)
+      ..lineTo(0, h)
+      ..close();
+    canvas.drawPath(far, Paint()..color = hill);
+
+    // A scatter of daisies on the far hill, fixed so they never jump
+    // between frames.
+    final petals = Paint()..color = flower.withValues(alpha: 0.85);
+    for (final (fx, fy) in const [
+      (0.12, 0.62),
+      (0.2, 0.5),
+      (0.63, 0.55),
+      (0.79, 0.4),
+      (0.88, 0.52),
+    ]) {
+      canvas.drawCircle(
+        Offset(w * fx, farTop + MeadowHeader.hillHeight * fy * 0.5),
+        1.8,
+        petals,
+      );
+    }
+
+    // The near slope: the page itself, rolling up into the field.
+    final nearTop = h - 16;
+    final near = Path()..moveTo(0, nearTop);
+    const waves = 2;
+    for (var i = 0; i < waves; i++) {
+      final x0 = w * i / waves;
+      final x1 = w * (i + 1) / waves;
+      near.cubicTo(
+        x0 + (x1 - x0) * 0.35,
+        nearTop - 12,
+        x0 + (x1 - x0) * 0.65,
+        nearTop + 8,
+        x1,
+        nearTop,
+      );
+    }
+    near
+      ..lineTo(w, h + 1)
+      ..lineTo(0, h + 1)
+      ..close();
+    canvas.drawPath(near, Paint()..color = ground);
+  }
+
+  @override
+  bool shouldRepaint(_MeadowPainter old) =>
+      old.grass != grass ||
+      old.hill != hill ||
+      old.ground != ground ||
+      old.flower != flower;
+}
+
+/// A chunky block: a rounded surface with a solid lip, the meadow's card.
+/// [color] defaults to the card white; the lip is a darker step of it.
+ShapeBorder chunkyCard(
+  AppColors colors, {
+  Color? color,
+  double radius = AppRadii.md,
+  double depth = 3,
+}) {
+  final face = color ?? colors.card;
+  return ChunkyBorder(
+    radius: radius,
+    depth: depth,
+    edge: Color.alphaBlend(colors.borderStrong, face),
+    side: BorderSide(color: colors.border, width: 1.5),
+  );
+}
+
+/// One stat on a tinted chunky tile: an illustration, a figure and what the
+/// figure counts. Read as one phrase by screen readers ("4 day streak").
+class StatTile extends StatelessWidget {
+  final Art art;
+  final String value;
+  final String label;
+  final Color tint;
+  final VoidCallback? onTap;
+
+  const StatTile({
+    super.key,
+    required this.art,
+    required this.value,
+    required this.label,
+    required this.tint,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    return Semantics(
+      container: true,
+      button: onTap != null,
+      label: '$value $label',
+      excludeSemantics: true,
+      child: Material(
+        color: tint,
+        shape: chunkyCard(colors, color: tint, depth: 4),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.md,
+              AppSpacing.md,
+              AppSpacing.sm,
+              AppSpacing.md + 4,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Illustration(art, size: 34),
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  value,
+                  maxLines: 1,
+                  style: TextStyle(
+                    fontSize: AppTypography.title1,
+                    height: 1,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: AppTypography.trackingFor(
+                      AppTypography.title1,
+                    ),
+                    color: colors.textPrimary,
+                    fontFeatures: const [FontFeature.tabularFigures()],
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: AppTypography.footnote,
+                    fontWeight: FontWeight.w800,
+                    color: colors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

@@ -12,10 +12,9 @@ import '../../domain/models/task.dart';
 import 'common.dart';
 import 'ticket.dart';
 
-/// The shared task row used by Focus, Calendar, Search and Completed: one
-/// ticket on the rail. It draws no surface of its own — the rail's
-/// [RailTile] supplies the paper — so a list of tasks reads as one strip
-/// rather than a stack of cards.
+/// The shared task row used by Focus, Calendar, Search and Completed. It
+/// draws no surface of its own: on Focus and Calendar a [TaskCard] supplies
+/// the chunky white block around it.
 ///
 /// With [stamp], the row prints its ticket stamp at the right edge: when it
 /// is due or how late it is, coloured by heat, with a punch mark per time it
@@ -222,8 +221,8 @@ class TaskRow extends StatelessWidget {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              fontSize: AppTypography.body,
-                              fontWeight: FontWeight.w500,
+                              fontSize: AppTypography.callout,
+                              fontWeight: FontWeight.w800,
                               color: muted
                                   ? colors.textMuted
                                   : colors.textPrimary,
@@ -287,11 +286,11 @@ class _Progress extends StatelessWidget {
       children: [
         Expanded(
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(2),
+            borderRadius: AppRadii.pillRadius,
             child: LinearProgressIndicator(
               value: progress,
-              minHeight: 4,
-              color: colors.textPrimary,
+              minHeight: 6,
+              color: colors.accentFill,
               backgroundColor: colors.pressed,
             ),
           ),

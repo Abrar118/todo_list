@@ -8,6 +8,7 @@ import '../../domain/models/goal.dart';
 import '../../domain/models/swatch.dart';
 import '../../state/goal_controller.dart';
 import '../widgets/common.dart';
+import '../widgets/meadow.dart';
 
 class GoalsScreen extends StatelessWidget {
   const GoalsScreen({super.key});
@@ -34,6 +35,16 @@ class GoalsScreen extends StatelessWidget {
             onAdd: addGoal,
             addTooltip: 'Add goal',
           ),
+          SliverToBoxAdapter(
+            child: MeadowHeader(
+              child: goals.isEmpty
+                  ? null
+                  : _GoalsSummary(
+                      active: goals.where((goal) => !goal.isCompleted).length,
+                      completed: goals.where((goal) => goal.isCompleted).length,
+                    ),
+            ),
+          ),
           if (!controller.isLoaded)
             const SliverFillRemaining(
               hasScrollBody: false,
@@ -54,17 +65,12 @@ class GoalsScreen extends StatelessWidget {
               ),
               sliver: SliverList.list(
                 children: [
-                  _GoalsSummary(
-                    active: goals.where((goal) => !goal.isCompleted).length,
-                    completed: goals.where((goal) => goal.isCompleted).length,
-                  ),
-                  const SizedBox(height: AppSpacing.xl),
                   Text(
                     'Your goals',
                     style: TextStyle(
                       color: context.colors.textPrimary,
-                      fontSize: AppTypography.body,
-                      fontWeight: FontWeight.w600,
+                      fontSize: AppTypography.callout,
+                      fontWeight: FontWeight.w900,
                     ),
                   ),
                   const SizedBox(height: AppSpacing.md),
@@ -81,9 +87,7 @@ class GoalsScreen extends StatelessWidget {
   }
 }
 
-/// A one-line count, not a hero number or an average bar: each goal card
-/// already carries its own progress, and a large 0% on day one only
-/// celebrates nothing.
+/// Two tiles on the grass: goals still in progress, and goals reached.
 class _GoalsSummary extends StatelessWidget {
   final int active;
   final int completed;
@@ -93,16 +97,23 @@ class _GoalsSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
       children: [
-        Text(
-          '$active in progress, $completed done',
-          style: TextStyle(
-            fontSize: AppTypography.body,
-            fontWeight: FontWeight.w600,
-            color: colors.textPrimary,
-            fontFeatures: const [FontFeature.tabularFigures()],
+        Expanded(
+          child: StatTile(
+            art: Art.bullseye,
+            value: '$active',
+            label: 'in progress',
+            tint: colors.tintSky,
+          ),
+        ),
+        const SizedBox(width: AppSpacing.sm),
+        Expanded(
+          child: StatTile(
+            art: Art.trophy,
+            value: '$completed',
+            label: 'reached',
+            tint: colors.tintSun,
           ),
         ),
       ],
@@ -129,12 +140,17 @@ class _GoalCard extends StatelessWidget {
       label: '${goal.title}, $percent percent complete',
       child: Material(
         color: colors.card,
-        shape: AppRadii.mediumShape,
+        shape: chunkyCard(colors),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: () => GoalDetailScreen.open(context, goal.id),
           child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.lg),
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.lg,
+              AppSpacing.lg,
+              AppSpacing.lg,
+              AppSpacing.lg + 3,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -163,7 +179,7 @@ class _GoalCard extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                               fontSize: AppTypography.callout,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w800,
                             ),
                           ),
                           const SizedBox(height: 2),
@@ -187,8 +203,8 @@ class _GoalCard extends StatelessWidget {
                       '$percent%',
                       style: TextStyle(
                         color: colors.textPrimary,
-                        fontSize: AppTypography.callout,
-                        fontWeight: FontWeight.w600,
+                        fontSize: AppTypography.title3,
+                        fontWeight: FontWeight.w900,
                         fontFeatures: const [FontFeature.tabularFigures()],
                       ),
                     ),
@@ -196,11 +212,11 @@ class _GoalCard extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.md),
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(2),
+                  borderRadius: AppRadii.pillRadius,
                   child: LinearProgressIndicator(
                     value: goal.progress,
-                    minHeight: 4,
-                    color: colors.textPrimary,
+                    minHeight: 12,
+                    color: colors.accentFill,
                     backgroundColor: colors.pressed,
                   ),
                 ),
@@ -230,6 +246,7 @@ class _EmptyGoals extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => EmptyState(
+    art: Art.trophy,
     title: 'No goals yet',
     message:
         'A goal has a target date and a few checkpoints on the way. Tick '

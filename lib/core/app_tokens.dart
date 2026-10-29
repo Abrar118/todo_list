@@ -11,20 +11,19 @@ abstract final class AppSpacing {
   static const xxl = 32.0;
 }
 
-/// Three corner sizes, plus a pill. iOS corners are continuous (squircles),
-/// so prefer the `*Shape` getters over [BorderRadius] wherever a widget takes
-/// a [ShapeBorder] — a circular-arc corner next to a system sheet is one of
-/// the clearest tells that an app is not native.
+/// Three corner sizes, plus a pill. Generous on purpose: the meadow's cards
+/// and buttons are chunky and soft, like toy blocks. iOS corners are
+/// continuous (squircles), so prefer the `*Shape` getters over
+/// [BorderRadius] wherever a widget takes a [ShapeBorder].
 abstract final class AppRadii {
   /// Chips, meta pills, calendar cells, inline fields.
-  static const sm = 4.0;
+  static const sm = 10.0;
 
-  /// Ticket runs, the pass, sheets, dialogs, panels. Small and
-  /// square-shouldered: a ticket is cut paper, not a pill.
-  static const md = 6.0;
+  /// Buttons, task cards, stat tiles, panels.
+  static const md = 16.0;
 
-  /// Sheet tops and other large surfaces.
-  static const lg = 12.0;
+  /// The hero card, the calendar month, the floating tab bar, sheet tops.
+  static const lg = 24.0;
 
   static const pill = 999.0;
 

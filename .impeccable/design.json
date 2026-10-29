@@ -1,1300 +1,180 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-29T09:59:54+00:00",
+  "generatedAt": "2026-10-29T12:00:00Z",
   "title": "Design System: Nudge",
   "extensions": {
     "colorMeta": {
-      "ticket-ink": {
-        "role": "primary",
-        "displayName": "Print-Black Ink",
-        "canonical": "#111417",
-        "tonalRamp": [
-          "#0A0B0D",
-          "#202224",
-          "#3B3D40",
-          "#585B5F",
-          "#777B7F",
-          "#9B9FA2",
-          "#C2C4C7",
-          "#ECEFF1"
-        ],
-        "oklch": "oklch(18.9% 0.008 248.2)"
-      },
-      "ink-secondary": {
-        "role": "neutral",
-        "displayName": "Secondary Ink",
-        "canonical": "#454E57",
-        "tonalRamp": [
-          "#080C0F",
-          "#1D2227",
-          "#373E44",
-          "#545C64",
-          "#727C85",
-          "#979FA8",
-          "#BEC5CC",
-          "#EAEFF5"
-        ],
-        "oklch": "oklch(41.9% 0.019 248.3)"
-      },
-      "ink-muted": {
-        "role": "neutral",
-        "displayName": "Muted Ink",
-        "canonical": "#4F5862",
-        "tonalRamp": [
-          "#080B0F",
-          "#1D2227",
-          "#373E45",
-          "#545C65",
-          "#727B86",
-          "#979FA8",
-          "#BEC5CC",
-          "#EAEFF5"
-        ],
-        "oklch": "oklch(45.6% 0.020 251.0)"
-      },
-      "ink-dim": {
-        "role": "primary",
-        "displayName": "Ink Dim (non-text)",
-        "canonical": "#6A747D",
-        "tonalRamp": [
-          "#080C0F",
-          "#1D2227",
-          "#373E44",
-          "#535C64",
-          "#727C84",
-          "#97A0A7",
-          "#BEC5CC",
-          "#EAEFF4"
-        ],
-        "oklch": "oklch(55.4% 0.018 245.3)"
-      },
-      "steel-ground": {
-        "role": "neutral",
-        "displayName": "Brushed Steel Ground",
-        "canonical": "#DDE2E6",
-        "tonalRamp": [
-          "#0A0B0D",
-          "#202224",
-          "#3A3E40",
-          "#585B5E",
-          "#777B7E",
-          "#9B9FA2",
-          "#C1C4C7",
-          "#ECEFF1"
-        ],
-        "oklch": "oklch(91.0% 0.008 241.7)"
-      },
-      "steel-raised": {
-        "role": "neutral",
-        "displayName": "Raised Steel",
-        "canonical": "#F3F5F6",
-        "tonalRamp": [
-          "#0B0B0C",
-          "#212222",
-          "#3C3D3E",
-          "#595B5C",
-          "#797A7B",
-          "#9D9F9F",
-          "#C3C4C5",
-          "#EEEEEF"
-        ],
-        "oklch": "oklch(96.9% 0.003 228.8)"
-      },
-      "ticket-paper": {
-        "role": "neutral",
-        "displayName": "Ticket Paper",
-        "canonical": "#FFFFFF",
-        "tonalRamp": [
-          "#0B0B0B",
-          "#222222",
-          "#3D3D3D",
-          "#5B5B5B",
-          "#7A7A7A",
-          "#9E9E9E",
-          "#C4C4C4",
-          "#EEEEEE"
-        ],
-        "oklch": "oklch(100.0% 0.000 89.9)"
-      },
-      "ticket-pressed": {
-        "role": "neutral",
-        "displayName": "Pressed Paper",
-        "canonical": "#E8ECEE",
-        "tonalRamp": [
-          "#0A0B0C",
-          "#202223",
-          "#3B3D3F",
-          "#585B5D",
-          "#777B7D",
-          "#9C9FA0",
-          "#C2C4C6",
-          "#EDEFF0"
-        ],
-        "oklch": "oklch(94.1% 0.005 228.8)"
-      },
-      "steel-hairline": {
-        "role": "neutral",
-        "displayName": "Steel Hairline",
-        "canonical": "#0E1A261F",
-        "note": "Translucent hairline (#RRGGBBAA); Flutter stores it as 0xAARRGGBB."
-      },
-      "steel-hairline-strong": {
-        "role": "neutral",
-        "displayName": "Strong Steel Hairline",
-        "canonical": "#0E1A2633",
-        "note": "Translucent hairline (#RRGGBBAA); Flutter stores it as 0xAARRGGBB."
-      },
-      "heat-lamp": {
-        "role": "secondary",
-        "displayName": "Heat Lamp Amber",
-        "canonical": "#7F4C00",
-        "tonalRamp": [
-          "#180600",
-          "#351A00",
-          "#583402",
-          "#7D4F17",
-          "#A16E34",
-          "#C29465",
-          "#E2BC96",
-          "#FFE9CB"
-        ],
-        "oklch": "oklch(46.5% 0.103 66.9)"
-      },
-      "thermal-red": {
-        "role": "secondary",
-        "displayName": "Thermal-Printer Red",
-        "canonical": "#AE2A21",
-        "tonalRamp": [
-          "#250000",
-          "#480000",
-          "#72140E",
-          "#9F2C23",
-          "#C94A3E",
-          "#E77A6C",
-          "#FFA89B",
-          "#FFDACF"
-        ],
-        "oklch": "oklch(49.6% 0.170 28.8)"
-      },
-      "done-green": {
-        "role": "tertiary",
-        "displayName": "Done Green",
-        "canonical": "#1C6B41",
-        "tonalRamp": [
-          "#001103",
-          "#002A14",
-          "#11492B",
-          "#276A44",
-          "#458B61",
-          "#74AE88",
-          "#A2D2B2",
-          "#D5F9E0"
-        ],
-        "oklch": "oklch(46.9% 0.102 155.4)"
-      },
-      "info-blue": {
-        "role": "tertiary",
-        "displayName": "Info Blue",
-        "canonical": "#2B5574",
-        "tonalRamp": [
-          "#000C18",
-          "#0D2435",
-          "#234057",
-          "#3A5F7B",
-          "#567F9F",
-          "#80A3BF",
-          "#ABC8E0",
-          "#DCF2FF"
-        ],
-        "oklch": "oklch(43.4% 0.070 242.6)"
-      },
-      "paper-ink-dark": {
-        "role": "primary",
-        "displayName": "Paper Ink (dark)",
-        "canonical": "#F1F3F5",
-        "tonalRamp": [
-          "#0B0B0C",
-          "#212223",
-          "#3C3D3E",
-          "#595B5C",
-          "#797A7C",
-          "#9D9EA0",
-          "#C3C4C5",
-          "#EDEEEF"
-        ],
-        "oklch": "oklch(96.3% 0.003 247.9)"
-      },
-      "ink-secondary-dark": {
-        "role": "neutral",
-        "displayName": "Secondary Ink (dark)",
-        "canonical": "#BCC3C9",
-        "tonalRamp": [
-          "#090B0D",
-          "#1F2225",
-          "#393E41",
-          "#565C60",
-          "#757B80",
-          "#9A9FA4",
-          "#C0C5C9",
-          "#EBEFF2"
-        ],
-        "oklch": "oklch(81.4% 0.011 243.7)"
-      },
-      "ink-muted-dark": {
-        "role": "neutral",
-        "displayName": "Muted Ink (dark)",
-        "canonical": "#AEB6BD",
-        "tonalRamp": [
-          "#090B0E",
-          "#1E2225",
-          "#393E42",
-          "#555C61",
-          "#747B82",
-          "#999FA5",
-          "#BFC5C9",
-          "#EBEFF3"
-        ],
-        "oklch": "oklch(77.2% 0.013 244.3)"
-      },
-      "ink-dim-dark": {
-        "role": "primary",
-        "displayName": "Ink Dim (non-text) (dark)",
-        "canonical": "#8A949D",
-        "tonalRamp": [
-          "#080C0F",
-          "#1D2227",
-          "#373E44",
-          "#545C63",
-          "#727C84",
-          "#97A0A7",
-          "#BEC5CB",
-          "#EAEFF4"
-        ],
-        "oklch": "oklch(66.1% 0.018 245.2)"
-      },
-      "steel-ground-dark": {
-        "role": "neutral",
-        "displayName": "Brushed Steel Ground (dark)",
-        "canonical": "#1D2124",
-        "tonalRamp": [
-          "#0A0B0D",
-          "#1F2224",
-          "#3A3E40",
-          "#575B5F",
-          "#767B7F",
-          "#9B9FA2",
-          "#C1C5C7",
-          "#ECEFF1"
-        ],
-        "oklch": "oklch(24.5% 0.008 240.2)"
-      },
-      "steel-raised-dark": {
-        "role": "neutral",
-        "displayName": "Raised Steel (dark)",
-        "canonical": "#24292D",
-        "tonalRamp": [
-          "#090B0D",
-          "#1F2224",
-          "#3A3E41",
-          "#565C60",
-          "#757B80",
-          "#9A9FA3",
-          "#C0C5C8",
-          "#ECEFF2"
-        ],
-        "oklch": "oklch(27.8% 0.010 242.1)"
-      },
-      "ticket-paper-dark": {
-        "role": "neutral",
-        "displayName": "Ticket Paper (dark)",
-        "canonical": "#2E3439",
-        "tonalRamp": [
-          "#090B0E",
-          "#1F2225",
-          "#393E42",
-          "#565C61",
-          "#757B81",
-          "#999FA4",
-          "#C0C5C9",
-          "#EBEFF2"
-        ],
-        "oklch": "oklch(32.1% 0.012 243.2)"
-      },
-      "ticket-pressed-dark": {
-        "role": "neutral",
-        "displayName": "Pressed Paper (dark)",
-        "canonical": "#33393F",
-        "tonalRamp": [
-          "#090B0E",
-          "#1F2225",
-          "#393E42",
-          "#565C61",
-          "#757B82",
-          "#999FA5",
-          "#C0C5CA",
-          "#EBEFF3"
-        ],
-        "oklch": "oklch(34.1% 0.013 248.2)"
-      },
-      "steel-hairline-dark": {
-        "role": "neutral",
-        "displayName": "Steel Hairline (dark)",
-        "canonical": "#FFFFFF17",
-        "note": "Translucent hairline (#RRGGBBAA); Flutter stores it as 0xAARRGGBB."
-      },
-      "steel-hairline-strong-dark": {
-        "role": "neutral",
-        "displayName": "Strong Steel Hairline (dark)",
-        "canonical": "#FFFFFF29",
-        "note": "Translucent hairline (#RRGGBBAA); Flutter stores it as 0xAARRGGBB."
-      },
-      "heat-lamp-dark": {
-        "role": "secondary",
-        "displayName": "Heat Lamp Amber (dark)",
-        "canonical": "#F2AE45",
-        "tonalRamp": [
-          "#1B0400",
-          "#391800",
-          "#5D3100",
-          "#834D00",
-          "#A96B00",
-          "#C89344",
-          "#E8BC7F",
-          "#FFE9BB"
-        ],
-        "oklch": "oklch(79.7% 0.142 74.6)"
-      },
-      "thermal-red-dark": {
-        "role": "secondary",
-        "displayName": "Thermal-Printer Red (dark)",
-        "canonical": "#FF7F73",
-        "tonalRamp": [
-          "#230000",
-          "#460204",
-          "#6F1916",
-          "#9B312B",
-          "#C44F46",
-          "#E37D72",
-          "#FFAAA0",
-          "#FFDBD3"
-        ],
-        "oklch": "oklch(74.0% 0.158 27.0)"
-      },
-      "done-green-dark": {
-        "role": "tertiary",
-        "displayName": "Done Green (dark)",
-        "canonical": "#63D894",
-        "tonalRamp": [
-          "#001301",
-          "#002D0C",
-          "#004D22",
-          "#006F39",
-          "#0B9255",
-          "#5BB47F",
-          "#91D7AA",
-          "#C9FDDA"
-        ],
-        "oklch": "oklch(79.7% 0.145 155.5)"
-      },
-      "info-blue-dark": {
-        "role": "tertiary",
-        "displayName": "Info Blue (dark)",
-        "canonical": "#86BDE0",
-        "tonalRamp": [
-          "#000D19",
-          "#062535",
-          "#1B4158",
-          "#32607C",
-          "#4E81A0",
-          "#7AA5C0",
-          "#A6CAE1",
-          "#D8F3FF"
-        ],
-        "oklch": "oklch(77.3% 0.076 237.0)"
-      },
-      "swatch-sage": {
-        "role": "decorative",
-        "displayName": "Sage swatch",
-        "canonical": "#48673C",
-        "tonalRamp": [
-          "#040F02",
-          "#162710",
-          "#2E4426",
-          "#48643E",
-          "#66855A",
-          "#8DA883",
-          "#B5CCAD",
-          "#E3F5DD"
-        ],
-        "oklch": "oklch(47.8% 0.075 137.3)"
-      },
-      "swatch-mist": {
-        "role": "decorative",
-        "displayName": "Mist swatch",
-        "canonical": "#395A6A",
-        "tonalRamp": [
-          "#020D13",
-          "#12242D",
-          "#29414C",
-          "#42606E",
-          "#5F8090",
-          "#87A3B2",
-          "#B1C8D4",
-          "#E0F2FB"
-        ],
-        "oklch": "oklch(44.9% 0.047 230.1)"
-      },
-      "swatch-lilac": {
-        "role": "decorative",
-        "displayName": "Lilac swatch",
-        "canonical": "#4B396A",
-        "tonalRamp": [
-          "#0E071A",
-          "#251B37",
-          "#423559",
-          "#61517F",
-          "#8170A3",
-          "#A495C3",
-          "#C9BDE3",
-          "#F2E9FF"
-        ],
-        "oklch": "oklch(38.7% 0.083 299.5)"
-      },
-      "swatch-clay": {
-        "role": "decorative",
-        "displayName": "Clay swatch",
-        "canonical": "#6C4C37",
-        "tonalRamp": [
-          "#140802",
-          "#2E1D12",
-          "#4E3728",
-          "#715441",
-          "#93725D",
-          "#B59885",
-          "#D7BFAF",
-          "#FEEADE"
-        ],
-        "oklch": "oklch(44.6% 0.054 54.1)"
-      },
-      "swatch-sand": {
-        "role": "decorative",
-        "displayName": "Sand swatch",
-        "canonical": "#685D36",
-        "tonalRamp": [
-          "#0F0B01",
-          "#27210C",
-          "#453D21",
-          "#645B38",
-          "#857A54",
-          "#A89E7E",
-          "#CCC4A9",
-          "#F4EFDA"
-        ],
-        "oklch": "oklch(47.9% 0.058 94.2)"
-      },
-      "swatch-rose": {
-        "role": "decorative",
-        "displayName": "Rose swatch",
-        "canonical": "#6C3745",
-        "tonalRamp": [
-          "#180409",
-          "#34171F",
-          "#573039",
-          "#7B4A56",
-          "#A06875",
-          "#C18F9A",
-          "#E2B7C0",
-          "#FFE5EB"
-        ],
-        "oklch": "oklch(40.9% 0.077 4.2)"
-      },
-      "swatch-moss": {
-        "role": "decorative",
-        "displayName": "Moss swatch",
-        "canonical": "#4E6539",
-        "tonalRamp": [
-          "#060E01",
-          "#1A260E",
-          "#334324",
-          "#4E623B",
-          "#6C8357",
-          "#92A681",
-          "#B9CBAB",
-          "#E6F4DB"
-        ],
-        "oklch": "oklch(47.6% 0.072 131.2)"
-      },
-      "swatch-stone": {
-        "role": "decorative",
-        "displayName": "Stone swatch",
-        "canonical": "#4C5157",
-        "tonalRamp": [
-          "#090B0E",
-          "#1F2225",
-          "#3A3D42",
-          "#575B61",
-          "#767B81",
-          "#9A9FA4",
-          "#C1C4C9",
-          "#ECEFF2"
-        ],
-        "oklch": "oklch(43.3% 0.012 252.9)"
-      },
-      "swatch-brick": {
-        "role": "decorative",
-        "displayName": "Brick swatch",
-        "canonical": "#713B33",
-        "tonalRamp": [
-          "#180503",
-          "#351814",
-          "#58312B",
-          "#7D4B44",
-          "#A26960",
-          "#C39088",
-          "#E3B8B1",
-          "#FFE6E0"
-        ],
-        "oklch": "oklch(41.8% 0.078 29.6)"
-      },
-      "swatch-apricot": {
-        "role": "decorative",
-        "displayName": "Apricot swatch",
-        "canonical": "#76542D",
-        "tonalRamp": [
-          "#140800",
-          "#2F1D08",
-          "#50381C",
-          "#725432",
-          "#95734D",
-          "#B79878",
-          "#D9BFA4",
-          "#FFEBD6"
-        ],
-        "oklch": "oklch(47.4% 0.071 68.4)"
-      },
-      "swatch-ochre": {
-        "role": "decorative",
-        "displayName": "Ochre swatch",
-        "canonical": "#646230",
-        "tonalRamp": [
-          "#0D0C00",
-          "#242307",
-          "#403F1C",
-          "#5F5D31",
-          "#7F7D4D",
-          "#A2A178",
-          "#C7C7A4",
-          "#F1F1D6"
-        ],
-        "oklch": "oklch(48.6% 0.071 106.7)"
-      },
-      "swatch-olive": {
-        "role": "decorative",
-        "displayName": "Olive swatch",
-        "canonical": "#566336",
-        "tonalRamp": [
-          "#090D01",
-          "#1E250C",
-          "#384222",
-          "#556039",
-          "#738155",
-          "#98A47E",
-          "#BFC9A9",
-          "#EAF3DA"
-        ],
-        "oklch": "oklch(47.7% 0.069 122.2)"
-      },
-      "swatch-fern": {
-        "role": "decorative",
-        "displayName": "Fern swatch",
-        "canonical": "#3C6747",
-        "tonalRamp": [
-          "#010F04",
-          "#102817",
-          "#27452F",
-          "#3F6548",
-          "#5C8666",
-          "#85A98D",
-          "#AFCDB5",
-          "#DFF6E3"
-        ],
-        "oklch": "oklch(47.3% 0.071 151.1)"
-      },
-      "swatch-seafoam": {
-        "role": "decorative",
-        "displayName": "Seafoam swatch",
-        "canonical": "#37675B",
-        "tonalRamp": [
-          "#000F0B",
-          "#0C2721",
-          "#23453C",
-          "#3A645A",
-          "#578579",
-          "#81A89D",
-          "#ACCCC3",
-          "#DCF5EE"
-        ],
-        "oklch": "oklch(47.6% 0.056 175.7)"
-      },
-      "swatch-teal": {
-        "role": "decorative",
-        "displayName": "Teal swatch",
-        "canonical": "#36686D",
-        "tonalRamp": [
-          "#000E10",
-          "#0A2629",
-          "#204447",
-          "#376367",
-          "#548489",
-          "#7FA7AB",
-          "#AACBCF",
-          "#DBF4F7"
-        ],
-        "oklch": "oklch(48.4% 0.054 204.0)"
-      },
-      "swatch-sky": {
-        "role": "decorative",
-        "displayName": "Sky swatch",
-        "canonical": "#315472",
-        "tonalRamp": [
-          "#020C18",
-          "#102334",
-          "#274055",
-          "#3F5E7A",
-          "#5B7E9D",
-          "#84A2BD",
-          "#AEC8DE",
-          "#DEF1FF"
-        ],
-        "oklch": "oklch(43.3% 0.064 245.9)"
-      },
-      "swatch-denim": {
-        "role": "decorative",
-        "displayName": "Denim swatch",
-        "canonical": "#37406C",
-        "tonalRamp": [
-          "#07091B",
-          "#1B2038",
-          "#333B5B",
-          "#4E5881",
-          "#6C77A6",
-          "#929CC5",
-          "#B9C3E5",
-          "#E6EDFF"
-        ],
-        "oklch": "oklch(38.5% 0.076 273.6)"
-      },
-      "swatch-iris": {
-        "role": "decorative",
-        "displayName": "Iris swatch",
-        "canonical": "#53396A",
-        "tonalRamp": [
-          "#100619",
-          "#281A35",
-          "#463357",
-          "#664F7C",
-          "#876DA0",
-          "#AA93C0",
-          "#CEBBE1",
-          "#F6E8FF"
-        ],
-        "oklch": "oklch(39.6% 0.085 307.4)"
-      },
-      "swatch-plum": {
-        "role": "decorative",
-        "displayName": "Plum swatch",
-        "canonical": "#653E65",
-        "tonalRamp": [
-          "#130514",
-          "#2E192E",
-          "#4E314E",
-          "#704C70",
-          "#936A92",
-          "#B491B4",
-          "#D7B9D6",
-          "#FDE6FD"
-        ],
-        "oklch": "oklch(42.5% 0.079 326.9)"
-      },
-      "swatch-berry": {
-        "role": "decorative",
-        "displayName": "Berry swatch",
-        "canonical": "#6F3456",
-        "tonalRamp": [
-          "#18030F",
-          "#351527",
-          "#582C45",
-          "#7D4665",
-          "#A16485",
-          "#C28BA8",
-          "#E3B5CC",
-          "#FFE3F5"
-        ],
-        "oklch": "oklch(41.5% 0.094 346.4)"
-      },
-      "swatch-sage-dark": {
-        "role": "decorative",
-        "displayName": "Sage swatch (dark)",
-        "canonical": "#A9C69F",
-        "tonalRamp": [
-          "#050E03",
-          "#182613",
-          "#31432A",
-          "#4B6243",
-          "#698360",
-          "#90A688",
-          "#B8CBB1",
-          "#E5F4E0"
-        ],
-        "oklch": "oklch(79.5% 0.062 137.7)"
-      },
-      "swatch-mist-dark": {
-        "role": "decorative",
-        "displayName": "Mist swatch (dark)",
-        "canonical": "#9CBAC9",
-        "tonalRamp": [
-          "#040D12",
-          "#15242B",
-          "#2D404A",
-          "#465F6B",
-          "#647F8C",
-          "#8BA3AE",
-          "#B4C8D2",
-          "#E2F1F9"
-        ],
-        "oklch": "oklch(77.1% 0.039 229.5)"
-      },
-      "swatch-lilac-dark": {
-        "role": "decorative",
-        "displayName": "Lilac swatch (dark)",
-        "canonical": "#AC9CC9",
-        "tonalRamp": [
-          "#0E0817",
-          "#251D32",
-          "#423754",
-          "#605377",
-          "#81729B",
-          "#A497BB",
-          "#C9BEDD",
-          "#F2EAFF"
-        ],
-        "oklch": "oklch(72.2% 0.067 301.0)"
-      },
-      "swatch-clay-dark": {
-        "role": "decorative",
-        "displayName": "Clay swatch (dark)",
-        "canonical": "#CBAE9A",
-        "tonalRamp": [
-          "#120904",
-          "#2C1E15",
-          "#4B392C",
-          "#6C5545",
-          "#8E7462",
-          "#B0998A",
-          "#D3C0B3",
-          "#FAEBE1"
-        ],
-        "oklch": "oklch(77.1% 0.044 56.6)"
-      },
-      "swatch-sand-dark": {
-        "role": "decorative",
-        "displayName": "Sand swatch (dark)",
-        "canonical": "#CBC09A",
-        "tonalRamp": [
-          "#0F0B01",
-          "#27210F",
-          "#443D24",
-          "#635B3C",
-          "#847A58",
-          "#A79E81",
-          "#CBC4AB",
-          "#F4EFDC"
-        ],
-        "oklch": "oklch(80.7% 0.053 93.8)"
-      },
-      "swatch-rose-dark": {
-        "role": "decorative",
-        "displayName": "Rose swatch (dark)",
-        "canonical": "#CB9AA6",
-        "tonalRamp": [
-          "#15060A",
-          "#311A20",
-          "#52333B",
-          "#754E58",
-          "#986C77",
-          "#BA929C",
-          "#DCBAC2",
-          "#FFE7ED"
-        ],
-        "oklch": "oklch(73.6% 0.060 2.4)"
-      },
-      "swatch-moss-dark": {
-        "role": "decorative",
-        "displayName": "Moss swatch (dark)",
-        "canonical": "#B1C89D",
-        "tonalRamp": [
-          "#070E02",
-          "#1B2511",
-          "#344227",
-          "#50623F",
-          "#6E825C",
-          "#93A584",
-          "#BBCAAE",
-          "#E7F3DD"
-        ],
-        "oklch": "oklch(80.4% 0.064 130.7)"
-      },
-      "swatch-stone-dark": {
-        "role": "decorative",
-        "displayName": "Stone swatch (dark)",
-        "canonical": "#ADB2B8",
-        "tonalRamp": [
-          "#0A0B0D",
-          "#1F2225",
-          "#3A3D41",
-          "#575B60",
-          "#767B80",
-          "#9B9FA4",
-          "#C1C4C8",
-          "#ECEFF2"
-        ],
-        "oklch": "oklch(76.1% 0.010 252.8)"
-      },
-      "swatch-brick-dark": {
-        "role": "decorative",
-        "displayName": "Brick swatch (dark)",
-        "canonical": "#D09D95",
-        "tonalRamp": [
-          "#160605",
-          "#321A17",
-          "#53332F",
-          "#774F49",
-          "#9B6D66",
-          "#BC938D",
-          "#DEBBB5",
-          "#FFE7E3"
-        ],
-        "oklch": "oklch(74.2% 0.062 28.8)"
-      },
-      "swatch-apricot-dark": {
-        "role": "decorative",
-        "displayName": "Apricot swatch (dark)",
-        "canonical": "#D5B590",
-        "tonalRamp": [
-          "#130900",
-          "#2D1E0C",
-          "#4D3921",
-          "#6F5637",
-          "#917553",
-          "#B39A7D",
-          "#D5C0A8",
-          "#FCECD9"
-        ],
-        "oklch": "oklch(79.2% 0.062 70.8)"
-      },
-      "swatch-ochre-dark": {
-        "role": "decorative",
-        "displayName": "Ochre swatch (dark)",
-        "canonical": "#CDCB98",
-        "tonalRamp": [
-          "#0D0C00",
-          "#242309",
-          "#413F1D",
-          "#5F5D33",
-          "#7F7D4F",
-          "#A2A17A",
-          "#C7C6A6",
-          "#F1F0D7"
-        ],
-        "oklch": "oklch(83.1% 0.068 105.9)"
-      },
-      "swatch-olive-dark": {
-        "role": "decorative",
-        "displayName": "Olive swatch (dark)",
-        "canonical": "#BCC99C",
-        "tonalRamp": [
-          "#090D01",
-          "#1F240E",
-          "#394124",
-          "#56603C",
-          "#758058",
-          "#99A481",
-          "#C0C9AB",
-          "#EBF2DB"
-        ],
-        "oklch": "oklch(81.4% 0.062 120.9)"
-      },
-      "swatch-fern-dark": {
-        "role": "decorative",
-        "displayName": "Fern swatch (dark)",
-        "canonical": "#9FC6A9",
-        "tonalRamp": [
-          "#030F06",
-          "#132719",
-          "#2B4432",
-          "#44644D",
-          "#61846B",
-          "#89A791",
-          "#B2CCB8",
-          "#E1F4E5"
-        ],
-        "oklch": "oklch(79.0% 0.058 152.8)"
-      },
-      "swatch-seafoam-dark": {
-        "role": "decorative",
-        "displayName": "Seafoam swatch (dark)",
-        "canonical": "#9CC9BE",
-        "tonalRamp": [
-          "#010E0B",
-          "#0F2722",
-          "#26443D",
-          "#3E635B",
-          "#5B847A",
-          "#84A79E",
-          "#AFCBC4",
-          "#DEF4EE"
-        ],
-        "oklch": "oklch(80.1% 0.050 178.3)"
-      },
-      "swatch-teal-dark": {
-        "role": "decorative",
-        "displayName": "Teal swatch (dark)",
-        "canonical": "#98C7CD",
-        "tonalRamp": [
-          "#000E10",
-          "#0D2629",
-          "#234347",
-          "#3B6267",
-          "#588388",
-          "#82A6AB",
-          "#ACCBCE",
-          "#DDF4F7"
-        ],
-        "oklch": "oklch(79.8% 0.050 205.9)"
-      },
-      "swatch-sky-dark": {
-        "role": "decorative",
-        "displayName": "Sky swatch (dark)",
-        "canonical": "#94B5D1",
-        "tonalRamp": [
-          "#030C15",
-          "#132331",
-          "#2A4051",
-          "#435E74",
-          "#607E97",
-          "#88A2B8",
-          "#B1C7DA",
-          "#E0F1FF"
-        ],
-        "oklch": "oklch(75.8% 0.054 244.2)"
-      },
-      "swatch-denim-dark": {
-        "role": "decorative",
-        "displayName": "Denim swatch (dark)",
-        "canonical": "#9AA2CB",
-        "tonalRamp": [
-          "#080A17",
-          "#1D2033",
-          "#363B55",
-          "#525879",
-          "#71789D",
-          "#969CBD",
-          "#BDC3DE",
-          "#E9EDFF"
-        ],
-        "oklch": "oklch(72.0% 0.060 276.2)"
-      },
-      "swatch-iris-dark": {
-        "role": "decorative",
-        "displayName": "Iris swatch (dark)",
-        "canonical": "#B49CC9",
-        "tonalRamp": [
-          "#0F0716",
-          "#281C31",
-          "#453552",
-          "#655176",
-          "#867099",
-          "#A895B9",
-          "#CDBDDB",
-          "#F5E9FF"
-        ],
-        "oklch": "oklch(72.9% 0.069 308.8)"
-      },
-      "swatch-plum-dark": {
-        "role": "decorative",
-        "displayName": "Plum swatch (dark)",
-        "canonical": "#C5A0C5",
-        "tonalRamp": [
-          "#120612",
-          "#2C1A2C",
-          "#4B344B",
-          "#6D4F6D",
-          "#8F6D8F",
-          "#B193B1",
-          "#D4BBD3",
-          "#FBE7FA"
-        ],
-        "oklch": "oklch(75.1% 0.067 326.2)"
-      },
-      "swatch-berry-dark": {
-        "role": "decorative",
-        "displayName": "Berry swatch (dark)",
-        "canonical": "#CE97B6",
-        "tonalRamp": [
-          "#16050F",
-          "#311827",
-          "#533044",
-          "#774B64",
-          "#9A6885",
-          "#BB8FA8",
-          "#DDB8CC",
-          "#FFE5F5"
-        ],
-        "oklch": "oklch(73.8% 0.077 344.3)"
-      }
+      "leaf-fill": { "role": "primary", "displayName": "Leaf Fill", "canonical": "#58CC02", "tonalRamp": ["#163300", "#234F02", "#316D02", "#3E8A02", "#4CA902", "#58CC02", "#9BE36A", "#E3F7D3"] },
+      "leaf-ink": { "role": "primary", "displayName": "Leaf Ink", "canonical": "#2A750D", "tonalRamp": ["#0C2404", "#153A07", "#1F550A", "#2A750D", "#4A9430", "#79B55F", "#AED69C", "#E2F2DA"] },
+      "forest-hero": { "role": "secondary", "displayName": "Forest Hero", "canonical": "#1D4D2B", "tonalRamp": ["#0A1C10", "#12301B", "#1D4D2B", "#2C6A3E", "#478A59", "#73AC81", "#A9D1B2", "#E0F1E4"] },
+      "overdue": { "role": "secondary", "displayName": "Overdue Red", "canonical": "#B3261E", "tonalRamp": ["#3A0905", "#5E120D", "#8A1D16", "#B3261E", "#D9534A", "#F08A82", "#F9BDB8", "#FDE9E7"] },
+      "medium": { "role": "secondary", "displayName": "Warming Amber", "canonical": "#8A4F00", "tonalRamp": ["#2B1800", "#4A2B00", "#6A3D00", "#8A4F00", "#B36D12", "#DB9440", "#F4C27F", "#FCEBD2"] },
+      "streak-flame": { "role": "tertiary", "displayName": "Streak Flame", "canonical": "#FF9600", "tonalRamp": ["#3A2000", "#663800", "#995400", "#CC7600", "#FF9600", "#FFB24D", "#FFD399", "#FFF1DE"] },
+      "grass": { "role": "tertiary", "displayName": "Grass", "canonical": "#8BDB4A", "tonalRamp": ["#1B3F20", "#24512A", "#3F8A1F", "#6CC72E", "#8BDB4A", "#AEE680", "#D1F1B6", "#F0FAE6"] },
+      "tint-sun": { "role": "tertiary", "displayName": "Sun Tint", "canonical": "#FFEFD2" },
+      "tint-leaf": { "role": "tertiary", "displayName": "Leaf Tint", "canonical": "#DDF4C9" },
+      "tint-sky": { "role": "tertiary", "displayName": "Sky Tint", "canonical": "#DCEBFB" },
+      "meadow-page": { "role": "neutral", "displayName": "Meadow Page", "canonical": "#F2F8EA", "tonalRamp": ["#0E1912", "#1A2B1F", "#3B5243", "#6E8572", "#A5BA9E", "#CFE0C4", "#E4EFD8", "#F2F8EA"] },
+      "forest-ink": { "role": "neutral", "displayName": "Forest Ink", "canonical": "#13251A" },
+      "meadow-page-dark": { "role": "neutral", "displayName": "Night Meadow", "canonical": "#0E1912" },
+      "moon-ink-dark": { "role": "neutral", "displayName": "Moon Ink", "canonical": "#EDF6E8" }
     },
     "typographyMeta": {
-      "display": {
-        "displayName": "Display",
-        "purpose": "Pass-ticket stamp (700) and focus-timer countdown (600), tabular figures. AppTypography.display."
-      },
-      "title1": {
-        "displayName": "Title 1",
-        "purpose": "Headline title or figure on Goals and Habit detail. AppTypography.title1."
-      },
-      "title3": {
-        "displayName": "Title 3",
-        "purpose": "Pass-ticket title, Android app bar title, empty-state heading. AppTypography.title3."
-      },
-      "callout": {
-        "displayName": "Callout",
-        "purpose": "Dialog titles, Material titleMedium. AppTypography.callout."
-      },
-      "body": {
-        "displayName": "Body",
-        "purpose": "Running text; rail row titles at 500. AppTypography.body."
-      },
-      "body-strong": {
-        "displayName": "Body Strong",
-        "purpose": "Section headers, rail stamps, button labels (AppTypography.body at 600)."
-      },
-      "footnote": {
-        "displayName": "Footnote",
-        "purpose": "Meta chips, section counts, chip labels, toast text. AppTypography.footnote."
-      },
-      "caption": {
-        "displayName": "Caption",
-        "purpose": "Stamp captions, navigation labels, percent labels. AppTypography.caption."
-      }
+      "display": { "displayName": "Display", "purpose": "iOS large title and the hero card's lateness stamp (tabular)." },
+      "title1": { "displayName": "Title 1", "purpose": "Android app-bar title and stat-tile figures (tabular)." },
+      "title3": { "displayName": "Title 3", "purpose": "Hero task title, empty-state headings; dialog titles at 800." },
+      "callout": { "displayName": "Callout", "purpose": "Button labels, section headers (900), the greeting's summary line." },
+      "body": { "displayName": "Body", "purpose": "Running text and task titles." },
+      "footnote": { "displayName": "Footnote", "purpose": "Meta chips, chip labels, stat labels, counts, toast text." },
+      "caption": { "displayName": "Caption", "purpose": "Tab labels and stamp captions." }
     },
     "shadows": [
-      {
-        "name": "bar-scrolled-under",
-        "value": "Material elevation 1, shadowColor steel-hairline-strong",
-        "purpose": "Android app bar edge when content scrolls under it."
-      },
-      {
-        "name": "fab",
-        "value": "Material elevation 2",
-        "purpose": "Android add FAB."
-      },
-      {
-        "name": "toast-slip",
-        "value": "Material elevation 6, shadowColor #00000066",
-        "purpose": "Top-anchored inverse-ink confirmation slip."
-      }
+      { "name": "lip-button", "value": "inset 0 -4px 0 #46A302", "purpose": "Solid bottom lip on leaf-green buttons and the FAB (ChunkyBorder depth 4); 1px while pressed." },
+      { "name": "lip-card", "value": "inset 0 -3px 0 rgba(19,37,26,0.22)", "purpose": "Quiet lip on task, habit and goal cards (Border Strong over the face)." },
+      { "name": "lip-hero", "value": "inset 0 -5px 0 rgba(0,0,0,0.35)", "purpose": "The hero card's deeper lip." },
+      { "name": "tab-bar-float", "value": "0 4px 10px rgba(0,0,0,0.2)", "purpose": "Material elevation 4 under the floating tab-bar block." },
+      { "name": "fab", "value": "0 3px 6px rgba(0,0,0,0.24)", "purpose": "Material elevation 3 under the Android FAB." },
+      { "name": "toast", "value": "0 6px 14px rgba(0,0,0,0.4)", "purpose": "Material elevation 6 under the forest toast." }
     ],
     "motion": [
-      {
-        "name": "quick",
-        "value": "140ms",
-        "purpose": "State flips: selection, checkmarks, chips; toast exit. AppMotion.quick."
-      },
-      {
-        "name": "standard",
-        "value": "240ms",
-        "purpose": "Local movement: panels, nav indicator, toast entrance. AppMotion.standard."
-      },
-      {
-        "name": "slow",
-        "value": "360ms",
-        "purpose": "Full-surface transitions. AppMotion.slow."
-      },
-      {
-        "name": "curve",
-        "value": "cubic-bezier(0.33, 1, 0.68, 1)",
-        "purpose": "Curves.easeOutCubic for entrances. AppMotion.curve."
-      },
-      {
-        "name": "exit-curve",
-        "value": "cubic-bezier(0.32, 0, 0.67, 0)",
-        "purpose": "Curves.easeInCubic for exits. AppMotion.exitCurve."
-      },
-      {
-        "name": "spike",
-        "value": "560ms total: strike, slide off over 20-65% (ease-in cubic), close the gap over 60-100% (ease-out cubic)",
-        "purpose": "Signature completion exit on Focus; skipped under Reduce Motion."
-      }
+      { "name": "quick", "value": "140ms", "purpose": "State flips: selection, checkmarks, chips; toast exit." },
+      { "name": "standard", "value": "240ms", "purpose": "Local movement: panels, nav indicator, toast entrance." },
+      { "name": "slow", "value": "360ms", "purpose": "Full-surface transitions." },
+      { "name": "press-sink", "value": "80ms", "purpose": "A chunky button's lip shrinking 4px to 1px while pressed." },
+      { "name": "ease-in", "value": "cubic-bezier(0.215, 0.61, 0.355, 1)", "purpose": "Ease-out cubic for entrances." },
+      { "name": "ease-exit", "value": "cubic-bezier(0.55, 0.055, 0.675, 0.19)", "purpose": "Ease-in cubic for exits." },
+      { "name": "completion-exit", "value": "560ms: strike, slide off 20-65% (ease-in cubic), collapse 60-100% (ease-out cubic)", "purpose": "A completed Focus task leaving the list. Skipped under Reduce Motion." }
     ],
     "platformMirrors": [
-      {
-        "name": "android-widgets",
-        "path": "android/app/src/main/res/values/colors.xml",
-        "mirrors": "AppColors.dark"
-      },
-      {
-        "name": "ios-widgets",
-        "path": "ios/NudgeWidgets/NudgeWidgets.swift",
-        "mirrors": "AppColors.dark"
-      },
-      {
-        "name": "android-splash",
-        "path": "android/app/src/main/res/values/colors.xml (splash_background)",
-        "mirrors": "steel-ground-dark"
-      }
+      { "name": "android-widgets", "path": "android/app/src/main/res/values/colors.xml", "mirrors": "AppColors.dark" },
+      { "name": "android-splash", "path": "android/app/src/main/res/values/colors.xml (splash_background)", "mirrors": "meadow-page-dark" },
+      { "name": "ios-widgets", "path": "ios/NudgeWidgets/NudgeWidgets.swift", "mirrors": "AppColors.dark" },
+      { "name": "ios-launch", "path": "ios/Runner/Base.lproj/LaunchScreen.storyboard", "mirrors": "meadow-page-dark" }
     ],
     "openItems": [
-      "App icon (assets/icon/) is still the pre-redesign purple bell; a ticket-rail icon needs a real asset."
+      "App icon (assets/icon/) predates the meadow, and ic_launcher_background is still #0B0B0D; a meadow icon needs a real asset.",
+      "Illustrations are borrowed Fluent Emoji 3D renders; a Nudge mascot would replace them once real artwork exists."
     ]
   },
   "components": [
     {
-      "name": "Primary Button (Done)",
+      "name": "Primary Button",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "Ink-filled primary action: Done on the pass, every empty-state action.",
-      "html": "<button class=\"ds-btn-primary\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12.5l4.5 4.5L19 7.5\"/></svg>Done</button>",
-      "css": ".ds-btn-primary { font-family: -apple-system, 'SF Pro Text', Roboto, system-ui, sans-serif; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-width: 160px; height: 48px; padding: 0 24px; background: #111417; color: #FFFFFF; border: none; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 140ms cubic-bezier(0.33,1,0.68,1); } .ds-btn-primary:hover { background: #2A2F34; } .ds-btn-primary:active { background: #454E57; } .ds-btn-primary:focus-visible { outline: 2px solid #6A747D; outline-offset: 2px; }"
+      "description": "Leaf-green chunky block with a solid lip; sinks when pressed. Done, empty-state actions.",
+      "html": "<button class=\"ds-btn-primary\">Add a goal</button>",
+      "css": ".ds-btn-primary { font-family: Nunito, sans-serif; font-size: 17px; font-weight: 800; height: 52px; padding: 0 20px 4px; background: #58CC02; color: #10270A; border: none; border-radius: 16px; box-shadow: inset 0 -4px 0 #46A302; cursor: pointer; transition: box-shadow 80ms, padding 80ms; } .ds-btn-primary:active { padding: 3px 20px 1px; box-shadow: inset 0 -1px 0 #46A302; } .ds-btn-primary:focus-visible { outline: 3px solid #2A750D; outline-offset: 2px; }"
     },
     {
-      "name": "Outlined Button (Later)",
+      "name": "Outlined Button",
       "kind": "button",
       "refersTo": "button-outlined",
-      "description": "Deliberate deferral beside Done on the pass; ink text, strong steel hairline.",
-      "html": "<button class=\"ds-btn-outlined\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M20 12a8 8 0 1 1-2.3-5.7M20 4v4h-4M12 8v4l3 2\"/></svg>Later</button>",
-      "css": ".ds-btn-outlined { font-family: -apple-system, 'SF Pro Text', Roboto, system-ui, sans-serif; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-width: 160px; height: 48px; padding: 0 24px; background: transparent; color: #111417; border: 1px solid rgba(14,26,38,0.2); border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 140ms cubic-bezier(0.33,1,0.68,1); } .ds-btn-outlined:hover { background: #E8ECEE; } .ds-btn-outlined:focus-visible { outline: 2px solid #6A747D; outline-offset: 2px; }"
+      "description": "The quiet chunky block: white face, strong border, quiet lip.",
+      "html": "<button class=\"ds-btn-outlined\">Later</button>",
+      "css": ".ds-btn-outlined { font-family: Nunito, sans-serif; font-size: 17px; font-weight: 800; height: 52px; padding: 0 20px 4px; background: #FFFFFF; color: #13251A; border: 1.5px solid rgba(19,37,26,0.22); border-radius: 16px; box-shadow: inset 0 -4px 0 #C9CECA; cursor: pointer; transition: box-shadow 80ms, padding 80ms; } .ds-btn-outlined:active { padding: 3px 20px 1px; box-shadow: inset 0 -1px 0 #C9CECA; } .ds-btn-outlined:focus-visible { outline: 3px solid #2A750D; outline-offset: 2px; }"
     },
     {
-      "name": "Filter Chips",
+      "name": "Hero Card",
+      "kind": "custom",
+      "refersTo": "hero-card",
+      "description": "The longest-waiting task on dark forest, stamped in heat, with Done and Later.",
+      "html": "<div class=\"ds-hero\"><div class=\"ds-hero-title\">Submit project proposal</div><div class=\"ds-hero-meta\">High priority &middot; 0 of 2</div><div class=\"ds-hero-stamp\"><span class=\"ds-hero-value\">1d</span> <span class=\"ds-hero-cap\">late</span></div><div class=\"ds-hero-actions\"><button class=\"ds-hero-done\">Done</button><button class=\"ds-hero-later\">Later</button></div></div>",
+      "css": ".ds-hero { font-family: Nunito, sans-serif; background: #1D4D2B; color: #FFFFFF; border-radius: 24px; padding: 20px 20px 25px; box-shadow: inset 0 -5px 0 rgba(0,0,0,0.35); max-width: 340px; } .ds-hero-title { font-size: 20px; font-weight: 900; letter-spacing: -0.4px; line-height: 1.2; } .ds-hero-meta { font-size: 13px; font-weight: 700; color: #BFE3C4; margin-top: 8px; } .ds-hero-stamp { margin-top: 12px; } .ds-hero-value { font-size: 34px; font-weight: 900; letter-spacing: -0.8px; color: #F4B04B; font-variant-numeric: tabular-nums; } .ds-hero-cap { font-size: 17px; font-weight: 800; color: #F4B04B; } .ds-hero-actions { display: flex; gap: 8px; margin-top: 16px; } .ds-hero-done, .ds-hero-later { font-family: inherit; font-size: 17px; font-weight: 800; height: 52px; padding: 0 20px 4px; border: none; border-radius: 16px; cursor: pointer; } .ds-hero-done { flex: 3; background: #58CC02; color: #10270A; box-shadow: inset 0 -4px 0 #46A302; } .ds-hero-later { flex: 2; background: rgba(255,255,255,0.12); color: #FFFFFF; box-shadow: inset 0 -4px 0 rgba(0,0,0,0.25); } .ds-hero-done:active, .ds-hero-later:active { padding: 3px 20px 1px; }"
+    },
+    {
+      "name": "Stat Tile",
+      "kind": "card",
+      "refersTo": "stat-tile-sun",
+      "description": "Illustration, figure and label on a cheer tint with a 4px lip.",
+      "html": "<div class=\"ds-stat\"><div class=\"ds-stat-art\" aria-hidden=\"true\"></div><div class=\"ds-stat-value\">4</div><div class=\"ds-stat-label\">day streak</div></div>",
+      "css": ".ds-stat { font-family: Nunito, sans-serif; width: 104px; background: #FFEFD2; border: 1.5px solid rgba(19,37,26,0.14); border-radius: 16px; padding: 12px 8px 16px 12px; box-shadow: inset 0 -4px 0 #E2D2B8; } .ds-stat-art { width: 34px; height: 34px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #FFD24D, #FF9600); } .ds-stat-value { margin-top: 8px; font-size: 28px; font-weight: 900; line-height: 1; letter-spacing: -0.8px; color: #13251A; font-variant-numeric: tabular-nums; } .ds-stat-label { margin-top: 2px; font-size: 13px; font-weight: 800; color: #3B5243; }"
+    },
+    {
+      "name": "Task Card",
+      "kind": "card",
+      "refersTo": "task-card",
+      "description": "One task as a chunky white block: completion circle, identity dot, title, meta, stamp.",
+      "html": "<div class=\"ds-task\"><span class=\"ds-task-check\"></span><div class=\"ds-task-body\"><div class=\"ds-task-title\"><span class=\"ds-task-dot\"></span>Review monthly expenses</div><div class=\"ds-task-meta\">0 of 3 &middot; Every month on day 28</div></div><div class=\"ds-task-stamp\">Nov 28</div></div>",
+      "css": ".ds-task { font-family: Nunito, sans-serif; display: flex; align-items: center; gap: 12px; background: #FFFFFF; border: 1.5px solid rgba(19,37,26,0.14); border-radius: 16px; padding: 10px 12px 13px; box-shadow: inset 0 -3px 0 #D3D7D4; max-width: 340px; } .ds-task-check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #4A604F; flex: none; } .ds-task-body { flex: 1; } .ds-task-title { font-size: 15px; font-weight: 800; color: #13251A; } .ds-task-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #395A6A; margin-right: 6px; vertical-align: middle; } .ds-task-meta { font-size: 13px; font-weight: 700; color: #3B5243; } .ds-task-stamp { font-size: 15px; font-weight: 600; color: #13251A; font-variant-numeric: tabular-nums; } .ds-task:active { background: #E4EFD8; }"
+    },
+    {
+      "name": "Filter Chip",
       "kind": "chip",
       "refersTo": "chip-filter",
-      "description": "Tag filter on Focus; the selected chip is inked so it is the loudest.",
-      "html": "<div class=\"ds-chips\"><button class=\"ds-chip ds-chip-on\">All</button><button class=\"ds-chip\">#home</button><button class=\"ds-chip\">#work</button></div>",
-      "css": ".ds-chips { display: flex; gap: 8px; padding: 8px; background: #DDE2E6; } .ds-chip { font-family: -apple-system, 'SF Pro Text', Roboto, system-ui, sans-serif; padding: 6px 10px; border: none; border-radius: 4px; background: #FFFFFF; color: #454E57; font-size: 13px; cursor: pointer; transition: background 140ms; } .ds-chip:hover { background: #E8ECEE; } .ds-chip:focus-visible { outline: 2px solid #6A747D; outline-offset: 2px; } .ds-chip-on, .ds-chip-on:hover { background: #111417; color: #DDE2E6; font-weight: 600; }"
+      "description": "Tag filter pill; the selected one is leaf green.",
+      "html": "<span class=\"ds-chip ds-chip-on\">All</span> <span class=\"ds-chip\">#work</span>",
+      "css": ".ds-chip { font-family: Nunito, sans-serif; display: inline-block; font-size: 13px; font-weight: 700; color: #3B5243; background: #FFFFFF; border: 1.5px solid rgba(19,37,26,0.22); border-radius: 999px; padding: 4px 12px; cursor: pointer; } .ds-chip-on { background: #58CC02; color: #10270A; font-weight: 800; border-color: transparent; } .ds-chip:focus-visible { outline: 3px solid #2A750D; outline-offset: 2px; }"
     },
     {
       "name": "Text Field",
       "kind": "input",
       "refersTo": "input-field",
-      "description": "Filled paper field with a steel hairline; focus shifts the border to ink dim.",
-      "html": "<input class=\"ds-input\" placeholder=\"Call mom tomorrow 5pm #home\" />",
-      "css": ".ds-input { font-family: -apple-system, 'SF Pro Text', Roboto, system-ui, sans-serif; width: 280px; padding: 12px; background: #FFFFFF; color: #111417; border: 1px solid rgba(14,26,38,0.12); border-radius: 4px; font-size: 15px; outline: none; transition: border-color 140ms; } .ds-input::placeholder { color: #4F5862; } .ds-input:hover { border-color: rgba(14,26,38,0.2); } .ds-input:focus-visible { border-color: #6A747D; }"
+      "description": "Filled white field; the stroke turns leaf green on focus.",
+      "html": "<input class=\"ds-input\" placeholder=\"Add subtask\">",
+      "css": ".ds-input { font-family: Nunito, sans-serif; font-size: 15px; font-weight: 600; color: #13251A; background: #FFFFFF; border: 1.5px solid rgba(19,37,26,0.22); border-radius: 10px; padding: 12px; outline: none; } .ds-input::placeholder { color: #4A604F; } .ds-input:focus-visible { border: 2px solid #58CC02; }"
     },
     {
-      "name": "Navigation Bar (Android)",
+      "name": "Floating Tab Bar",
       "kind": "nav",
-      "refersTo": "nav-bar-android",
-      "description": "Material navigation bar in raised steel with a pressed-steel indicator, ink when selected. iOS uses the translucent CupertinoTabBar instead.",
-      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-item ds-nav-on\" href=\"#\"><span class=\"ds-nav-ind\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"12\" cy=\"12\" r=\"7\"/><circle cx=\"12\" cy=\"12\" r=\"2\"/></svg></span>Focus</a><a class=\"ds-nav-item\" href=\"#\"><span class=\"ds-nav-ind\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"4\" y=\"5\" width=\"16\" height=\"15\" rx=\"2\"/><path d=\"M4 10h16M9 3v4M15 3v4\"/></svg></span>Calendar</a><a class=\"ds-nav-item\" href=\"#\"><span class=\"ds-nav-ind\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M20 12a8 8 0 0 1-14 5M4 12a8 8 0 0 1 14-5M18 3v4h-4M6 21v-4h4\"/></svg></span>Habits</a><a class=\"ds-nav-item\" href=\"#\"><span class=\"ds-nav-ind\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M6 21V4h11l-2 4 2 4H6\"/></svg></span>Goals</a></nav>",
-      "css": ".ds-nav { font-family: -apple-system, 'SF Pro Text', Roboto, system-ui, sans-serif; display: flex; height: 72px; background: #F3F5F6; } .ds-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #4F5862; text-decoration: none; font-size: 11px; font-weight: 500; } .ds-nav-ind { display: flex; align-items: center; justify-content: center; width: 56px; height: 32px; border-radius: 16px; transition: background 240ms cubic-bezier(0.33,1,0.68,1); } .ds-nav-item:hover .ds-nav-ind { background: rgba(14,26,38,0.06); } .ds-nav-item:focus-visible { outline: 2px solid #6A747D; outline-offset: -2px; } .ds-nav-on { color: #111417; } .ds-nav-on .ds-nav-ind { background: #E8ECEE; }"
+      "refersTo": "tab-bar",
+      "description": "The native tab bar inside one floating white chunky block.",
+      "html": "<nav class=\"ds-tabs\"><a class=\"ds-tab ds-tab-on\"><span class=\"ds-tab-pill\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"4\" fill=\"currentColor\"/><path d=\"M3 7V3h4M17 3h4v4M21 17v4h-4M7 21H3v-4\" stroke=\"currentColor\" stroke-width=\"2\" fill=\"none\"/></svg></span>Focus</a><a class=\"ds-tab\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\"><rect x=\"3\" y=\"5\" width=\"18\" height=\"16\" rx=\"2\" stroke=\"currentColor\" stroke-width=\"2\" fill=\"none\"/><path d=\"M3 10h18M8 3v4M16 3v4\" stroke=\"currentColor\" stroke-width=\"2\"/></svg>Calendar</a></nav>",
+      "css": ".ds-tabs { font-family: Nunito, sans-serif; display: flex; justify-content: space-around; background: #FFFFFF; border: 1.5px solid rgba(19,37,26,0.14); border-radius: 24px; height: 64px; padding-bottom: 4px; box-shadow: inset 0 -4px 0 #D3D7D4, 0 4px 10px rgba(0,0,0,0.2); max-width: 340px; } .ds-tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 11px; font-weight: 800; color: #4A604F; text-decoration: none; cursor: pointer; } .ds-tab-on { color: #2A750D; } .ds-tab-pill { background: #DDF4C9; border-radius: 16px; padding: 2px 16px; } .ds-tab:focus-visible { outline: 3px solid #2A750D; border-radius: 12px; }"
     },
     {
-      "name": "Pass Ticket",
+      "name": "Toast",
       "kind": "custom",
-      "refersTo": "pass-ticket",
-      "description": "Signature: the most put-off task on paper at the top of Focus, stamped large in its heat colour with a punch mark per deferral.",
-      "html": "<div class=\"ds-pass-ground\"><article class=\"ds-pass\"><div class=\"ds-pass-top\"><div><h3 class=\"ds-pass-title\">Renew passport</h3><p class=\"ds-pass-esc\">Put off 3 times</p></div><div class=\"ds-stamp\"><span class=\"ds-stamp-v\">4d</span><span class=\"ds-stamp-c\">late</span><span class=\"ds-punches\"><i></i><i></i><i></i></span></div></div><div class=\"ds-pass-actions\"><button class=\"ds-pass-done\">Done</button><button class=\"ds-pass-later\">Later</button></div></article></div>",
-      "css": ".ds-pass-ground { background: #DDE2E6; padding: 16px; } .ds-pass { font-family: -apple-system, 'SF Pro Text', Roboto, system-ui, sans-serif; background: #FFFFFF; border-radius: 6px; padding: 16px; color: #111417; } .ds-pass-top { display: flex; justify-content: space-between; gap: 16px; } .ds-pass-title { margin: 0; font-size: 20px; font-weight: 600; line-height: 1.2; letter-spacing: -0.4px; } .ds-pass-esc { margin: 8px 0 0; font-size: 13px; font-weight: 600; color: #AE2A21; } .ds-stamp { display: flex; flex-direction: column; align-items: flex-end; } .ds-stamp-v { font-size: 34px; font-weight: 700; line-height: 1.1; letter-spacing: -0.8px; color: #AE2A21; font-variant-numeric: tabular-nums; } .ds-stamp-c { font-size: 11px; font-weight: 500; color: #AE2A21; } .ds-punches { display: flex; gap: 3px; margin-top: 4px; } .ds-punches i { width: 8px; height: 8px; border-radius: 50%; background: #DDE2E6; border: 1.5px solid #AE2A21; box-sizing: border-box; } .ds-pass-actions { display: flex; gap: 8px; margin-top: 16px; } .ds-pass-actions button { font-family: -apple-system, 'SF Pro Text', Roboto, system-ui, sans-serif; flex: 1; height: 48px; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; } .ds-pass-done { background: #111417; color: #FFFFFF; border: none; } .ds-pass-done:hover { background: #2A2F34; } .ds-pass-later { background: transparent; color: #111417; border: 1px solid rgba(14,26,38,0.2); } .ds-pass-later:hover { background: #E8ECEE; } .ds-pass-actions button:focus-visible { outline: 2px solid #6A747D; outline-offset: 2px; }"
-    },
-    {
-      "name": "Rail Section",
-      "kind": "card",
-      "refersTo": "rail-tile",
-      "description": "Signature: one strip of ticket paper per section, hairline-ruled from 52px, each row ending in a stamp coloured by heat.",
-      "html": "<section class=\"ds-rail-ground\"><h4 class=\"ds-rail-h\">Up next</h4><div class=\"ds-rail\"><div class=\"ds-row\" tabindex=\"0\"><span class=\"ds-check\"></span><div class=\"ds-row-main\"><span class=\"ds-row-title\"><i class=\"ds-dot\"></i>Submit project proposal</span><span class=\"ds-meta\">High &middot; 0 of 2</span></div><div class=\"ds-rstamp ds-warm\"><b>1d</b><small>late</small></div></div><div class=\"ds-row\" tabindex=\"0\"><span class=\"ds-check\"></span><div class=\"ds-row-main\"><span class=\"ds-row-title\">Call the landlord</span><span class=\"ds-meta\">#home</span></div><div class=\"ds-rstamp\"><b>5:00 PM</b><small>due</small></div></div><div class=\"ds-row ds-struck\" tabindex=\"0\"><span class=\"ds-check ds-checked\"></span><div class=\"ds-row-main\"><span class=\"ds-row-title\">Book dentist</span></div></div></div></section>",
-      "css": ".ds-rail-ground { font-family: -apple-system, 'SF Pro Text', Roboto, system-ui, sans-serif; background: #DDE2E6; padding: 16px; } .ds-rail-h { margin: 4px 4px 8px; font-size: 15px; font-weight: 600; color: #111417; } .ds-rail { background: #FFFFFF; border-radius: 6px; overflow: hidden; } .ds-row { position: relative; display: flex; align-items: center; gap: 4px; padding: 8px 12px 8px 4px; cursor: pointer; transition: background 140ms; } .ds-row:hover { background: #E8ECEE; } .ds-row:focus-visible { outline: 2px solid #6A747D; outline-offset: -2px; } .ds-row + .ds-row::before { content: ''; position: absolute; top: 0; left: 52px; right: 0; height: 0.5px; background: rgba(14,26,38,0.12); } .ds-check { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; flex: none; } .ds-check::after { content: ''; width: 18px; height: 18px; border-radius: 50%; border: 1.6px solid #4F5862; box-sizing: border-box; } .ds-checked::after { background: #111417; border-color: #111417; } .ds-row-main { flex: 1; display: flex; flex-direction: column; gap: 2px; } .ds-row-title { display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 500; color: #111417; } .ds-dot { width: 8px; height: 8px; border-radius: 50%; background: #4B396A; } .ds-meta { font-size: 13px; font-weight: 500; color: #454E57; } .ds-rstamp { display: flex; flex-direction: column; align-items: flex-end; padding-left: 12px; font-variant-numeric: tabular-nums; } .ds-rstamp b { font-size: 15px; font-weight: 600; color: #111417; line-height: 1.1; } .ds-rstamp small { font-size: 11px; font-weight: 500; color: #454E57; } .ds-warm b { font-weight: 700; color: #7F4C00; } .ds-warm small { color: #7F4C00; } .ds-struck .ds-row-title { color: #4F5862; text-decoration: line-through; text-decoration-thickness: 2px; }"
-    },
-    {
-      "name": "Toast Slip",
-      "kind": "custom",
-      "refersTo": "toast-slip",
-      "description": "Inverse-ink confirmation slip anchored at the top, like a printed ticket handed across the pass.",
-      "html": "<div class=\"ds-toast\"><span>Task completed</span><button class=\"ds-toast-act\">Undo</button></div>",
-      "css": ".ds-toast { font-family: -apple-system, 'SF Pro Text', Roboto, system-ui, sans-serif; display: flex; align-items: center; gap: 12px; width: 320px; padding: 12px 16px; background: #111417; color: #DDE2E6; border-radius: 6px; font-size: 13px; box-shadow: 0 3px 10px rgba(0,0,0,0.4); } .ds-toast span { flex: 1; } .ds-toast-act { font-family: -apple-system, 'SF Pro Text', Roboto, system-ui, sans-serif; background: none; border: none; color: #DDE2E6; font-size: 13px; font-weight: 600; text-decoration: underline; cursor: pointer; } .ds-toast-act:hover { opacity: 0.8; } .ds-toast-act:focus-visible { outline: 2px solid #DDE2E6; outline-offset: 2px; }"
+      "refersTo": "toast",
+      "description": "Forest confirmation slip at the top of the screen, with a leaf-green action.",
+      "html": "<div class=\"ds-toast\"><span>Task completed</span><button class=\"ds-toast-action\">Undo</button></div>",
+      "css": ".ds-toast { font-family: Nunito, sans-serif; display: flex; align-items: center; justify-content: space-between; gap: 12px; background: #1D4D2B; color: #FFFFFF; font-size: 13px; font-weight: 700; border-radius: 16px; padding: 12px 16px; box-shadow: 0 6px 14px rgba(0,0,0,0.4); max-width: 340px; } .ds-toast-action { font-family: inherit; background: none; border: none; color: #58CC02; font-size: 13px; font-weight: 900; cursor: pointer; } .ds-toast-action:focus-visible { outline: 2px solid #58CC02; }"
     }
   ],
   "narrative": {
-    "northStar": "The Ticket Rail at the Pass",
-    "overview": "Nudge is a kitchen pass. Every open task is a paper ticket hanging on a brushed-steel rail, stamped with how long it has waited; the ticket that has been put off longest sits on the pass at the top, printed large. Chrome and actions are print-black ink on white paper (light) or paper ink on a mid-dark steel (dark). Nothing is decorated. Colour has exactly one job, heat: a ticket warms to heat-lamp amber and then goes thermal red as it is ignored, and it holds that colour until someone handles it.\n\nDensity is phone-glance density: one strong ticket on the pass, then a compact rail of sentence-case sections (Up next, Overdue, Today, Coming up) where each row ends in a right-aligned stamp in tabular figures. The world is one identity across both OSes, but its chrome is native: an iOS large-title nav bar, translucent tab bar and nav-bar add button on iPhone; a Material top app bar, navigation bar and ink FAB on Android. Dark is \"the pass after close\": a mid-dark steel, tickets a clear step lighter, never near-black and never blue slate. Theme follows the system by default.\n\nThe world refuses the category default (a priority-coloured checklist of identical cards), and it refuses glass, gradients, background washes, watermark motifs, uppercase tracked labels and hero numbers.",
+    "northStar": "The Meadow",
+    "overview": "Nudge opens onto a field. Every root tab starts under a band of fresh grass: the app bar is painted grass green and runs straight into a painted header where a far hill swells across the width, a few daisies dot it, and the pale green page rolls up over it like a near slope. On that page sit chunky, soft blocks: white cards with a solid lip along their bottom edge, vivid leaf-green buttons that visibly sink when pressed, and 3D illustrations (a flame, a check, an alarm clock, a trophy) that make the counts feel like rewards rather than debts. The tone is playful and encouraging, in the family of Duolingo and Headspace, not a grey utility list.\n\nThe one task that has waited longest sits on a dark-forest hero card near the top of Focus, printed large with how late it is and with Done and Later right there. Lateness still has a temperature: a task warms to amber and then goes red the longer it is put off, and a hollow ring under it counts each deferral. Everything else is a stack of white task cards in sentence-case sections. Dark mode is the same meadow at night: deep forest ground, moonlit ink, cards a clear step lighter, the same leaf-green buttons.\n\nThe world is one identity across both OSes but its chrome behaves natively: an iOS large-title nav bar, `CupertinoTabBar` and nav-bar add button on iPhone; a Material app bar, `NavigationBar` and FAB on Android. Both tab bars are floated inside one chunky white block above the page.",
     "keyCharacteristics": [
-      "Steel ground, white ticket paper, print-black ink; colour only for heat.",
-      "Small, square-shouldered corners (6px) with continuous (superellipse) curvature.",
-      "Hairline steel dividers inside one strip of paper per section, not floating cards.",
-      "Tabular figures on every stamp, count and timer.",
-      "Done is a struck line, then the ticket slides off the rail.",
-      "Platform-native chrome per OS around one shared visual world."
+      "A grass band (painted hills, scattered daisies) heads every root tab and flows from the status bar into the page.",
+      "Chunky blocks: generous continuous corners (10/16/24px) and a solid bottom lip on everything pressable; pressed, the lip shrinks and the block sinks.",
+      "Vivid leaf green is a fill with dark glyphs on it, never a text colour; a deeper leaf green carries green text.",
+      "Lateness is heat (amber, then red); priority stays in ink.",
+      "Cheerful 3D illustrations decorate stat tiles, the hero card and empty states; icons stay Material/Cupertino.",
+      "Nunito throughout, heavy (800/900) for headings, figures and buttons."
     ],
     "rules": [
-      {
-        "name": "The Colour Means Heat Rule",
-        "body": "On Focus, the only hue on screen is heat. If a coloured pixel is not saying \"this ticket is warming\" or \"this ticket is critical\", it should be ink.",
-        "section": "colors"
-      },
-      {
-        "name": "The Priority Speaks Ink Rule",
-        "body": "Priority never takes a hue: high is full ink with a filled flag, medium and low are secondary ink with an outlined flag, so a high-priority ticket can never outshout one that is actually late.",
-        "section": "colors"
-      },
-      {
-        "name": "The Identity Dot Rule",
-        "body": "A swatch is an identity mark, never a semantic signal and never a surface tint. The punch mark is hollow precisely so it cannot be mistaken for a swatch dot.",
-        "section": "colors"
-      },
-      {
-        "name": "The Contrast Floor Rule",
-        "body": "Every colour that can carry text or a meaningful icon clears WCAG 4.5:1 against ground, paper and pressed in both themes; `ink-dim` is non-text and clears 3:1. `test/design_tokens_test.dart` enforces this.",
-        "section": "colors"
-      },
-      {
-        "name": "The Nine Sizes Rule",
-        "body": "Font sizes come only from `AppTypography`; no literals and no half-points. Tracking comes from `AppTypography.trackingFor(size)`.",
-        "section": "typography"
-      },
-      {
-        "name": "The Tabular Stamp Rule",
-        "body": "Every stamp, count, punch-mark overflow and timer is set with tabular figures so values align down the rail.",
-        "section": "typography"
-      },
-      {
-        "name": "The Sentence Case Rule",
-        "body": "Section headings are sentence case in ink at body weight 600. No small caps, no uppercase tracked labels.",
-        "section": "typography"
-      },
-      {
-        "name": "The Paper On Steel Rule",
-        "body": "A ticket reads as paper on metal by value step alone. No card shadows, no gradients, no blur behind content.",
-        "section": "elevation"
-      }
+      { "name": "The Heat Rule", "body": "Lateness is the only thing that turns a task amber or red: `heatColor` on the page, `heroHeatColor` on the hero. Nothing else borrows those two colours as decoration.", "section": "colors" },
+      { "name": "The Priority Speaks Ink Rule", "body": "Priority never takes a hue: high is full ink with a filled flag, medium and low are secondary ink with an outlined flag (`priorityColor`, `priorityIcon`), so a high flag can never outshout a task that is actually late. The widgets follow it too.", "section": "colors" },
+      { "name": "The Fill-Only Leaf Rule", "body": "Leaf Fill is a surface, not a text colour, and what sits on it is always On Leaf Fill; white on it fails contrast. Green text uses Leaf Ink.", "section": "colors" },
+      { "name": "The Cheer Is Fill Rule", "body": "Streak Flame and the three tints are grounds and illustration companions. Text on them is ink; they are never text themselves.", "section": "colors" },
+      { "name": "The Identity Dot Rule", "body": "A swatch renders as a small solid dot (8px by a task title, likewise on habit and goal cards), never as a card tint or a flag. Deferral marks are hollow rings precisely so they cannot be read as identity dots.", "section": "colors" },
+      { "name": "The Contrast Floor Rule", "body": "Every text or meaningful-icon colour clears 4.5:1 on page, card and pressed in both themes; Leaf Dim clears 3:1; each fill clears 4.5:1 with its own foreground; on-hero colours clear 4.5:1 on forest (Leaf Fill 3:1); ink clears 4.5:1 on every tint and on the grass. `test/design_tokens_test.dart` enforces all of it.", "section": "colors" },
+      { "name": "The Scale-Only Rule", "body": "Sizes come only from `AppTypography` (no literals, no half-points) and tracking from `AppTypography.trackingFor(size)`.", "section": "typography" },
+      { "name": "The Tabular Figures Rule", "body": "Every stamp, count, stat figure and timer is set with tabular figures.", "section": "typography" },
+      { "name": "The Sentence Case Rule", "body": "Headings and section headers are sentence case in ink. Weight carries emphasis, not case or letter-spacing.", "section": "typography" },
+      { "name": "The Lip Rule", "body": "Every pressable block carries a solid lip on its bottom edge (`ChunkyBorder`): 4px on buttons, the FAB, stat tiles and the tab bar; 3px on task, habit and goal cards; 5px on the hero. Pressed, a button's lip drops to 1px and its label drops with the face (80ms), so the block sinks. The leaf lip is Leaf Lip; quiet blocks take a lip of Border Strong blended over their own face; the hero takes 35% black over forest.", "section": "elevation" }
     ],
     "dos": [
-      "**Do** route every colour through `context.colors`; never a hardcoded palette constant.",
-      "**Do** colour a Focus ticket only through `heatColor(colors, TicketAge.heat)`.",
-      "**Do** set priority in ink: full ink and a filled flag for high, secondary ink and an outlined flag otherwise.",
-      "**Do** show a swatch only as a small identity dot.",
-      "**Do** take sizes from `AppTypography`, gaps from `AppSpacing` (4/8 rhythm) and corners from `AppRadii` (4/6/12), using the continuous `*Shape` getters.",
-      "**Do** use tabular figures for every stamp, count and timer.",
-      "**Do** use the platform form for chrome: `isCupertino(context)` picks large-title nav bar, tab bar and nav-bar add on iOS, app bar, navigation bar and FAB on Android; `.adaptive` dialogs, switches and progress indicators.",
-      "**Do** honour Reduce Motion: durations from `AppMotion` (140 / 240 / 360ms, ease-out cubic in, ease-in cubic out) and none at all when animations are disabled.",
-      "**Do** keep text and meaningful icons at 4.5:1 against ground, paper and pressed in both themes."
+      "Do route every colour through `context.colors`; never a hardcoded palette constant.",
+      "Do colour lateness only through `heatColor` on the page and `heroHeatColor` on the hero.",
+      "Do set priority in ink: full ink and a filled flag for high, secondary ink and an outlined flag otherwise.",
+      "Do put On Leaf Fill on every Leaf Fill surface, and use Leaf Ink when green must be text.",
+      "Do give every pressable block the solid lip (`ChunkyBorder`, or `chunkyCard` for cards) and let it sink when pressed.",
+      "Do open each root tab under the meadow band, with the app bar painted Grass, and keep text on the grass rather than the hill.",
+      "Do use illustrations for stat tiles, the hero card and empty states, and Material/Cupertino glyphs for every icon.",
+      "Do show a swatch only as a small identity dot.",
+      "Do take sizes from `AppTypography`, gaps from `AppSpacing` and corners from `AppRadii` (10/16/24, pill for chips), using the continuous `*Shape` getters.",
+      "Do keep chrome native in behaviour: `isCupertino(context)` picks the large-title nav bar, `CupertinoTabBar` and nav-bar add on iOS, the app bar, `NavigationBar` and FAB on Android; use `.adaptive` dialogs, switches and progress indicators.",
+      "Do honour Reduce Motion.",
+      "Do change `AppColors.dark` together with its Android, iOS widget and launch-screen mirrors."
     ],
     "donts": [
-      "**Don't** use glass, gradients, background washes, watermark motifs, uppercase tracked labels or hero numbers.",
-      "**Don't** colour priority, chrome or actions; red is for a ticket gone critical, not a high flag.",
-      "**Don't** tint a card or surface with a swatch.",
-      "**Don't** add card shadows; depth is a value step from steel to paper.",
-      "**Don't** use pill or large rounded corners on tickets, buttons or panels; 12px is for sheet tops only.",
-      "**Don't** make dark near-black or blue slate; it is mid-dark steel with tickets a clear step lighter.",
-      "**Don't** write a font-size, radius or spacing literal."
+      "Don't put white text on Leaf Fill; it fails contrast.",
+      "Don't use Streak Flame or the tints as text colours.",
+      "Don't colour priority amber or red; those two mean late.",
+      "Don't tint a card or surface with a swatch.",
+      "Don't replace an icon with an illustration, or put an illustration where a control's meaning depends on it.",
+      "Don't swap the native tab bar or nav bar for a custom widget; restyle around them.",
+      "Don't write a font-size, radius or spacing literal."
     ]
   }
 }

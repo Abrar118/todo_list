@@ -7,10 +7,11 @@ import '../../core/app_colors.dart';
 import '../../core/app_tokens.dart';
 import '../../domain/models/priority.dart';
 import '../../domain/models/swatch.dart';
+import 'meadow.dart';
 
-/// Colour is reserved for heat, so priority speaks in ink: high priority is
-/// set in full ink (and drawn with a filled flag, see [priorityIcon]) rather
-/// than red, so it never outshouts a ticket that is actually late.
+/// Red and amber are reserved for lateness, so priority speaks in ink: high
+/// priority is set in full ink (and drawn with a filled flag, see
+/// [priorityIcon]) so it never outshouts a task that is actually late.
 Color priorityColor(BuildContext context, TaskPriority priority) {
   final colors = context.colors;
   return switch (priority) {
@@ -32,8 +33,8 @@ bool isCupertino(BuildContext context) => switch (Theme.of(context).platform) {
   _ => false,
 };
 
-/// Bottom padding for a root tab's scrolling content: clears the platform
-/// tab bar (already in the inset on iOS) and, on Android, the FAB.
+/// Bottom padding for a root tab's scrolling content: clears the home
+/// indicator when there is one and, on Android, the FAB.
 double listBottomInset(BuildContext context) =>
     MediaQuery.paddingOf(context).bottom +
     AppSpacing.lg +
@@ -151,9 +152,7 @@ class _SwatchCell extends StatelessWidget {
                     size: 20,
                     // On a filled swatch the glyph sits on the colour; the
                     // automatic cell is only tinted, so it needs ink.
-                    color: icon == null
-                        ? colors.background
-                        : colors.textPrimary,
+                    color: icon == null ? colors.card : colors.textPrimary,
                   )
                 : icon == null
                 ? null
@@ -189,7 +188,7 @@ class MetaChip extends StatelessWidget {
           style: TextStyle(
             fontSize: AppTypography.footnote,
             color: c,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ],
@@ -198,9 +197,10 @@ class MetaChip extends StatelessWidget {
 }
 
 /// A root tab's header, in each platform's own form: an iOS large title
-/// that collapses on scroll (with the system's translucent bar material), or
-/// a Material top app bar. [onAdd] puts the tab's add action in the iOS nav
-/// bar; Android shows it as a FAB instead (see [rootAddFab]).
+/// that collapses on scroll, or a Material top app bar. Both are painted the
+/// meadow's grass green so they run straight into the tab's [MeadowHeader].
+/// [onAdd] puts the tab's add action in the iOS nav bar; Android shows it as
+/// a FAB instead (see [rootAddFab]).
 Widget rootAppBar(
   BuildContext context, {
   required String title,
@@ -212,8 +212,8 @@ Widget rootAppBar(
   if (isCupertino(context)) {
     return CupertinoSliverNavigationBar(
       largeTitle: Text(title),
-      backgroundColor: colors.background.withValues(alpha: 0.86),
-      border: Border(bottom: BorderSide(color: colors.border, width: 0.5)),
+      backgroundColor: colors.meadowTop,
+      border: null,
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -230,7 +230,14 @@ Widget rootAppBar(
   }
   return SliverAppBar(
     pinned: true,
-    title: Text(title),
+    backgroundColor: colors.meadowTop,
+    title: Text(
+      title,
+      style: const TextStyle(
+        fontSize: AppTypography.title1,
+        fontWeight: FontWeight.w900,
+      ),
+    ),
     actions: [
       ...actions,
       const SizedBox(width: AppSpacing.xs),
@@ -238,10 +245,11 @@ Widget rootAppBar(
   );
 }
 
-/// The one empty state every tab uses: a heading that says what is true, a
-/// sentence that teaches what the screen is for, and the action that fills
-/// it. No icon medallion — the words carry it.
+/// The one empty state every tab uses: the tab's illustration, a heading
+/// that says what is true, a sentence that teaches what the screen is for,
+/// and the chunky button that fills it.
 class EmptyState extends StatelessWidget {
+  final Art art;
   final String title;
   final String message;
   final String actionLabel;
@@ -249,6 +257,7 @@ class EmptyState extends StatelessWidget {
 
   const EmptyState({
     super.key,
+    required this.art,
     required this.title,
     required this.message,
     required this.actionLabel,
@@ -264,12 +273,14 @@ class EmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            Illustration(art, size: 112),
+            const SizedBox(height: AppSpacing.lg),
             Text(
               title,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: AppTypography.title3,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w900,
                 color: colors.textPrimary,
               ),
             ),
@@ -292,8 +303,7 @@ class EmptyState extends StatelessWidget {
   }
 }
 
-/// A list section's heading: sentence case, set in ink. It names the group
-/// below it rather than labelling it in small capitals.
+/// A list section's heading: sentence case, heavy, set in ink.
 class SectionHeader extends StatelessWidget {
   final String title;
   final String? trailing;
@@ -325,8 +335,8 @@ class SectionHeader extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-              fontSize: AppTypography.body,
-              fontWeight: FontWeight.w600,
+              fontSize: AppTypography.callout,
+              fontWeight: FontWeight.w900,
               color: colors.textPrimary,
             ),
           ),
@@ -336,6 +346,7 @@ class SectionHeader extends StatelessWidget {
               trailing!,
               style: TextStyle(
                 fontSize: AppTypography.footnote,
+                fontWeight: FontWeight.w800,
                 color: colors.textSecondary,
                 fontFeatures: const [FontFeature.tabularFigures()],
               ),
@@ -508,12 +519,12 @@ class _ToastState extends State<_Toast> with SingleTickerProviderStateMixin {
             begin: const Offset(0, -0.4),
             end: Offset.zero,
           ).animate(curved),
-          // An inverse ink slip, like a printed ticket handed across the
-          // pass. It sits in an overlay outside the app's Material, so the
-          // Material here also supplies the text defaults — without it the
-          // text falls back to monospace with yellow underlines.
+          // A dark-forest slip, the hero card's colour. It sits in an
+          // overlay outside the app's Material, so the Material here also
+          // supplies the text defaults — without it the text falls back to
+          // monospace with yellow underlines.
           child: Material(
-            color: colors.textPrimary,
+            color: colors.hero,
             shape: AppRadii.mediumShape,
             elevation: 6,
             shadowColor: const Color(0x66000000),
@@ -528,8 +539,9 @@ class _ToastState extends State<_Toast> with SingleTickerProviderStateMixin {
                     child: Text(
                       widget.message,
                       style: TextStyle(
-                        color: colors.background,
+                        color: colors.onHero,
                         fontSize: AppTypography.footnote,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
@@ -544,11 +556,9 @@ class _ToastState extends State<_Toast> with SingleTickerProviderStateMixin {
                         child: Text(
                           widget.actionLabel!,
                           style: TextStyle(
-                            color: colors.background,
-                            decoration: TextDecoration.underline,
-                            decorationColor: colors.background,
+                            color: colors.accentFill,
                             fontSize: AppTypography.footnote,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w900,
                           ),
                         ),
                       ),

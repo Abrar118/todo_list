@@ -9,19 +9,17 @@ related_targets: ["lib/ui/home_shell.dart"]
 
 Scope: the Focus tab, plus the app shell (navigation, add action) it sits in. Mode: Operate.
 Audience and job: one person glancing at their phone between other things; see what has waited longest, then complete it or consciously put it off. Must carry escalation (deferral count, days overdue) honestly; no invented data.
-Memorable moment: the ticket on the pass, stamped with how long it has waited, warming from ink to amber to red.
-Open decisions: app icon redesign (needs a real asset; out of scope).
+Memorable moment: the dark-forest hero card holding the task that has waited longest, its stamp warming from white to amber to coral, with a chunky green Done.
+Open decisions: app icon redesign and a custom mascot (need real artwork; out of scope).
 
 ## Direction contract
 
-THESIS: Focus is a ticket rail. Every open task is a ticket stamped with how long it has waited; the most put-off ticket sits on the pass. It refuses the category default: a priority-coloured checklist of identical cards.
+THESIS: Focus is a meadow you check in on. A friendly greeting and three bright stat tiles, then the one task that has waited longest on a dark-forest hero card, then everything else as chunky white blocks. Pinned by the user's Duolingo / Headspace reference (2026-10-29), after a quiet grey "ticket rail" was rejected as generic and washed out.
 
-OWN-WORLD: Brushed-steel ground (cool blue-grey), white ticket surfaces, print-black ink for all chrome and primary actions. Colour is reserved for heat: heat-lamp amber when a ticket is warming, thermal red when critical. System type (SF / Roboto), tabular figures on every stamp. Small square-shouldered radii, hairline steel dividers; no glass, no gradients, no washes. Dark (adaptation: Apple HIG and Material 3 both expect a Dark Mode that follows the system, and the default theme now does): the pass after close — a mid-dark brushed steel ground (#1D2124) with tickets a clear step lighter (#2E3439), paper ink (#F1F3F5) for chrome and the primary action, the same heat ramp brightened for the dark ground. Never near-black, never blue slate.
+OWN-WORLD: A grass band (#8BDB4A by day) rolling over painted hills into a pale green page (#F2F8EA); white chunky cards with a solid bottom lip; vivid leaf green (#58CC02) for every primary button and the add button, always with dark ink text; a dark-forest hero card (#1D4D2B); stat tiles in sun, leaf and sky tints with Fluent Emoji 3D illustrations; Nunito throughout, heavy (800–900) for headings and buttons. Lateness is still heat: amber when warming, red when critical (re-mixed for the hero card). Dark: the meadow at night — forest ground (#0E1912), cards a step lighter, the same vivid green buttons.
 
-STORY: The visitor sees at a glance what has waited longest, understands that ignoring it makes it louder, and completes or deliberately defers it.
+STORY: The visitor feels welcomed, sees at a glance what has waited longest and how their day is going, and completes or deliberately defers it.
 
-FIRST VIEWPORT: Platform large title "Focus". Under it, the pass: one full-width ticket with the title, its wait stamp large in tabular figures at the right in its heat colour, punch marks counting put-offs, inline Done and Later. Below, the rail: one list in sentence-case sections (Up next, Overdue, Today, Coming up), each row ending in a right-aligned wait or due stamp. Add is the nav-bar + on iOS, the FAB on Android; tabs are the platform tab bar or navigation bar. Signature interaction: a completed ticket is struck through, then slides off the rail.
+FIRST VIEWPORT: The platform title bar painted grass green, carrying a time-of-day greeting. Under it on the grass, one line ("2 waiting, 1 of them late.") and three stat tiles: best habit streak, done today, waiting. Then the hero card: title, meta, illustration, the wait stamp large in its heat colour with put-off marks, chunky Done and Later. Below, sentence-case sections of chunky task cards. Add is the nav-bar + on iOS, the green FAB on Android; tabs are the native tab bar or navigation bar, floated as a chunky white block. Signature interaction: a completed task is struck through, then slides off.
 
-FORM: kitchen ticket rail, 4 of 7; seed:312d9d97e7eb115e. Raises: from Ikeda, value not tint carries state; from the gate board, an escalated stamp holds its colour until handled; from airport yellow, colour has one job (heat); from the star atlas, one fixed heat ramp encodes escalation; from the centre rail, done is a struck line; from Crouwel, a strict 4/8 grid.
-
-FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
+FINISH: unreviewed and undocumented is unfinished; this build ends with an emulator check in both themes and both OS chromes, DESIGN.md, and every shipping raster carrying its provenance (assets/illustrations/README.md).

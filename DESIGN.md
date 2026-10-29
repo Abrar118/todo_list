@@ -2,34 +2,63 @@
 name: Nudge
 description: A local-first task manager where put-off work comes back hotter until it is handled.
 colors:
-  ticket-ink: "#111417"
-  ink-secondary: "#454E57"
-  ink-muted: "#4F5862"
-  ink-dim: "#6A747D"
-  steel-ground: "#DDE2E6"
-  steel-raised: "#F3F5F6"
-  ticket-paper: "#FFFFFF"
-  ticket-pressed: "#E8ECEE"
-  steel-hairline: "#0E1A261F"
-  steel-hairline-strong: "#0E1A2633"
-  heat-lamp: "#7F4C00"
-  thermal-red: "#AE2A21"
-  done-green: "#1C6B41"
-  info-blue: "#2B5574"
-  paper-ink-dark: "#F1F3F5"
-  ink-secondary-dark: "#BCC3C9"
-  ink-muted-dark: "#AEB6BD"
-  ink-dim-dark: "#8A949D"
-  steel-ground-dark: "#1D2124"
-  steel-raised-dark: "#24292D"
-  ticket-paper-dark: "#2E3439"
-  ticket-pressed-dark: "#33393F"
-  steel-hairline-dark: "#FFFFFF17"
-  steel-hairline-strong-dark: "#FFFFFF29"
-  heat-lamp-dark: "#F2AE45"
-  thermal-red-dark: "#FF7F73"
-  done-green-dark: "#63D894"
-  info-blue-dark: "#86BDE0"
+  leaf-fill: "#58CC02"
+  on-leaf-fill: "#10270A"
+  leaf-lip: "#46A302"
+  leaf-lip-dark: "#3B8A02"
+  leaf-ink: "#2A750D"
+  on-leaf-ink: "#FFFFFF"
+  leaf-dim: "#578F40"
+  leaf-ink-dark: "#86E04A"
+  on-leaf-ink-dark: "#0E1912"
+  leaf-dim-dark: "#4D8A37"
+  forest-hero: "#1D4D2B"
+  on-hero: "#FFFFFF"
+  on-hero-muted: "#BFE3C4"
+  hero-warm: "#F4B04B"
+  hero-hot: "#FFB0A6"
+  forest-hero-dark: "#215C30"
+  on-hero-muted-dark: "#C3E8C8"
+  hero-warm-dark: "#F7BE62"
+  hero-hot-dark: "#FFB8AE"
+  grass: "#8BDB4A"
+  far-hill: "#6CC72E"
+  grass-dark: "#1B3F20"
+  far-hill-dark: "#24512A"
+  streak-flame: "#FF9600"
+  tint-sun: "#FFEFD2"
+  tint-leaf: "#DDF4C9"
+  tint-sky: "#DCEBFB"
+  streak-flame-dark: "#FF9F1C"
+  tint-sun-dark: "#3A2A12"
+  tint-leaf-dark: "#1F3A1E"
+  tint-sky-dark: "#172C40"
+  meadow-page: "#F2F8EA"
+  elevated: "#FFFFFF"
+  card-white: "#FFFFFF"
+  pressed: "#E4EFD8"
+  forest-ink: "#13251A"
+  ink-secondary: "#3B5243"
+  ink-muted: "#4A604F"
+  border: "#13251A24"
+  border-strong: "#13251A38"
+  meadow-page-dark: "#0E1912"
+  elevated-dark: "#16241A"
+  card-dark: "#1A2B1F"
+  pressed-dark: "#223727"
+  moon-ink-dark: "#EDF6E8"
+  ink-secondary-dark: "#B7CBB0"
+  ink-muted-dark: "#A5BA9E"
+  border-dark: "#E6FFDC1F"
+  border-strong-dark: "#E6FFDC33"
+  overdue: "#B3261E"
+  medium: "#8A4F00"
+  done: "#21733A"
+  low: "#2A5C85"
+  overdue-dark: "#FF8A7E"
+  medium-dark: "#F4B04B"
+  done-dark: "#6ADB8E"
+  low-dark: "#8CC2EA"
   swatch-sage: "#48673C"
   swatch-mist: "#395A6A"
   swatch-lilac: "#4B396A"
@@ -72,53 +101,50 @@ colors:
   swatch-berry-dark: "#CE97B6"
 typography:
   display:
-    fontFamily: "SF Pro (iOS system), Roboto (Android system)"
+    fontFamily: "Nunito"
     fontSize: "34px"
-    fontWeight: 700
-    lineHeight: 1.1
+    fontWeight: 900
+    lineHeight: 1
     letterSpacing: "-0.8px"
     fontFeature: "tnum"
   title1:
-    fontFamily: "SF Pro (iOS system), Roboto (Android system)"
+    fontFamily: "Nunito"
     fontSize: "28px"
-    fontWeight: 700
+    fontWeight: 900
+    lineHeight: 1
     letterSpacing: "-0.8px"
   title3:
-    fontFamily: "SF Pro (iOS system), Roboto (Android system)"
+    fontFamily: "Nunito"
     fontSize: "20px"
-    fontWeight: 600
+    fontWeight: 900
     lineHeight: 1.2
     letterSpacing: "-0.4px"
   callout:
-    fontFamily: "SF Pro (iOS system), Roboto (Android system)"
+    fontFamily: "Nunito"
     fontSize: "17px"
-    fontWeight: 600
+    fontWeight: 800
     letterSpacing: "-0.2px"
   body:
-    fontFamily: "SF Pro (iOS system), Roboto (Android system)"
-    fontSize: "15px"
-    fontWeight: 400
-    lineHeight: 1.35
-    letterSpacing: "0px"
-  body-strong:
-    fontFamily: "SF Pro (iOS system), Roboto (Android system)"
+    fontFamily: "Nunito"
     fontSize: "15px"
     fontWeight: 600
+    lineHeight: 1.35
     letterSpacing: "0px"
   footnote:
-    fontFamily: "SF Pro (iOS system), Roboto (Android system)"
+    fontFamily: "Nunito"
     fontSize: "13px"
-    fontWeight: 500
+    fontWeight: 700
     letterSpacing: "0px"
   caption:
-    fontFamily: "SF Pro (iOS system), Roboto (Android system)"
+    fontFamily: "Nunito"
     fontSize: "11px"
-    fontWeight: 500
+    fontWeight: 800
     letterSpacing: "0px"
 rounded:
-  sm: "4px"
-  md: "6px"
-  lg: "12px"
+  sm: "10px"
+  md: "16px"
+  lg: "24px"
+  pill: "999px"
 spacing:
   xs: "4px"
   sm: "8px"
@@ -128,251 +154,283 @@ spacing:
   xxl: "32px"
 components:
   button-primary:
-    backgroundColor: "{colors.ticket-ink}"
-    textColor: "{colors.ticket-paper}"
-    typography: "{typography.body-strong}"
+    backgroundColor: "{colors.leaf-fill}"
+    textColor: "{colors.on-leaf-fill}"
+    typography: "{typography.callout}"
     rounded: "{rounded.md}"
-    height: "48px"
-  button-primary-dark:
-    backgroundColor: "{colors.paper-ink-dark}"
-    textColor: "{colors.steel-ground-dark}"
-    typography: "{typography.body-strong}"
+    padding: "0 20px 4px"
+    height: "52px"
+  button-primary-pressed:
+    backgroundColor: "{colors.leaf-fill}"
+    textColor: "{colors.on-leaf-fill}"
+    typography: "{typography.callout}"
     rounded: "{rounded.md}"
-    height: "48px"
+    padding: "3px 20px 1px"
+    height: "52px"
   button-outlined:
-    backgroundColor: "{colors.ticket-paper}"
-    textColor: "{colors.ticket-ink}"
-    typography: "{typography.body-strong}"
+    backgroundColor: "{colors.card-white}"
+    textColor: "{colors.forest-ink}"
+    typography: "{typography.callout}"
     rounded: "{rounded.md}"
-    height: "48px"
+    padding: "0 20px 4px"
+    height: "52px"
   button-text:
-    textColor: "{colors.ticket-ink}"
-    typography: "{typography.body-strong}"
+    textColor: "{colors.leaf-ink}"
+    typography: "{typography.body}"
     height: "44px"
   fab-android:
-    backgroundColor: "{colors.ticket-ink}"
-    textColor: "{colors.ticket-paper}"
+    backgroundColor: "{colors.leaf-fill}"
+    textColor: "{colors.on-leaf-fill}"
     rounded: "{rounded.md}"
     size: "56px"
-  pass-ticket:
-    backgroundColor: "{colors.ticket-paper}"
-    textColor: "{colors.ticket-ink}"
+  hero-card:
+    backgroundColor: "{colors.forest-hero}"
+    textColor: "{colors.on-hero}"
     typography: "{typography.title3}"
+    rounded: "{rounded.lg}"
+    padding: "20px 20px 25px"
+  stat-tile-sun:
+    backgroundColor: "{colors.tint-sun}"
+    textColor: "{colors.forest-ink}"
+    typography: "{typography.title1}"
     rounded: "{rounded.md}"
-    padding: "16px"
-  rail-tile:
-    backgroundColor: "{colors.ticket-paper}"
-    textColor: "{colors.ticket-ink}"
+    padding: "12px 8px 16px 12px"
+  stat-tile-leaf:
+    backgroundColor: "{colors.tint-leaf}"
+    textColor: "{colors.forest-ink}"
+    typography: "{typography.title1}"
+    rounded: "{rounded.md}"
+    padding: "12px 8px 16px 12px"
+  stat-tile-sky:
+    backgroundColor: "{colors.tint-sky}"
+    textColor: "{colors.forest-ink}"
+    typography: "{typography.title1}"
+    rounded: "{rounded.md}"
+    padding: "12px 8px 16px 12px"
+  task-card:
+    backgroundColor: "{colors.card-white}"
+    textColor: "{colors.forest-ink}"
     typography: "{typography.body}"
     rounded: "{rounded.md}"
-    padding: "8px 12px 8px 4px"
-  ticket-stamp:
-    textColor: "{colors.ticket-ink}"
-    typography: "{typography.body-strong}"
-  ticket-stamp-pass:
-    textColor: "{colors.thermal-red}"
-    typography: "{typography.display}"
+  form-panel:
+    backgroundColor: "{colors.card-white}"
+    textColor: "{colors.forest-ink}"
+    typography: "{typography.callout}"
+    rounded: "{rounded.md}"
   chip-filter:
-    backgroundColor: "{colors.ticket-paper}"
+    backgroundColor: "{colors.card-white}"
     textColor: "{colors.ink-secondary}"
     typography: "{typography.footnote}"
-    rounded: "{rounded.sm}"
+    rounded: "{rounded.pill}"
     padding: "4px 8px"
   chip-filter-selected:
-    backgroundColor: "{colors.ticket-ink}"
-    textColor: "{colors.steel-ground}"
+    backgroundColor: "{colors.leaf-fill}"
+    textColor: "{colors.on-leaf-fill}"
     typography: "{typography.footnote}"
-    rounded: "{rounded.sm}"
+    rounded: "{rounded.pill}"
     padding: "4px 8px"
   input-field:
-    backgroundColor: "{colors.ticket-paper}"
-    textColor: "{colors.ticket-ink}"
+    backgroundColor: "{colors.card-white}"
+    textColor: "{colors.forest-ink}"
     typography: "{typography.body}"
     rounded: "{rounded.sm}"
     padding: "12px"
-  toast-slip:
-    backgroundColor: "{colors.ticket-ink}"
-    textColor: "{colors.steel-ground}"
+  toast:
+    backgroundColor: "{colors.forest-hero}"
+    textColor: "{colors.on-hero}"
     typography: "{typography.footnote}"
     rounded: "{rounded.md}"
     padding: "12px 16px"
-  nav-bar-android:
-    backgroundColor: "{colors.steel-raised}"
-    textColor: "{colors.ticket-ink}"
+  tab-bar:
+    backgroundColor: "{colors.card-white}"
+    textColor: "{colors.leaf-ink}"
     typography: "{typography.caption}"
-    height: "72px"
+    rounded: "{rounded.lg}"
+    height: "64px"
+  root-app-bar:
+    backgroundColor: "{colors.grass}"
+    textColor: "{colors.forest-ink}"
+    typography: "{typography.title1}"
 ---
 
 # Design System: Nudge
 
 ## Overview
 
-**Creative North Star: "The Ticket Rail at the Pass"**
+**Creative North Star: "The Meadow"**
 
-Nudge is a kitchen pass. Every open task is a paper ticket hanging on a brushed-steel rail, stamped with how long it has waited; the ticket that has been put off longest sits on the pass at the top, printed large. Chrome and actions are print-black ink on white paper (light) or paper ink on a mid-dark steel (dark). Nothing is decorated. Colour has exactly one job, heat: a ticket warms to heat-lamp amber and then goes thermal red as it is ignored, and it holds that colour until someone handles it.
+Nudge opens onto a field. Every root tab starts under a band of fresh grass: the app bar is painted grass green and runs straight into a painted header where a far hill swells across the width, a few daisies dot it, and the pale green page rolls up over it like a near slope. On that page sit chunky, soft blocks: white cards with a solid lip along their bottom edge, vivid leaf-green buttons that visibly sink when pressed, and 3D illustrations (a flame, a check, an alarm clock, a trophy) that make the counts feel like rewards rather than debts. The tone is playful and encouraging, in the family of Duolingo and Headspace, not a grey utility list.
 
-Density is phone-glance density: one strong ticket on the pass, then a compact rail of sentence-case sections (Up next, Overdue, Today, Coming up) where each row ends in a right-aligned stamp in tabular figures. The world is one identity across both OSes, but its chrome is native: an iOS large-title nav bar, translucent tab bar and nav-bar add button on iPhone; a Material top app bar, navigation bar and ink FAB on Android. Dark is "the pass after close": a mid-dark steel, tickets a clear step lighter, never near-black and never blue slate. Theme follows the system by default.
+The one task that has waited longest sits on a dark-forest hero card near the top of Focus, printed large with how late it is and with Done and Later right there. Lateness still has a temperature: a task warms to amber and then goes red the longer it is put off, and a hollow ring under it counts each deferral. Everything else is a stack of white task cards in sentence-case sections. Dark mode is the same meadow at night: deep forest ground, moonlit ink, cards a clear step lighter, the same leaf-green buttons.
 
-The world refuses the category default (a priority-coloured checklist of identical cards), and it refuses glass, gradients, background washes, watermark motifs, uppercase tracked labels and hero numbers.
+The world is one identity across both OSes but its chrome behaves natively: an iOS large-title nav bar, `CupertinoTabBar` and nav-bar add button on iPhone; a Material app bar, `NavigationBar` and FAB on Android. Both tab bars are floated inside one chunky white block above the page.
 
 **Key Characteristics:**
-- Steel ground, white ticket paper, print-black ink; colour only for heat.
-- Small, square-shouldered corners (6px) with continuous (superellipse) curvature.
-- Hairline steel dividers inside one strip of paper per section, not floating cards.
-- Tabular figures on every stamp, count and timer.
-- Done is a struck line, then the ticket slides off the rail.
-- Platform-native chrome per OS around one shared visual world.
+- A grass band (painted hills, scattered daisies) heads every root tab and flows from the status bar into the page.
+- Chunky blocks: generous continuous corners (10/16/24px) and a solid bottom lip on everything pressable; pressed, the lip shrinks and the block sinks.
+- Vivid leaf green is a fill with dark glyphs on it, never a text colour; a deeper leaf green carries green text.
+- Lateness is heat (amber, then red); priority stays in ink.
+- Cheerful 3D illustrations decorate stat tiles, the hero card and empty states; icons stay Material/Cupertino.
+- Nunito throughout, heavy (800/900) for headings, figures and buttons.
 
 ## Colors
 
-A cool steel-and-paper neutral system with a single print-black ink and a two-step heat ramp; every hue outside heat is either a quiet semantic signal or a user-chosen identity dot.
+A fresh green meadow by day and a forest at night, with one vivid leaf-green fill for actions, a warm cheer family for rewards, and a heat pair that is reserved for lateness.
 
 ### Primary
-- **Ticket Ink** (light `ticket-ink`, dark `paper-ink-dark`): the accent. Fills the primary button, the Android FAB, selected chips and segmented buttons, the checked completion circle, the progress track fill and the toast slip. Because it is ink, chrome and actions carry no hue at all. In dark it inverts to paper ink on steel.
-- **Ink Dim** (`ink-dim` / `ink-dim-dark`): non-text accent only (3:1): switch tracks, focused input borders, secondary/tertiary Material roles.
+- **Leaf Fill** (`leaf-fill`, both themes): every primary button, the Android FAB, the checked completion circle, the selected filter chip and segmented segment, the selected calendar day, switch tracks, sliders, progress fills and the focused-field border. Too light for white text; it always carries **On Leaf Fill** (`on-leaf-fill`), a near-black green.
+- **Leaf Lip** (`leaf-lip` / `leaf-lip-dark`): the solid bottom lip under every leaf-green block.
+- **Leaf Ink** (`leaf-ink` / `leaf-ink-dark`): the text- and icon-safe green. Text buttons ("Show completed", the editor's Done), selected tab icons and labels, the Material `primary` role and Cupertino `primaryColor`. **Leaf Dim** (`leaf-dim` / `leaf-dim-dark`) is the non-text green (3:1) for the `secondary` role.
 
-### Secondary (the heat ramp)
-- **Heat Lamp** (`heat-lamp` / `heat-lamp-dark`): heat 1, a ticket warming. Any late ticket is at least this warm. Darkened in light so it still carries text on steel.
-- **Thermal Red** (`thermal-red` / `thermal-red-dark`): heat 2, a ticket gone critical. Also the Material `error` role, destructive dialog actions and the storage-error banner rim.
+### Secondary (the hero and heat)
+- **Forest Hero** (`forest-hero` / `forest-hero-dark`): the dark-forest card the longest-waiting task sits on, in both themes; also the toast and the date-picker header. Text on it is **On Hero** (white) or **On Hero Muted** for meta.
+- **Heat** is computed, never chosen: `TicketAge.heat` (0/1/2) maps through `heatColor` to secondary ink, **Medium** amber (`medium` / `medium-dark`) or **Overdue** red (`overdue` / `overdue-dark`). On the hero card the same heat goes through `heroHeatColor` to **Hero Warm** and **Hero Hot**, re-mixed to clear 4.5:1 on forest. Overdue is also the Material `error` role and the destructive dialog action.
 
-Heat is computed, never chosen: `TicketAge.heat` (`lib/domain/logic/ticket_age.dart`) returns 0/1/2 and `heatColor` in `lib/ui/widgets/ticket.dart` maps it to secondary ink, heat lamp, or thermal red.
-
-### Tertiary (quiet semantics)
-- **Done Green** (`done-green` / `done-green-dark`) and **Info Blue** (`info-blue` / `info-blue-dark`): completion and information states on Habits detail. Semantic, never decorative, and never on Focus.
+### Tertiary (cheer)
+- **Streak Flame** (`streak-flame` / `streak-flame-dark`): the streak colour and the Material `tertiary` role. A fill only.
+- **Tint Sun / Tint Leaf / Tint Sky** (`tint-*`): the grounds of the three stat tiles (streak, done today, waiting) and of the swipe-to-Later reveal (sun). Ink text sits on them.
+- **Grass / Far Hill** (`grass`, `far-hill` and their `-dark` pair): the meadow band at the top of every root tab and the hill rolling out of it. Text sits on the grass, never on the hill.
 
 ### Neutral
-- **Steel Ground** (`steel-ground` / `steel-ground-dark`): scaffold, app bars, the inside of a punch mark.
-- **Steel Raised** (`steel-raised` / `steel-raised-dark`): navigation bar, tab bar, bottom sheets.
-- **Ticket Paper** (`ticket-paper` / `ticket-paper-dark`): every ticket, card, dialog, input and unselected chip.
-- **Ticket Pressed** (`ticket-pressed` / `ticket-pressed-dark`): pressed and selected container states, the swipe-to-defer reveal, progress tracks, the nav indicator.
-- **Ink Secondary / Ink Muted**: secondary text, metadata chips, inactive tab icons and labels, placeholder text.
-- **Steel Hairline / Steel Hairline Strong**: translucent dividers, field borders, outlined-button borders and the scrolled-under app bar edge.
+- **Meadow Page** (`meadow-page` / `meadow-page-dark`): scaffold and the near slope of the header.
+- **Card White** (`card-white` / `card-dark`) and **Elevated** (`elevated` / `elevated-dark`): every card, panel, dialog, input, unselected chip and the tab-bar block; elevated is the sheet ground.
+- **Pressed** (`pressed` / `pressed-dark`): pressed states, progress tracks, unchecked habit day dots.
+- **Forest Ink / Moon Ink** (`forest-ink` / `moon-ink-dark`), **Ink Secondary**, **Ink Muted**: primary, secondary and placeholder text, inactive tab icons.
+- **Border / Border Strong**: translucent forest (light) or moonlit green (dark) for card sides, field strokes, chip strokes and the source of the quiet lip.
+- **Done** and **Low** (`done`, `low` and dark pair): completion and information semantics. Never decorative.
 
 ### Identity swatches
-Twenty muted `swatch-*` colours (light variants are deep, dark variants are pale) give tasks, habits and goals a user-picked identity. They render as a small dot (8px on task rows), never as a card fill or flag. Their order is parallel to the `Swatch` enum; reorder both palettes and the enum together.
+Twenty muted `swatch-*` colours (deep in light, pale in dark) give tasks, habits and goals a user-picked identity. Their order is parallel to the `Swatch` enum and `AppColors.decorative`; reorder the enum and both palettes together.
 
 ### Platform mirrors
-The home-screen widgets cannot read `AppColors`, so they carry a hand-kept copy of the dark palette: `android/app/src/main/res/values/colors.xml` (Kotlin widgets, plus `splash_background` at `steel-ground-dark` so launch opens onto steel) and the colour constants in `ios/NudgeWidgets/NudgeWidgets.swift`. Change `AppColors.dark` and both mirrors together.
-
-Open item: the app icon in `assets/icon/` is still the pre-redesign purple bell and does not belong to this world. A ticket-rail icon needs a real asset; it is not specified here.
+Home-screen widgets and launch cannot read `AppColors`, so they carry a hand-kept copy of `AppColors.dark`: `android/app/src/main/res/values/colors.xml` (widget colours and `splash_background`), the colour constants in `ios/NudgeWidgets/NudgeWidgets.swift`, and the background of `ios/Runner/Base.lproj/LaunchScreen.storyboard`. All three open on the night-meadow ground. Change `AppColors.dark` and all three together.
 
 ### Named Rules
-**The Colour Means Heat Rule.** On Focus, the only hue on screen is heat. If a coloured pixel is not saying "this ticket is warming" or "this ticket is critical", it should be ink.
+**The Heat Rule.** Lateness is the only thing that turns a task amber or red: `heatColor` on the page, `heroHeatColor` on the hero. Nothing else borrows those two colours as decoration.
 
-**The Priority Speaks Ink Rule.** Priority never takes a hue: high is full ink with a filled flag, medium and low are secondary ink with an outlined flag, so a high-priority ticket can never outshout one that is actually late.
+**The Priority Speaks Ink Rule.** Priority never takes a hue: high is full ink with a filled flag, medium and low are secondary ink with an outlined flag (`priorityColor`, `priorityIcon`), so a high flag can never outshout a task that is actually late. The widgets follow it too.
 
-**The Identity Dot Rule.** A swatch is an identity mark, never a semantic signal and never a surface tint. The punch mark is hollow precisely so it cannot be mistaken for a swatch dot.
+**The Fill-Only Leaf Rule.** Leaf Fill is a surface, not a text colour, and what sits on it is always On Leaf Fill; white on it fails contrast. Green text uses Leaf Ink.
 
-**The Contrast Floor Rule.** Every colour that can carry text or a meaningful icon clears WCAG 4.5:1 against ground, paper and pressed in both themes; `ink-dim` is non-text and clears 3:1. `test/design_tokens_test.dart` enforces this.
+**The Cheer Is Fill Rule.** Streak Flame and the three tints are grounds and illustration companions. Text on them is ink; they are never text themselves.
+
+**The Identity Dot Rule.** A swatch renders as a small solid dot (8px by a task title, likewise on habit and goal cards), never as a card tint or a flag. Deferral marks are hollow rings precisely so they cannot be read as identity dots.
+
+**The Contrast Floor Rule.** Every text or meaningful-icon colour clears 4.5:1 on page, card and pressed in both themes; Leaf Dim clears 3:1; each fill clears 4.5:1 with its own foreground; on-hero colours clear 4.5:1 on forest (Leaf Fill 3:1); ink clears 4.5:1 on every tint and on the grass. `test/design_tokens_test.dart` enforces all of it.
 
 ## Typography
 
-**Display Font:** the platform system face (SF Pro on iOS, Roboto on Android)
-**Body Font:** the same system face
-**Label/Mono Font:** none; figures use the system face with tabular figures
+**Display Font:** Nunito (bundled, `assets/fonts/`, weights 400 to 900)
+**Body Font:** Nunito
+**Label/Mono Font:** none; counts and stamps use Nunito with tabular figures
 
-**Character:** Plain system type, set like a ticket printer: weights do the work, figures line up in columns, and large sizes are tightened so they do not look loose.
+**Character:** Rounded terminals and a heavy black weight: headings, figures and buttons are set at 800 to 900 so the type feels as chunky and friendly as the blocks it sits on; running text stays at 600 so it still reads easily.
 
 ### Hierarchy
-- **Display** (700, 34px, 1.1, tracking -0.8): the stamp on the pass ticket and the focus-timer countdown (600). The iOS large title is the system's own.
-- **Title 1** (700, 28px, tracking -0.8): the headline figure or title on Goals and Habit detail.
-- **Title 3** (600, 20px, 1.2, tracking -0.4): the pass ticket's title, Android app bar title, empty-state heading.
-- **Callout** (600, 17px, tracking -0.2): dialog titles, Material titleMedium.
-- **Body** (400, 15px, 1.35): running text; rail row titles at 500; section headers and rail stamps at 600.
-- **Footnote** (500, 13px): metadata chips, section counts, chip labels, toast text.
-- **Caption** (500, 11px): stamp captions ("late", "due"), navigation-bar labels, percent labels.
+- **Display** (900, 34px, 1, tracking -0.8): the iOS large title and the hero card's lateness stamp (tabular).
+- **Title 1** (900, 28px, 1, tracking -0.8): the Android app-bar title and stat-tile figures (tabular).
+- **Title 3** (900, 20px, 1.2, tracking -0.4): the hero task title, empty-state headings; dialog titles at 800.
+- **Callout** (800, 17px, tracking -0.2): button labels, section headers (900), the summary line under the greeting, Cupertino nav titles.
+- **Body** (600, 15px, 1.35): running text and task titles.
+- **Footnote** (700, 13px): meta chips, chip labels, stat-tile labels (800), section counts, toast text.
+- **Caption** (800, 11px): tab labels and small stamp captions.
 
 ### Named Rules
-**The Nine Sizes Rule.** Font sizes come only from `AppTypography`; no literals and no half-points. Tracking comes from `AppTypography.trackingFor(size)`.
+**The Scale-Only Rule.** Sizes come only from `AppTypography` (no literals, no half-points) and tracking from `AppTypography.trackingFor(size)`.
 
-**The Tabular Stamp Rule.** Every stamp, count, punch-mark overflow and timer is set with tabular figures so values align down the rail.
+**The Tabular Figures Rule.** Every stamp, count, stat figure and timer is set with tabular figures.
 
-**The Sentence Case Rule.** Section headings are sentence case in ink at body weight 600. No small caps, no uppercase tracked labels.
+**The Sentence Case Rule.** Headings and section headers are sentence case in ink. Weight carries emphasis, not case or letter-spacing.
 
 ## Layout
 
-A strict 4/8 rhythm (`AppSpacing`: 4, 8, 12, 16, 24, 32). Root tabs inset content 16px left and right; the list starts 8px below the app bar and pads its bottom by the safe-area inset plus 16px (plus 72px on Android to clear the FAB). Section headers sit 24px below the previous section (4px for the first) and 8px above their run. Inside the pass ticket, 16px padding, 8px between title, meta and escalation line, 16px before the Done/Later pair, which splits the width with an 8px gap. Rail rows are 44px tap targets with 8px vertical padding (2px when the Compact rows setting is on). The tag filter is a 48px horizontal scroller of chips at 8px spacing.
+A 4/8 rhythm (`AppSpacing`: 4, 8, 12, 16, 24, 32). Root tabs use 16px side gutters. The meadow header pads its content 16px at the sides and 4px at the top and reserves its bottom 40px for the hills; on Focus it holds the summary line, 12px of air, then three equal stat tiles 8px apart. Lists start 8px below the header and pad their bottom by the safe-area inset plus 16px (plus 72px on Android to clear the FAB). Task cards stack with 8px between them. Section headers sit 24px below the previous section (4px for the first) and 8px above their cards. The tag filter is a 48px horizontal row of pill chips at 8px spacing. The tab-bar block floats 16px in from each side and sits on the home indicator inset (12px when there is none). Editors and detail screens drop the meadow band and group fields in white panels on the page, under sentence-case section headers.
 
 ## Elevation & Depth
 
-Flat by default; depth is tonal. Steel ground sits under raised steel bars, and white (or one-step-lighter) ticket paper sits on the ground with no shadow. Cards, dialogs and tickets are elevation 0 with surface tint disabled, so the steel stays one colour.
+Depth is mostly built, not cast: a block reads as raised because of its solid bottom lip, not a shadow. Cards and panels are elevation 0 with surface tint disabled. A few floating elements cast a soft shadow on top of their lip.
 
 ### Shadow Vocabulary
-- **Scrolled-under bar edge** (Material elevation 1, shadow in `steel-hairline-strong`): Android app bar when content passes under it.
-- **FAB** (Material elevation 2): the Android add button.
-- **Toast slip** (Material elevation 6, shadow #00000066): the inverse-ink confirmation slip at the top of the screen.
-
-The iOS nav bar and tab bar are translucent (ground or raised steel at 86% alpha, 0.5px hairline edge): the system bar material, not decorative glass.
+- **Tab-bar block** (Material elevation 4, shadow `#00000033`): the floating tab bar.
+- **FAB** (Material elevation 3, 1 while pressed): the Android add button.
+- **Toast** (Material elevation 6, shadow `#00000066`): the forest confirmation slip at the top of the screen.
 
 ### Named Rules
-**The Paper On Steel Rule.** A ticket reads as paper on metal by value step alone. No card shadows, no gradients, no blur behind content.
+**The Lip Rule.** Every pressable block carries a solid lip on its bottom edge (`ChunkyBorder`): 4px on buttons, the FAB, stat tiles and the tab bar; 3px on task, habit and goal cards; 5px on the hero. Pressed, a button's lip drops to 1px and its label drops with the face (80ms), so the block sinks. The leaf lip is Leaf Lip; quiet blocks take a lip of Border Strong blended over their own face; the hero takes 35% black over forest.
 
 ## Shapes
 
-Small, square-shouldered corners: a ticket is cut paper, not a pill. Corners are continuous superellipses (`RoundedSuperellipseBorder` via the `AppRadii.*Shape` getters) wherever a widget takes a shape. Small (4px) for chips, fields and calendar cells; medium (6px) for ticket runs, the pass, buttons, the FAB, dialogs, toasts and panels; large (12px) for sheet tops only. Circles are reserved for the completion control (round on both platforms, the punched hole once done), punch marks and identity dots. A rail section is one strip: only its first and last tickets round their outer corners.
+Soft, chunky, toy-block forms with continuous (superellipse) corners, via `AppRadii.*Shape` and `ChunkyBorder`. Small (10px) for fields, calendar cells and inline pills; medium (16px) for buttons, the FAB, task cards, stat tiles, form panels, toasts and the segmented control; large (24px) for the hero card, the calendar card, the tab-bar block, dialogs and sheet tops. Filter chips are full pills. Circles are reserved for the completion control (round on both platforms, filled leaf green once done), habit day dots, identity dots and the hollow deferral marks. The meadow header's hills are the only free-form curves: one long cubic swell for the far hill and two gentle waves for the near slope.
 
 ## Components
 
 ### Buttons
-Inked and decisive, never coloured.
-- **Shape:** gently squared (6px continuous).
-- **Primary (Filled):** ink fill, paper text, weight 600, 48px min height. Done on the pass and every empty-state action.
-- **Outlined:** ink text, strong steel hairline border, 48px min height. Later on the pass.
-- **Text:** ink text, 44px min target. "Show completed", Android dialog actions (destructive in thermal red). iOS dialogs use `CupertinoDialogAction`.
-- **FAB (Android only):** ink square-shouldered (6px) add button, elevation 2. On iOS the same action is the nav-bar plus.
+Chunky, cheerful and pressable.
+- **Shape:** medium continuous corners (16px) with a 4px solid lip.
+- **Primary (Filled):** Leaf Fill face, On Leaf Fill label at callout 800, 52px tall, 20px side padding. Every empty-state action and Done on the hero.
+- **Outlined (quiet):** card face, ink label, 1.5px Border Strong side, same lip and height. On the hero it is re-mixed as a translucent white face (12%) with a dark lip so it never competes with Done (Later).
+- **Pressed:** the lip shrinks 4px to 1px and the label drops 3px; disabled blocks take a Border Strong lip.
+- **Text:** Leaf Ink at 800, 44px minimum target. Android dialog actions are text buttons (destructive in Overdue); iOS dialogs use `CupertinoDialogAction`.
+- **FAB (Android only):** Leaf Fill, 16px chunky shape with the Leaf Lip, 30px plus glyph. On iOS the same action is the nav-bar plus.
 
 ### Chips
-- **Filter (ChoiceChip):** paper ground, secondary-ink footnote label, no border, 4px corners. Selected is inked (ink fill, ground-coloured 600 label), so the active filter is the loudest chip.
-- **MetaChip:** not a container; a 14px icon plus footnote label in secondary ink, coloured only by heat (overdue/escalation) or by priority ink.
+- **Filter (ChoiceChip):** card face, 1.5px Border Strong side, Ink Secondary footnote label, full pill. Selected is Leaf Fill with an On Leaf Fill label at 800, so the active filter is the loudest chip.
+- **MetaChip:** not a container; a 14px icon plus footnote label at 700 in Ink Secondary (On Hero Muted on the hero), coloured only by heat or priority ink.
 
 ### Cards / Containers
-- **Corner Style:** 6px continuous.
-- **Background:** ticket paper.
-- **Shadow Strategy:** none (see Elevation & Depth).
-- **Border:** none; rail tickets are divided by 0.5px hairlines indented 52px so they rule the text column.
-- **Internal Padding:** 16px on the pass and panels; 8/12px on rail rows.
+- **Task card:** white face, 16px, 1.5px Border side, 3px quiet lip, 8px gap below. Leads with the round completion control, may carry an 8px identity dot by the title, and ends in its stamp.
+- **Stat tile:** a tint face (sun, leaf or sky), 4px lip, a 34px illustration, the figure at title 1 900 and a footnote 800 label. Read as one phrase by screen readers.
+- **Form panel (editors, detail):** white face, 16px corners, no side and no lip; panels are containers, not pressable blocks.
+- **Calendar card:** the month grid on a white block, 24px corners, 4px lip, sitting on the meadow band; the selected day is a Leaf Fill cell.
 
 ### Inputs / Fields
-- **Style:** filled paper, 1px steel hairline, 4px corners, 12px padding, muted-ink hint.
-- **Focus:** the border shifts to ink dim. No glow.
+- **Style:** filled card white, 1.5px Border Strong stroke, 10px corners, 12px padding, Ink Muted hint.
+- **Focus:** the stroke turns Leaf Fill at 2px. No glow.
 
 ### Navigation
-- **iOS:** `CupertinoSliverNavigationBar` large title with translucent steel and a 0.5px hairline; `CupertinoTabBar` in raised steel at 86%, ink active, muted inactive. Secondary destinations (Completed, Settings) open from an action sheet.
-- **Android:** pinned `SliverAppBar` (title 3), Material `NavigationBar` in raised steel, 72px tall, pressed-steel indicator, caption labels in ink (selected) or muted ink. Secondary destinations open from a popup menu.
+- **Root app bar:** painted Grass in both forms so it runs into the meadow header. iOS: `CupertinoSliverNavigationBar` large title (display 900), no border, actions and the add plus trailing. Android: pinned `SliverAppBar` with a title 1 900 title; the add action is the FAB.
+- **Tab bar:** the platform's own bar (`CupertinoTabBar`, 58px, or Material `NavigationBar`, 64px) on a transparent ground inside one floating white chunky block (24px, 4px lip, elevation 4). Active icon and label in Leaf Ink, inactive in Ink Muted, caption labels at 800; Android shows a Tint Leaf pill indicator.
+- **Secondary destinations** (Completed, Settings) open from a `CupertinoActionSheet` on iOS and a popup menu on Android.
 
-### The Pass Ticket (signature)
-The single most put-off open task, on paper at the top of Focus. Title at title 3 (3 lines max), meta chips, and an escalation line ("Put off 3 times") in its heat colour; at the right, the stamp at display size in tabular figures with its caption and punch marks; below, Done (filled) and Later (outlined). Swiping it left also defers.
+### Meadow Header (signature)
+The grass band under every root tab's app bar: Grass fill, a Far Hill swell 40px from the bottom with five fixed daisies (card colour, 85%), and the page colour rolling up as a two-wave near slope. Focus puts the greeting's summary line and the stat tiles on it; Calendar puts the month card on it; Habits puts its segmented control and stat tiles on it.
 
-### Ticket Stamp and Punch Marks (signature)
-The right edge of every Focus ticket. The value ("4d", "5:00 PM", "Sunday", "Nov 28") is ink when cold and heat-coloured at weight 700 when warm; the caption ("late", "due") is caption size. One hollow 8px punch per deferral (steel showing through, 1.5px rim in heat colour), five at most, then "+N".
+### Hero Card (signature)
+The single longest-waiting open task on Forest Hero, 24px corners, 5px lip. Title at title 3 900 (3 lines max), meta chips in On Hero Muted, a 56px illustration that follows heat (bullseye when cold, hourglass when warming, alarm clock when critical), the stamp at display 900 with its caption, deferral marks on the right, the put-off line in heat, then Done (flex 3) and Later (flex 2) 8px apart. Swiping it left also defers.
 
-### Rail Tile (signature)
-A section is one strip of ticket paper: `RailTile` rounds only the first and last tickets and rules the rest with indented hairlines. Rows lead with the round 44px completion control and may carry an 8px identity dot by the title.
+### Stamp and Deferral Marks
+The right edge of every Focus task card: the value ("1d", "5:00 PM", "Nov 28") in ink when cold and in heat at 700 when warm, with its caption at caption size. One hollow 9px ring per deferral (2px rim in the heat colour, the surface showing through), five at most, then "+N".
 
-### The Spike (signature motion)
-Completing a ticket strikes its title through (2px, muted ink), holds a beat, slides it fully off to the right (ease-in cubic, 20-65% of 560ms), then the rail closes over the gap (ease-out cubic, 60-100%). Skipped entirely under Reduce Motion.
+### Illustrations
+Fluent Emoji 3D renders (`assets/illustrations/`, MIT, provenance in its README) through the `Art` enum and `Illustration`: 34px on stat tiles, 56px on the hero, 112px in empty states, 22px beside habit streaks. Hidden from screen readers; the words beside them carry meaning.
 
 ### Empty State
-One for every tab: a title 3 heading that says what is true, one teaching sentence in body secondary ink, and a filled ink action. No icon medallion.
+One for every tab: a 112px illustration, a title 3 heading that says what is true, one teaching sentence in Ink Secondary, and a chunky Leaf Fill action.
+
+### Completion exit (signature motion)
+Completing a Focus task strikes its title through (2px), slides the card fully off to the right (ease-in cubic, 20 to 65% of 560ms) and then closes the gap (ease-out cubic, 60 to 100%). Skipped under Reduce Motion. Other motion uses `AppMotion` (140 / 240 / 360ms, ease-out cubic in, ease-in cubic out); the toast slides down 240ms and leaves in 140ms.
 
 ## Do's and Don'ts
 
 ### Do:
 - **Do** route every colour through `context.colors`; never a hardcoded palette constant.
-- **Do** colour a Focus ticket only through `heatColor(colors, TicketAge.heat)`.
+- **Do** colour lateness only through `heatColor` on the page and `heroHeatColor` on the hero.
 - **Do** set priority in ink: full ink and a filled flag for high, secondary ink and an outlined flag otherwise.
+- **Do** put On Leaf Fill on every Leaf Fill surface, and use Leaf Ink when green must be text.
+- **Do** give every pressable block the solid lip (`ChunkyBorder`, or `chunkyCard` for cards) and let it sink when pressed.
+- **Do** open each root tab under the meadow band, with the app bar painted Grass, and keep text on the grass rather than the hill.
+- **Do** use illustrations for stat tiles, the hero card and empty states, and Material/Cupertino glyphs for every icon.
 - **Do** show a swatch only as a small identity dot.
-- **Do** take sizes from `AppTypography`, gaps from `AppSpacing` (4/8 rhythm) and corners from `AppRadii` (4/6/12), using the continuous `*Shape` getters.
-- **Do** use tabular figures for every stamp, count and timer.
-- **Do** use the platform form for chrome: `isCupertino(context)` picks large-title nav bar, tab bar and nav-bar add on iOS, app bar, navigation bar and FAB on Android; `.adaptive` dialogs, switches and progress indicators.
-- **Do** honour Reduce Motion: durations from `AppMotion` (140 / 240 / 360ms, ease-out cubic in, ease-in cubic out) and none at all when animations are disabled.
-- **Do** keep text and meaningful icons at 4.5:1 against ground, paper and pressed in both themes.
+- **Do** take sizes from `AppTypography`, gaps from `AppSpacing` and corners from `AppRadii` (10/16/24, pill for chips), using the continuous `*Shape` getters.
+- **Do** keep chrome native in behaviour: `isCupertino(context)` picks the large-title nav bar, `CupertinoTabBar` and nav-bar add on iOS, the app bar, `NavigationBar` and FAB on Android; use `.adaptive` dialogs, switches and progress indicators.
+- **Do** honour Reduce Motion.
+- **Do** change `AppColors.dark` together with its Android, iOS widget and launch-screen mirrors.
 
 ### Don't:
-- **Don't** use glass, gradients, background washes, watermark motifs, uppercase tracked labels or hero numbers.
-- **Don't** colour priority, chrome or actions; red is for a ticket gone critical, not a high flag.
+- **Don't** put white text on Leaf Fill; it fails contrast.
+- **Don't** use Streak Flame or the tints as text colours.
+- **Don't** colour priority amber or red; those two mean late.
 - **Don't** tint a card or surface with a swatch.
-- **Don't** add card shadows; depth is a value step from steel to paper.
-- **Don't** use pill or large rounded corners on tickets, buttons or panels; 12px is for sheet tops only.
-- **Don't** make dark near-black or blue slate; it is mid-dark steel with tickets a clear step lighter.
+- **Don't** replace an icon with an illustration, or put an illustration where a control's meaning depends on it.
+- **Don't** swap the native tab bar or nav bar for a custom widget; restyle around them.
 - **Don't** write a font-size, radius or spacing literal.

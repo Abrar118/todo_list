@@ -5,13 +5,21 @@ import '../../core/app_tokens.dart';
 import '../../core/formats.dart';
 import '../../domain/logic/ticket_age.dart';
 import '../../domain/models/task.dart';
+import 'meadow.dart';
 
-/// The one colour Focus uses: heat. Ink when cold, the heat lamp when a
-/// ticket is warming, thermal red when it has gone critical.
+/// Lateness speaks in heat: ink when a task is on time, amber when it is
+/// warming, red when it has gone critical.
 Color heatColor(AppColors colors, int heat) => switch (heat) {
   <= 0 => colors.textSecondary,
   1 => colors.medium,
   _ => colors.overdue,
+};
+
+/// [heatColor] for text on the dark-forest hero card.
+Color heroHeatColor(AppColors colors, int heat) => switch (heat) {
+  <= 0 => colors.onHeroMuted,
+  1 => colors.heroWarm,
+  _ => colors.heroHot,
 };
 
 /// What a ticket's stamp prints: a value set in tabular figures and the word
@@ -104,7 +112,15 @@ class PunchMarks extends StatelessWidget {
   final int count;
   final Color color;
 
-  const PunchMarks({super.key, required this.count, required this.color});
+  /// What shows through each hole: the surface the marks sit on.
+  final Color? ground;
+
+  const PunchMarks({
+    super.key,
+    required this.count,
+    required this.color,
+    this.ground,
+  });
 
   static const _maxHoles = 5;
 
@@ -118,16 +134,15 @@ class PunchMarks extends StatelessWidget {
           for (var i = 0; i < holes; i++)
             Padding(
               padding: EdgeInsets.only(left: i == 0 ? 0 : 3),
-              // A hole punched through the ticket: the steel ground shows
-              // through, rimmed in the ticket's heat colour. Hollow, so it
-              // can never be mistaken for a swatch's identity dot.
+              // A hollow ring rimmed in the heat colour, so it can never be
+              // mistaken for a swatch's solid identity dot.
               child: Container(
-                width: 8,
-                height: 8,
+                width: 9,
+                height: 9,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: context.colors.background,
-                  border: Border.all(color: color, width: 1.5),
+                  color: ground ?? context.colors.background,
+                  border: Border.all(color: color, width: 2),
                 ),
               ),
             ),
@@ -150,51 +165,22 @@ class PunchMarks extends StatelessWidget {
   }
 }
 
-/// One ticket on the rail: a row inside a white run of tickets on the steel
-/// ground. The run's top and bottom tickets round its corners and every
-/// ticket after the first is separated by a hairline, so a section reads as
-/// one strip of paper rather than a stack of floating cards.
-class RailTile extends StatelessWidget {
+/// One task as a chunky white card on the meadow, with a gap below it so a
+/// section reads as a stack of blocks.
+class TaskCard extends StatelessWidget {
   final Widget child;
-  final bool first;
-  final bool last;
 
-  const RailTile({
-    super.key,
-    required this.child,
-    this.first = false,
-    this.last = false,
-  });
-
-  /// Where the hairline starts: past the completion control, so it underlines
-  /// the text column like a ruled ticket.
-  static const dividerIndent = 52.0;
+  const TaskCard({super.key, required this.child});
 
   @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-    final radius = BorderRadius.vertical(
-      top: first ? const Radius.circular(AppRadii.md) : Radius.zero,
-      bottom: last ? const Radius.circular(AppRadii.md) : Radius.zero,
-    );
-    return ClipRRect(
-      borderRadius: radius,
-      child: Material(
-        color: colors.card,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (!first)
-              Divider(
-                height: 0.5,
-                thickness: 0.5,
-                indent: dividerIndent,
-                color: colors.border,
-              ),
-            child,
-          ],
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+    child: Material(
+      color: context.colors.card,
+      shape: chunkyCard(context.colors),
+      clipBehavior: Clip.antiAlias,
+      // Room for the lip, so content centres on the face.
+      child: Padding(padding: const EdgeInsets.only(bottom: 3), child: child),
+    ),
+  );
 }

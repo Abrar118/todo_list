@@ -9,6 +9,7 @@ import '../../domain/models/habit.dart';
 import '../../domain/models/swatch.dart';
 import '../../state/habit_controller.dart';
 import '../widgets/common.dart';
+import '../widgets/meadow.dart';
 import '../widgets/task_flows.dart';
 import 'habit_detail_screen.dart';
 
@@ -33,6 +34,9 @@ class _HabitsScreenState extends State<HabitsScreen> {
           ? HabitCadence.daily
           : HabitCadence.monthly,
     );
+    final daily = controller.habits
+        .where((h) => h.cadence == HabitCadence.daily)
+        .toList(growable: false);
     void select(_HabitRange? range) {
       if (range != null) setState(() => _range = range);
     }
@@ -59,38 +63,44 @@ class _HabitsScreenState extends State<HabitsScreen> {
             )
           else ...[
             SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.lg,
-                  AppSpacing.sm,
-                  AppSpacing.lg,
-                  AppSpacing.md,
+              child: MeadowHeader(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // The platform's own segmented control on each OS.
+                    isCupertino(context)
+                        ? CupertinoSlidingSegmentedControl<_HabitRange>(
+                            groupValue: _range,
+                            backgroundColor: context.colors.pressed,
+                            thumbColor: context.colors.card,
+                            onValueChanged: select,
+                            children: const {
+                              _HabitRange.daily: Text('Daily'),
+                              _HabitRange.monthly: Text('Monthly'),
+                            },
+                          )
+                        : SegmentedButton<_HabitRange>(
+                            showSelectedIcon: false,
+                            segments: const [
+                              ButtonSegment(
+                                value: _HabitRange.daily,
+                                label: Text('Daily'),
+                              ),
+                              ButtonSegment(
+                                value: _HabitRange.monthly,
+                                label: Text('Monthly'),
+                              ),
+                            ],
+                            selected: {_range},
+                            onSelectionChanged: (value) => select(value.single),
+                          ),
+                    // No tiles over an empty list: 0/0 counts nothing.
+                    if (daily.isNotEmpty) ...[
+                      const SizedBox(height: AppSpacing.md),
+                      _TodaySummary(habits: daily, today: today),
+                    ],
+                  ],
                 ),
-                // The platform's own segmented control on each OS.
-                child: isCupertino(context)
-                    ? CupertinoSlidingSegmentedControl<_HabitRange>(
-                        groupValue: _range,
-                        onValueChanged: select,
-                        children: const {
-                          _HabitRange.daily: Text('Daily'),
-                          _HabitRange.monthly: Text('Monthly'),
-                        },
-                      )
-                    : SegmentedButton<_HabitRange>(
-                        showSelectedIcon: false,
-                        segments: const [
-                          ButtonSegment(
-                            value: _HabitRange.daily,
-                            label: Text('Daily'),
-                          ),
-                          ButtonSegment(
-                            value: _HabitRange.monthly,
-                            label: Text('Monthly'),
-                          ),
-                        ],
-                        selected: {_range},
-                        onSelectionChanged: (value) => select(value.single),
-                      ),
               ),
             ),
             switch (_range) {
@@ -141,13 +151,11 @@ class _DailyHabitView extends StatelessWidget {
       ),
       sliver: SliverList.list(
         children: [
-          _TodaySummary(habits: habits, today: today),
           if (controller.hasStorageError ||
               controller.hasNotificationError) ...[
-            const SizedBox(height: AppSpacing.md),
             _StatusWarning(controller: controller),
+            const SizedBox(height: AppSpacing.lg),
           ],
-          const SizedBox(height: AppSpacing.xl),
           Row(
             children: [
               const _SectionLabel('Your routines'),
@@ -157,6 +165,7 @@ class _DailyHabitView extends StatelessWidget {
                 style: TextStyle(
                   color: context.colors.textSecondary,
                   fontSize: AppTypography.footnote,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
             ],
@@ -606,6 +615,8 @@ class _HabitEditorSheetState extends State<HabitEditorSheet> {
   }
 }
 
+/// Today's daily habits as two tiles on the grass: the longest running
+/// streak, and how many are done today.
 class _TodaySummary extends StatelessWidget {
   final List<Habit> habits;
   final DateOnly today;
@@ -618,33 +629,28 @@ class _TodaySummary extends StatelessWidget {
     final completed = habits
         .where((habit) => habit.isCompletedOn(today))
         .length;
-    final total = habits.length;
-    // A status line, not a scoreboard: day one should not open on a large
-    // zero, so the count is plain text over a thin ink rule.
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    final streak = habits
+        .map((h) => h.currentStreak(today))
+        .fold(0, (a, b) => a > b ? a : b);
+    return Row(
       children: [
-        Text(
-          completed < total
-              ? '$completed of $total done today'
-              : total == 1
-              ? 'Done today'
-              : 'All $total done today',
-          style: TextStyle(
-            fontSize: AppTypography.body,
-            fontWeight: FontWeight.w600,
-            color: colors.textPrimary,
-            fontFeatures: const [FontFeature.tabularFigures()],
+        Expanded(
+          child: StatTile(
+            art: Art.fire,
+            value: '$streak',
+            label: 'best streak',
+            tint: colors.tintSun,
           ),
         ),
-        const SizedBox(height: AppSpacing.sm),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(2),
-          child: LinearProgressIndicator(
-            value: total == 0 ? 0 : completed / total,
-            minHeight: 4,
-            color: colors.textPrimary,
-            backgroundColor: colors.pressed,
+        const SizedBox(width: AppSpacing.sm),
+        Expanded(
+          child: StatTile(
+            art: completed == habits.length && habits.isNotEmpty
+                ? Art.partyPopper
+                : Art.seedling,
+            value: '$completed/${habits.length}',
+            label: 'done today',
+            tint: colors.tintLeaf,
           ),
         ),
       ],
@@ -668,11 +674,12 @@ class _HabitCard extends StatelessWidget {
       habit.id,
       today,
     );
-    // A sheet of ticket paper like the Focus rail; the habit's colour is
-    // its identity dot, not a tinted icon tile.
+    // A chunky block like Focus's task cards; the habit's colour is its
+    // identity dot, not a tinted icon tile.
+    final streak = habit.currentStreak(today);
     return Material(
       color: colors.card,
-      shape: AppRadii.mediumShape,
+      shape: chunkyCard(colors),
       clipBehavior: Clip.antiAlias,
       child: Column(
         children: [
@@ -700,8 +707,8 @@ class _HabitCard extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                            fontSize: AppTypography.body,
-                            fontWeight: FontWeight.w600,
+                            fontSize: AppTypography.callout,
+                            fontWeight: FontWeight.w800,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -717,11 +724,28 @@ class _HabitCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  if (habit.currentStreak(today) > 0)
-                    _Pill(
-                      label:
-                          '${habit.currentStreak(today)} day${habit.currentStreak(today) == 1 ? '' : 's'} streak',
-                      color: color,
+                  if (streak > 0)
+                    Semantics(
+                      label: '$streak day${streak == 1 ? '' : 's'} streak',
+                      excludeSemantics: true,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Illustration(Art.fire, size: 22),
+                          const SizedBox(width: 2),
+                          Text(
+                            '$streak',
+                            style: TextStyle(
+                              fontSize: AppTypography.callout,
+                              fontWeight: FontWeight.w900,
+                              color: colors.textPrimary,
+                              fontFeatures: const [
+                                FontFeature.tabularFigures(),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   IconButton(
                     tooltip: habit.isCollapsed
@@ -747,9 +771,9 @@ class _HabitCard extends StatelessWidget {
             crossFadeState: habit.isCollapsed
                 ? CrossFadeState.showFirst
                 : CrossFadeState.showSecond,
-            firstChild: const SizedBox(width: double.infinity),
+            firstChild: const SizedBox(width: double.infinity, height: 3),
             secondChild: Padding(
-              padding: const EdgeInsets.fromLTRB(10, 0, 10, 12),
+              padding: const EdgeInsets.fromLTRB(10, 0, 10, 15),
               child: Column(
                 children: [
                   Row(
@@ -869,32 +893,39 @@ class _HabitDay extends StatelessWidget {
                 Text(
                   weekdays[date.weekday - 1],
                   style: TextStyle(
-                    color: isToday ? color : context.colors.textMuted,
+                    color: isToday
+                        ? context.colors.accent
+                        : context.colors.textMuted,
                     fontSize: AppTypography.caption,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w900,
                   ),
                 ),
                 const SizedBox(height: 6),
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 180),
-                  width: 30,
-                  height: 30,
+                  width: 32,
+                  height: 32,
                   decoration: BoxDecoration(
-                    color: done ? color : context.colors.pressed,
+                    color: done
+                        ? context.colors.accentFill
+                        : context.colors.pressed,
                     shape: BoxShape.circle,
+                    border: isToday && !done
+                        ? Border.all(color: context.colors.accentFill, width: 2)
+                        : null,
                   ),
                   alignment: Alignment.center,
                   child: done
                       ? Icon(
                           Icons.check_rounded,
-                          color: context.colors.onAccent,
-                          size: 18,
+                          color: context.colors.onAccentFill,
+                          size: 20,
                         )
                       : Text(
                           '${date.day}',
                           style: TextStyle(
                             color: isToday
-                                ? color
+                                ? context.colors.accent
                                 : context.colors.textSecondary,
                             fontSize: AppTypography.caption,
                             fontWeight: FontWeight.w700,
@@ -973,30 +1004,6 @@ class _TypeCard extends StatelessWidget {
   }
 }
 
-class _Pill extends StatelessWidget {
-  final String label;
-  final Color color;
-
-  const _Pill({required this.label, required this.color});
-
-  @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
-    decoration: BoxDecoration(
-      color: color.withValues(alpha: .12),
-      borderRadius: AppRadii.smallRadius,
-    ),
-    child: Text(
-      label,
-      style: TextStyle(
-        color: color,
-        fontSize: AppTypography.caption,
-        fontWeight: FontWeight.w800,
-      ),
-    ),
-  );
-}
-
 class _SectionLabel extends StatelessWidget {
   final String text;
   const _SectionLabel(this.text);
@@ -1006,8 +1013,8 @@ class _SectionLabel extends StatelessWidget {
     text,
     style: TextStyle(
       color: context.colors.textPrimary,
-      fontSize: AppTypography.footnote,
-      fontWeight: FontWeight.w600,
+      fontSize: AppTypography.callout,
+      fontWeight: FontWeight.w900,
     ),
   );
 }
@@ -1057,6 +1064,7 @@ class _EmptyHabits extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => EmptyState(
+    art: Art.seedling,
     title: title,
     message: message,
     actionLabel: 'Add habit',

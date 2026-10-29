@@ -72,6 +72,40 @@ void main() {
           greaterThanOrEqualTo(4.5),
         );
       });
+
+      test('$themeName: text on the hero card clears 4.5:1', () {
+        for (final (name, fg) in [
+          ('onHero', c.onHero),
+          ('onHeroMuted', c.onHeroMuted),
+          ('heroWarm', c.heroWarm),
+          ('heroHot', c.heroHot),
+          ('accentFill', c.accentFill),
+        ]) {
+          expect(
+            contrast(fg, c.hero),
+            greaterThanOrEqualTo(name == 'accentFill' ? 3.0 : 4.5),
+            reason: '$themeName $name on hero',
+          );
+        }
+      });
+
+      test('$themeName: text on tints and the meadow clears 4.5:1', () {
+        for (final (name, bg) in [
+          ('tintSun', c.tintSun),
+          ('tintLeaf', c.tintLeaf),
+          ('tintSky', c.tintSky),
+          // Text sits on the grass band, never on the hill below it.
+          ('meadowTop', c.meadowTop),
+        ]) {
+          for (final fg in [c.textPrimary, c.textSecondary]) {
+            expect(
+              contrast(fg, bg),
+              greaterThanOrEqualTo(4.5),
+              reason: '$themeName text on $name',
+            );
+          }
+        }
+      });
     }
   });
 
@@ -82,8 +116,8 @@ void main() {
         return hsl.saturation;
       }
 
-      // The accent is print-black ink by design, so only the chromatic
-      // semantic colours (heat, completion, information) are compared.
+      // The semantic colours (heat, completion, information) must out-shout
+      // every identity colour.
       final semantic = [
         AppColors.dark.overdue,
         AppColors.dark.medium,

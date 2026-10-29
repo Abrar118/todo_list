@@ -176,11 +176,11 @@ private func loadFocus() -> FocusPayload {
 
 // MARK: - Palette
 
-private let nudgeBackground = Color(red: 0.114, green: 0.129, blue: 0.141)
-private let nudgeAccent = Color(red: 0.945, green: 0.953, blue: 0.961)
-private let nudgePrimary = Color(red: 0.945, green: 0.953, blue: 0.961)
-private let nudgeSecondary = Color(red: 0.737, green: 0.765, blue: 0.788)
-private let nudgeOverdue = Color(red: 1.0, green: 0.498, blue: 0.451)
+private let nudgeBackground = Color(red: 0.055, green: 0.098, blue: 0.071)
+private let nudgeAccent = Color(red: 0.525, green: 0.878, blue: 0.29)
+private let nudgePrimary = Color(red: 0.929, green: 0.965, blue: 0.91)
+private let nudgeSecondary = Color(red: 0.718, green: 0.796, blue: 0.69)
+private let nudgeOverdue = Color(red: 1.0, green: 0.541, blue: 0.494)
 
 // MARK: - Timeline
 

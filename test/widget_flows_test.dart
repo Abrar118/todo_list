@@ -475,7 +475,18 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Fix the sink'), findsOneWidget);
+    // The meadow header and the hero card push the rest below the fold.
+    await tester.scrollUntilVisible(
+      find.text('Quarterly report'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
     expect(find.text('Quarterly report'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.widgetWithText(ChoiceChip, '#home'),
+      -200,
+      scrollable: find.byType(Scrollable).first,
+    );
 
     await tester.tap(find.widgetWithText(ChoiceChip, '#home'));
     await tester.pumpAndSettle();
@@ -484,6 +495,11 @@ void main() {
 
     await tester.tap(find.widgetWithText(ChoiceChip, 'All'));
     await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.text('Quarterly report'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
     expect(find.text('Quarterly report'), findsOneWidget);
   });
 
@@ -510,12 +526,13 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Drink water'), findsOneWidget);
-    expect(find.text('0 of 1 done today'), findsOneWidget);
+    expect(find.bySemanticsLabel('0/1 done today'), findsOneWidget);
 
     await tester.tap(find.byTooltip('Mark today complete'));
     await tester.pumpAndSettle();
-    expect(find.text('Done today'), findsOneWidget);
-    expect(find.text('1 day streak'), findsOneWidget);
+    expect(find.bySemanticsLabel('1/1 done today'), findsOneWidget);
+    expect(find.bySemanticsLabel('1 best streak'), findsOneWidget);
+    expect(find.bySemanticsLabel(RegExp('1 day streak')), findsOneWidget);
   });
 
   testWidgets('timer habit opens details and persists checkpoints', (

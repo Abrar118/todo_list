@@ -66,8 +66,16 @@ an explicit "not today" swipe rather than letting a task sit overdue.
 - Product name **Nudge** (package name `todo_list` is internal only).
 - App icon in `assets/icon/` (`icon.png`, `icon_foreground.png`,
   `icon_monochrome.png`).
-- No visual identity has been confirmed as binding; the current look is the
-  incumbent implementation, not a commitment.
+- Visual identity, chosen by the user on 2026-10-29 from a Duolingo /
+  Headspace-style reference: "the meadow" — bright, colourful and friendly,
+  never grey or washed out. Fresh greens, a grass band across the top of each
+  tab, chunky rounded cards and buttons with a solid lip, 3D illustrations,
+  the rounded Nunito face. `DESIGN.md` records the system. An earlier quiet,
+  monochrome "ticket rail" direction was rejected as generic; don't drift
+  back toward restraint.
+- The app icon (a purple bell) predates the meadow and does not match it
+  yet; a custom mascot would replace the stand-in Fluent Emoji illustrations
+  once real artwork exists.
 
 ## Evidence on Hand
 

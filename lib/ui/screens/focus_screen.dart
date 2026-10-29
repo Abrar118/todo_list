@@ -4,15 +4,19 @@ import 'package:provider/provider.dart';
 
 import '../../core/app_colors.dart';
 import '../../core/app_tokens.dart';
+import '../../core/chunky_border.dart';
 import '../../domain/logic/escalation.dart';
 import '../../domain/logic/ticket_age.dart';
+import '../../domain/models/date_only.dart';
 import '../../domain/models/priority.dart';
 import '../../domain/models/recurrence.dart';
 import '../../domain/models/task.dart';
 import '../../state/app_state.dart';
 import '../../state/focus_timer_controller.dart';
+import '../../state/habit_controller.dart';
 import '../../state/settings_controller.dart';
 import '../widgets/common.dart';
+import '../widgets/meadow.dart';
 import '../widgets/task_flows.dart';
 import '../widgets/task_row.dart';
 import '../widgets/ticket.dart';
@@ -23,9 +27,10 @@ import 'search_screen.dart';
 import 'settings_screen.dart';
 import 'task_editor_screen.dart';
 
-/// Focus is the ticket rail. The task that has waited longest sits on the
-/// pass at the top, stamped with how late it is; everything else hangs on
-/// the rail below in sentence-case sections, each row ending in its own
+/// Focus opens on the meadow: a greeting, three stat tiles (habit streak,
+/// done today, still waiting), then the task that has waited longest on the
+/// dark-forest hero card, stamped with how late it is. Everything else sits
+/// below as chunky cards in sentence-case sections, each ending in its own
 /// stamp. Put a task off and it comes back hotter.
 class FocusScreen extends StatefulWidget {
   const FocusScreen({super.key});
@@ -37,7 +42,7 @@ class FocusScreen extends StatefulWidget {
 class _FocusScreenState extends State<FocusScreen> {
   String? _tagFilter;
 
-  /// Tickets being spiked: struck through and sliding off before the
+  /// Tasks being spiked: struck through and sliding off before the
   /// completion lands and the list closes over them.
   final _spiking = <String>{};
 
@@ -85,7 +90,11 @@ class _FocusScreenState extends State<FocusScreen> {
       background: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: AppSpacing.xl),
-        color: colors.pressed,
+        margin: const EdgeInsets.only(bottom: AppSpacing.sm),
+        decoration: ShapeDecoration(
+          color: colors.tintSun,
+          shape: AppRadii.mediumShape,
+        ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -95,7 +104,7 @@ class _FocusScreenState extends State<FocusScreen> {
               'Later',
               style: TextStyle(
                 color: colors.textPrimary,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w800,
               ),
             ),
           ],
@@ -104,31 +113,28 @@ class _FocusScreenState extends State<FocusScreen> {
       child: child,
     );
 
-    Widget row(Task task, {required bool first, required bool last}) =>
-        deferSwipe(
-          task,
-          RailTile(
-            first: first,
-            last: last,
-            child: _Spike(
-              spiking: _spiking.contains(task.id),
-              child: TaskRow(
-                task: task,
-                rule: state.ruleOf(task),
-                compact: compact,
-                showOverdue: true,
-                showTaskBackground: true,
-                stamp: true,
-                striking: _spiking.contains(task.id),
-                onTap: () => TaskEditorScreen.open(context, task: task),
-                onToggle: () => _complete(state, task),
-                onSnooze: task.hasAlarm || task.hasReminders
-                    ? () => snoozeFlow(context, state, task)
-                    : null,
-              ),
-            ),
+    Widget row(Task task) => deferSwipe(
+      task,
+      TaskCard(
+        child: _Spike(
+          spiking: _spiking.contains(task.id),
+          child: TaskRow(
+            task: task,
+            rule: state.ruleOf(task),
+            compact: compact,
+            showOverdue: true,
+            showTaskBackground: true,
+            stamp: true,
+            striking: _spiking.contains(task.id),
+            onTap: () => TaskEditorScreen.open(context, task: task),
+            onToggle: () => _complete(state, task),
+            onSnooze: task.hasAlarm || task.hasReminders
+                ? () => snoozeFlow(context, state, task)
+                : null,
           ),
-        );
+        ),
+      ),
+    );
 
     final lead = sections.spotlight.isEmpty ? null : sections.spotlight.first;
     final entries = <Widget Function()>[
@@ -137,13 +143,16 @@ class _FocusScreenState extends State<FocusScreen> {
           lead,
           _Spike(
             spiking: _spiking.contains(lead.id),
-            child: _PassTicket(
-              task: lead,
-              rule: state.ruleOf(lead),
-              spiking: _spiking.contains(lead.id),
-              onOpen: () => TaskEditorScreen.open(context, task: lead),
-              onDone: () => _complete(state, lead),
-              onLater: () => deferFlow(context, state, lead),
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+              child: _HeroTask(
+                task: lead,
+                rule: state.ruleOf(lead),
+                spiking: _spiking.contains(lead.id),
+                onOpen: () => TaskEditorScreen.open(context, task: lead),
+                onDone: () => _complete(state, lead),
+                onLater: () => deferFlow(context, state, lead),
+              ),
             ),
           ),
         ),
@@ -152,10 +161,8 @@ class _FocusScreenState extends State<FocusScreen> {
       if (tasks.isEmpty) return;
       final first = entries.isEmpty;
       entries.add(() => SectionHeader(title, trailing: trailing, tight: first));
-      for (final (i, task) in tasks.indexed) {
-        entries.add(
-          () => row(task, first: i == 0, last: i == tasks.length - 1),
-        );
+      for (final task in tasks) {
+        entries.add(() => row(task));
       }
     }
 
@@ -184,6 +191,31 @@ class _FocusScreenState extends State<FocusScreen> {
     final timer = context.watch<FocusTimerController>();
     void addTask() => QuickAddSheet.open(context);
 
+    final now = DateTime.now();
+    final today = DateOnly.fromDateTime(now);
+    final waiting = {
+      for (final t in [
+        ...sections.spotlight,
+        ...sections.overdue,
+        ...sections.today,
+      ])
+        t.id: t,
+    }.values;
+    final late = waiting.where((t) => t.isOverdue(now)).length;
+    final doneToday = state.allTasks
+        .where(
+          (t) =>
+              t.isCompleted &&
+              t.completedAt != null &&
+              DateOnly.fromDateTime(t.completedAt!) == today,
+        )
+        .length;
+    final streak = context
+        .watch<HabitController>()
+        .habits
+        .map((h) => h.currentStreak(today))
+        .fold(0, (a, b) => a > b ? a : b);
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       floatingActionButton: rootAddFab(
@@ -195,7 +227,7 @@ class _FocusScreenState extends State<FocusScreen> {
         slivers: [
           rootAppBar(
             context,
-            title: 'Focus',
+            title: _greeting(now),
             onAdd: addTask,
             addTooltip: 'Add task',
             actions: [
@@ -228,6 +260,16 @@ class _FocusScreenState extends State<FocusScreen> {
               ),
               const _FocusMenu(),
             ],
+          ),
+          SliverToBoxAdapter(
+            child: MeadowHeader(
+              child: _FocusSummary(
+                waiting: waiting.length,
+                late: late,
+                doneToday: doneToday,
+                streak: streak,
+              ),
+            ),
           ),
           if (tags.isNotEmpty) SliverToBoxAdapter(child: _tagBar(tags)),
           if (state.hasStorageError)
@@ -274,6 +316,12 @@ class _FocusScreenState extends State<FocusScreen> {
       ),
     );
   }
+
+  static String _greeting(DateTime now) => switch (now.hour) {
+    < 12 => 'Good morning',
+    < 17 => 'Good afternoon',
+    _ => 'Good evening',
+  };
 
   Widget _tagBar(List<String> tags) => SizedBox(
     height: 48,
@@ -367,11 +415,82 @@ class _FocusMenu extends StatelessWidget {
   }
 }
 
-/// The ticket on the pass: the one task that has waited longest, printed
-/// large with its stamp, and the two things you can do about it right there.
-/// Later is a button here, not only a swipe, because deferring on purpose is
-/// half of what Nudge is for.
-class _PassTicket extends StatelessWidget {
+/// The line under the greeting and the three stat tiles, on the grass.
+class _FocusSummary extends StatelessWidget {
+  final int waiting;
+  final int late;
+  final int doneToday;
+  final int streak;
+
+  const _FocusSummary({
+    required this.waiting,
+    required this.late,
+    required this.doneToday,
+    required this.streak,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final line = switch ((waiting, late)) {
+      (0, _) => 'Nothing waiting. Enjoy it.',
+      (final w, 0) =>
+        w == 1 ? 'One thing waiting on you.' : '$w things waiting on you.',
+      (final w, final l) => '$w waiting, $l of them late.',
+    };
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          line,
+          style: TextStyle(
+            fontSize: AppTypography.callout,
+            fontWeight: FontWeight.w800,
+            color: colors.textSecondary,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: StatTile(
+                art: Art.fire,
+                value: '$streak',
+                label: 'day streak',
+                tint: colors.tintSun,
+              ),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: StatTile(
+                art: Art.checkMark,
+                value: '$doneToday',
+                label: 'done today',
+                tint: colors.tintLeaf,
+              ),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: StatTile(
+                art: late > 0 ? Art.alarmClock : Art.hourglass,
+                value: '$waiting',
+                label: 'waiting',
+                tint: colors.tintSky,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+/// The hero card: the one task that has waited longest, on dark forest,
+/// printed large with its stamp, and the two things you can do about it
+/// right there. Later is a button here, not only a swipe, because putting
+/// something off on purpose is half of what Nudge is for.
+class _HeroTask extends StatelessWidget {
   final Task task;
   final RecurrenceRule? rule;
   final bool spiking;
@@ -379,7 +498,7 @@ class _PassTicket extends StatelessWidget {
   final VoidCallback onDone;
   final VoidCallback onLater;
 
-  const _PassTicket({
+  const _HeroTask({
     required this.task,
     required this.rule,
     required this.spiking,
@@ -394,6 +513,7 @@ class _PassTicket extends StatelessWidget {
     final now = DateTime.now();
     final age = TicketAge.of(task, now);
     final stamp = stampText(task, age);
+    final heat = heroHeatColor(colors, age.heat);
     final putOff = switch (task.deferralCount) {
       0 => Escalation.describe(task, now),
       1 => 'Put off once',
@@ -405,16 +525,27 @@ class _PassTicket extends StatelessWidget {
         MetaChip(
           icon: priorityIcon(task.priority),
           label: '${task.priority.label} priority',
-          color: priorityColor(context, task.priority),
+          color: colors.onHeroMuted,
         ),
       if (task.subtasks.isNotEmpty)
         MetaChip(
           icon: Icons.checklist_outlined,
           label: '${task.completedSubtaskCount} of ${task.subtasks.length}',
+          color: colors.onHeroMuted,
         ),
       if (task.isRecurring)
-        MetaChip(icon: Icons.repeat, label: rule?.describe() ?? 'Repeats'),
+        MetaChip(
+          icon: Icons.repeat,
+          label: rule?.describe() ?? 'Repeats',
+          color: colors.onHeroMuted,
+        ),
     ];
+
+    final art = switch (age.heat) {
+      >= 2 => Art.alarmClock,
+      1 => Art.hourglass,
+      _ => Art.bullseye,
+    };
 
     return Semantics(
       container: true,
@@ -424,69 +555,127 @@ class _PassTicket extends StatelessWidget {
         ?putOff,
       ].join(', '),
       child: Material(
-        color: colors.card,
-        shape: AppRadii.mediumShape,
+        color: colors.hero,
+        shape: ChunkyBorder(
+          radius: AppRadii.lg,
+          depth: 5,
+          edge: Color.alphaBlend(const Color(0x59000000), colors.hero),
+        ),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onOpen,
           child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.lg),
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.lg + 4,
+              AppSpacing.lg + 4,
+              AppSpacing.lg + 4,
+              AppSpacing.lg + 9,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ExcludeSemantics(
-                  child: Row(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              task.title,
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: AppTypography.title3,
-                                height: 1.2,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: AppTypography.trackingFor(
-                                  AppTypography.title3,
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  task.title,
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: AppTypography.title3,
+                                    height: 1.2,
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: AppTypography.trackingFor(
+                                      AppTypography.title3,
+                                    ),
+                                    color: spiking
+                                        ? colors.onHeroMuted
+                                        : colors.onHero,
+                                    decoration: spiking
+                                        ? TextDecoration.lineThrough
+                                        : null,
+                                    decorationColor: colors.onHeroMuted,
+                                    decorationThickness: 2,
+                                  ),
                                 ),
-                                color: spiking
-                                    ? colors.textMuted
-                                    : colors.textPrimary,
-                                decoration: spiking
-                                    ? TextDecoration.lineThrough
-                                    : null,
-                                decorationColor: colors.textMuted,
-                                decorationThickness: 2,
-                              ),
+                                if (meta.isNotEmpty) ...[
+                                  const SizedBox(height: AppSpacing.sm),
+                                  Wrap(
+                                    spacing: AppSpacing.md,
+                                    runSpacing: AppSpacing.xs,
+                                    children: meta,
+                                  ),
+                                ],
+                              ],
                             ),
-                            if (meta.isNotEmpty) ...[
-                              const SizedBox(height: AppSpacing.sm),
-                              Wrap(
-                                spacing: AppSpacing.md,
-                                runSpacing: AppSpacing.xs,
-                                children: meta,
-                              ),
-                            ],
-                            if (putOff != null) ...[
-                              const SizedBox(height: AppSpacing.sm),
+                          ),
+                          const SizedBox(width: AppSpacing.md),
+                          Illustration(art, size: 56),
+                        ],
+                      ),
+                      if (stamp != null || task.deferralCount > 0) ...[
+                        const SizedBox(height: AppSpacing.md),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          textBaseline: TextBaseline.alphabetic,
+                          children: [
+                            if (stamp != null) ...[
                               Text(
-                                putOff,
+                                stamp.value,
                                 style: TextStyle(
-                                  fontSize: AppTypography.footnote,
-                                  fontWeight: FontWeight.w600,
-                                  color: heatColor(colors, age.heat),
+                                  fontSize: AppTypography.display,
+                                  height: 1,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: AppTypography.trackingFor(
+                                    AppTypography.display,
+                                  ),
+                                  color: age.heat > 0 ? heat : colors.onHero,
+                                  fontFeatures: const [
+                                    FontFeature.tabularFigures(),
+                                  ],
                                 ),
                               ),
+                              if (stamp.caption.isNotEmpty) ...[
+                                const SizedBox(width: AppSpacing.xs + 2),
+                                Text(
+                                  stamp.caption,
+                                  style: TextStyle(
+                                    fontSize: AppTypography.callout,
+                                    fontWeight: FontWeight.w800,
+                                    color: heat,
+                                  ),
+                                ),
+                              ],
                             ],
+                            const Spacer(),
+                            if (task.deferralCount > 0)
+                              PunchMarks(
+                                count: task.deferralCount,
+                                color: heat,
+                                ground: colors.hero,
+                              ),
                           ],
                         ),
-                      ),
-                      const SizedBox(width: AppSpacing.lg),
-                      TicketStamp(task: task, age: age, large: true),
+                      ],
+                      if (putOff != null) ...[
+                        const SizedBox(height: AppSpacing.xs),
+                        Text(
+                          putOff,
+                          style: TextStyle(
+                            fontSize: AppTypography.footnote,
+                            fontWeight: FontWeight.w800,
+                            color: heat,
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -494,17 +683,20 @@ class _PassTicket extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(
+                      flex: 3,
                       child: FilledButton.icon(
                         onPressed: spiking ? null : onDone,
-                        icon: const Icon(Icons.check_rounded, size: 20),
+                        icon: const Icon(Icons.check_rounded, size: 22),
                         label: const Text('Done'),
                       ),
                     ),
                     const SizedBox(width: AppSpacing.sm),
                     Expanded(
+                      flex: 2,
                       child: OutlinedButton.icon(
                         onPressed: spiking ? null : onLater,
-                        icon: const Icon(Icons.update_rounded, size: 20),
+                        style: _onHero(colors),
+                        icon: const Icon(Icons.update_rounded, size: 22),
                         label: const Text('Later'),
                       ),
                     ),
@@ -517,6 +709,23 @@ class _PassTicket extends StatelessWidget {
       ),
     );
   }
+
+  /// The quiet chunky button, re-mixed for the forest: a translucent face
+  /// and a darker lip, so it never competes with Done.
+  static ButtonStyle _onHero(AppColors colors) =>
+      OutlinedButton.styleFrom(
+        backgroundColor: Colors.white.withValues(alpha: 0.12),
+        foregroundColor: colors.onHero,
+      ).copyWith(
+        side: const WidgetStatePropertyAll(BorderSide.none),
+        shape: WidgetStateProperty.resolveWith(
+          (states) => ChunkyBorder(
+            radius: AppRadii.md,
+            edge: const Color(0x40000000),
+            depth: states.contains(WidgetState.pressed) ? 1 : 4,
+          ),
+        ),
+      );
 }
 
 /// The signature exit. A completed ticket holds its strike-through for a
@@ -589,6 +798,7 @@ class _EmptyFocus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => EmptyState(
+    art: Art.partyPopper,
     title: 'Nothing is waiting on you',
     message:
         'Tasks you add land here, oldest first. Put one off and it comes '

@@ -1007,9 +1007,18 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
       children: [
         for (final p in TaskPriority.values)
           ChoiceChip(
+            // The flag already marks the choice; a checkmark would sit on
+            // top of it.
+            showCheckmark: false,
             avatar: p == TaskPriority.none
                 ? null
-                : Icon(Icons.flag, size: 15, color: priorityColor(context, p)),
+                : Icon(
+                    Icons.flag,
+                    size: 15,
+                    color: _draft.priority == p
+                        ? context.colors.onAccentFill
+                        : priorityColor(context, p),
+                  ),
             label: Text(p.label),
             selected: _draft.priority == p,
             onSelected: (_) => _update(_draft.copyWith(priority: p)),
