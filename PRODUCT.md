@@ -81,7 +81,7 @@ an explicit "not today" swipe rather than letting a task sit overdue.
 
 ## Evidence on Hand
 
-- `README.md` feature list and two redacted screenshots in `assets/readme/`.
+- `README.md` feature list and five screenshots with dummy data in `public/`.
 - Seeded sample tasks on first launch.
 - No users, testimonials, reviews, metrics or store listing exist yet; do not
   invent any.
