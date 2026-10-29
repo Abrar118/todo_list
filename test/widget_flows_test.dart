@@ -101,10 +101,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(repository.store.single.progress, 1);
-    expect(find.text('100'), findsOneWidget);
+    expect(find.text('100%'), findsOneWidget);
   });
 
-  testWidgets('goal detail uses the editorial metric and chart layout', (
+  testWidgets('goal detail shows progress, chart and checkpoints', (
     tester,
   ) async {
     final repository = InMemoryGoalRepository()
@@ -124,8 +124,8 @@ void main() {
     await tester.tap(find.text('Fix sleep schedule'));
     await tester.pumpAndSettle();
 
-    expect(find.text('40'), findsOneWidget);
-    expect(find.text('Your Goal'), findsOneWidget);
+    expect(find.text('40%'), findsNWidgets(2)); // headline and manual row
+    expect(find.text('Fix sleep schedule'), findsOneWidget);
     expect(find.byKey(const ValueKey('goal-progress-chart')), findsOneWidget);
     expect(find.text('Tracking progress'), findsOneWidget);
   });
@@ -510,11 +510,11 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Drink water'), findsOneWidget);
-    expect(find.text('0 of 1 complete today'), findsOneWidget);
+    expect(find.text('0 of 1 done today'), findsOneWidget);
 
     await tester.tap(find.byTooltip('Mark today complete'));
     await tester.pumpAndSettle();
-    expect(find.text('1 of 1 complete today'), findsOneWidget);
+    expect(find.text('Done today'), findsOneWidget);
     expect(find.text('1 day streak'), findsOneWidget);
   });
 

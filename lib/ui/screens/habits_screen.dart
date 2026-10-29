@@ -246,22 +246,18 @@ class _MonthlyRoutineCard extends StatelessWidget {
     final done = habit.isCompletedOn(dueDate);
     return Material(
       color: context.colors.card,
-      borderRadius: BorderRadius.circular(20),
+      shape: AppRadii.mediumShape,
+      clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () => HabitDetailScreen.open(context, habit.id),
-        borderRadius: BorderRadius.circular(20),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
               Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: .16),
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: Icon(Icons.event_repeat_rounded, color: color),
+                width: 10,
+                height: 10,
+                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -272,7 +268,7 @@ class _MonthlyRoutineCard extends StatelessWidget {
                       habit.title,
                       style: const TextStyle(
                         fontSize: AppTypography.body,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -623,70 +619,35 @@ class _TodaySummary extends StatelessWidget {
         .where((habit) => habit.isCompletedOn(today))
         .length;
     final total = habits.length;
-    final progress = total == 0 ? 0.0 : completed / total;
-    return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: colors.card,
-        borderRadius: BorderRadius.circular(22),
-      ),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 82,
-            height: 82,
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                CircularProgressIndicator(
-                  value: progress,
-                  strokeWidth: 9,
-                  strokeCap: StrokeCap.round,
-                  backgroundColor: colors.pressed,
-                  color: colors.accent,
-                ),
-                Center(
-                  child: Text(
-                    '${(progress * 100).round()}%',
-                    style: const TextStyle(
-                      fontSize: AppTypography.callout,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+    // A status line, not a scoreboard: day one should not open on a large
+    // zero, so the count is plain text over a thin ink rule.
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          completed < total
+              ? '$completed of $total done today'
+              : total == 1
+              ? 'Done today'
+              : 'All $total done today',
+          style: TextStyle(
+            fontSize: AppTypography.body,
+            fontWeight: FontWeight.w600,
+            color: colors.textPrimary,
+            fontFeatures: const [FontFeature.tabularFigures()],
           ),
-          const SizedBox(width: 18),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Today', style: TextStyle(color: colors.textSecondary)),
-                const SizedBox(height: 4),
-                Text(
-                  '$completed of $total complete today',
-                  style: const TextStyle(
-                    fontSize: AppTypography.callout,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  completed == total
-                      ? 'Perfect rhythm. Keep it going.'
-                      : 'Small steps add up.',
-                  style: TextStyle(
-                    color: colors.textMuted,
-                    fontSize: AppTypography.footnote,
-                  ),
-                ),
-              ],
-            ),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(2),
+          child: LinearProgressIndicator(
+            value: total == 0 ? 0 : completed / total,
+            minHeight: 4,
+            color: colors.textPrimary,
+            backgroundColor: colors.pressed,
           ),
-          Icon(Icons.bolt_rounded, color: colors.accent, size: 28),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -707,176 +668,162 @@ class _HabitCard extends StatelessWidget {
       habit.id,
       today,
     );
-    // Not glass: the card sits on the flat scaffold background, so the blur
-    // sampled a flat colour and returned it unchanged, per row, every frame.
-    return ClipRSuperellipse(
-      borderRadius: AppRadii.mediumRadius,
-      child: DecoratedBox(
-        decoration: ShapeDecoration(
-          shape: RoundedSuperellipseBorder(
-            borderRadius: AppRadii.mediumRadius,
-            side: BorderSide(color: colors.borderStrong),
+    // A sheet of ticket paper like the Focus rail; the habit's colour is
+    // its identity dot, not a tinted icon tile.
+    return Material(
+      color: colors.card,
+      shape: AppRadii.mediumShape,
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          InkWell(
+            onTap: () => HabitDetailScreen.open(context, habit.id),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 14, 8, 12),
+              child: Row(
+                children: [
+                  Container(
+                    width: 10,
+                    height: 10,
+                    decoration: BoxDecoration(
+                      color: color,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          habit.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: AppTypography.body,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          habitMeta(context, habit, seconds),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: colors.textSecondary,
+                            fontSize: AppTypography.footnote,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (habit.currentStreak(today) > 0)
+                    _Pill(
+                      label:
+                          '${habit.currentStreak(today)} day${habit.currentStreak(today) == 1 ? '' : 's'} streak',
+                      color: color,
+                    ),
+                  IconButton(
+                    tooltip: habit.isCollapsed
+                        ? 'Expand habit'
+                        : 'Collapse habit',
+                    onPressed: () => context
+                        .read<HabitController>()
+                        .toggleCollapsed(habit.id),
+                    icon: AnimatedRotation(
+                      turns: habit.isCollapsed ? 0 : .5,
+                      duration: const Duration(milliseconds: 180),
+                      child: const Icon(Icons.keyboard_arrow_down_rounded),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
-        child: Material(
-          color: colors.card,
-          child: Column(
-            children: [
-              InkWell(
-                onTap: () => HabitDetailScreen.open(context, habit.id),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(14, 14, 8, 12),
-                  child: Row(
+          AnimatedCrossFade(
+            duration: MediaQuery.disableAnimationsOf(context)
+                ? Duration.zero
+                : const Duration(milliseconds: 180),
+            crossFadeState: habit.isCollapsed
+                ? CrossFadeState.showFirst
+                : CrossFadeState.showSecond,
+            firstChild: const SizedBox(width: double.infinity),
+            secondChild: Padding(
+              padding: const EdgeInsets.fromLTRB(10, 0, 10, 12),
+              child: Column(
+                children: [
+                  Row(
                     children: [
-                      Container(
-                        width: 42,
-                        height: 42,
+                      for (final date in days)
+                        Expanded(
+                          child: _HabitDay(
+                            habit: habit,
+                            date: date,
+                            today: today,
+                            color: color,
+                          ),
+                        ),
+                    ],
+                  ),
+                  if (isTimer || habit.checkpoints.isNotEmpty) ...[
+                    const SizedBox(height: 10),
+                    InkWell(
+                      borderRadius: BorderRadius.circular(13),
+                      onTap: () => HabitDetailScreen.open(context, habit.id),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 11,
+                        ),
                         decoration: BoxDecoration(
-                          color: color.withValues(alpha: 0.16),
+                          color: color.withValues(alpha: 0.09),
                           borderRadius: BorderRadius.circular(13),
                         ),
-                        child: Icon(
-                          isTimer ? Icons.timer_rounded : Icons.loop_rounded,
-                          color: color,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        child: Row(
                           children: [
-                            Text(
-                              habit.title,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontSize: AppTypography.body,
-                                fontWeight: FontWeight.w800,
+                            Icon(
+                              isTimer
+                                  ? Icons.play_circle_outline_rounded
+                                  : Icons.route_rounded,
+                              size: 19,
+                              color: color,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                isTimer
+                                    ? '${formatDuration(seconds)} of ${habit.timerTargetMinutes} min today'
+                                    : '${habit.checkpoints.where((c) => c.isCompletedOn(today)).length} of ${habit.checkpoints.length} checkpoints',
+                                style: TextStyle(
+                                  color: color,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: AppTypography.footnote,
+                                ),
                               ),
                             ),
-                            const SizedBox(height: 4),
                             Text(
-                              habitMeta(context, habit, seconds),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                              'Open',
                               style: TextStyle(
                                 color: colors.textSecondary,
                                 fontSize: AppTypography.footnote,
                               ),
                             ),
+                            const SizedBox(width: 2),
+                            Icon(
+                              Icons.chevron_right_rounded,
+                              color: colors.textSecondary,
+                              size: 19,
+                            ),
                           ],
                         ),
                       ),
-                      if (habit.currentStreak(today) > 0)
-                        _Pill(
-                          label:
-                              '${habit.currentStreak(today)} day${habit.currentStreak(today) == 1 ? '' : 's'} streak',
-                          color: color,
-                        ),
-                      IconButton(
-                        tooltip: habit.isCollapsed
-                            ? 'Expand habit'
-                            : 'Collapse habit',
-                        onPressed: () => context
-                            .read<HabitController>()
-                            .toggleCollapsed(habit.id),
-                        icon: AnimatedRotation(
-                          turns: habit.isCollapsed ? 0 : .5,
-                          duration: const Duration(milliseconds: 180),
-                          child: const Icon(Icons.keyboard_arrow_down_rounded),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                    ),
+                  ],
+                ],
               ),
-              AnimatedCrossFade(
-                duration: MediaQuery.disableAnimationsOf(context)
-                    ? Duration.zero
-                    : const Duration(milliseconds: 180),
-                crossFadeState: habit.isCollapsed
-                    ? CrossFadeState.showFirst
-                    : CrossFadeState.showSecond,
-                firstChild: const SizedBox(width: double.infinity),
-                secondChild: Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 12),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          for (final date in days)
-                            Expanded(
-                              child: _HabitDay(
-                                habit: habit,
-                                date: date,
-                                today: today,
-                                color: color,
-                              ),
-                            ),
-                        ],
-                      ),
-                      if (isTimer || habit.checkpoints.isNotEmpty) ...[
-                        const SizedBox(height: 10),
-                        InkWell(
-                          borderRadius: BorderRadius.circular(13),
-                          onTap: () =>
-                              HabitDetailScreen.open(context, habit.id),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 11,
-                            ),
-                            decoration: BoxDecoration(
-                              color: color.withValues(alpha: 0.09),
-                              borderRadius: BorderRadius.circular(13),
-                            ),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  isTimer
-                                      ? Icons.play_circle_outline_rounded
-                                      : Icons.route_rounded,
-                                  size: 19,
-                                  color: color,
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(
-                                    isTimer
-                                        ? '${formatDuration(seconds)} of ${habit.timerTargetMinutes} min today'
-                                        : '${habit.checkpoints.where((c) => c.isCompletedOn(today)).length} of ${habit.checkpoints.length} checkpoints',
-                                    style: TextStyle(
-                                      color: color,
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: AppTypography.footnote,
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  'Open',
-                                  style: TextStyle(
-                                    color: colors.textSecondary,
-                                    fontSize: AppTypography.footnote,
-                                  ),
-                                ),
-                                const SizedBox(width: 2),
-                                Icon(
-                                  Icons.chevron_right_rounded,
-                                  color: colors.textSecondary,
-                                  size: 19,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
