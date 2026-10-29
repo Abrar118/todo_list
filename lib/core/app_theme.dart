@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -24,7 +25,19 @@ abstract final class AppTheme {
             surfaceContainerHigh: c.pressed,
             primary: c.accent,
             onPrimary: c.onAccent,
+            // Every container role is a neutral from the palette: a seed
+            // colour would otherwise tint selections (segmented buttons,
+            // chips, the nav indicator) with a hue the world never chose.
+            primaryContainer: c.pressed,
+            onPrimaryContainer: c.textPrimary,
             secondary: c.accentDim,
+            onSecondary: c.onAccent,
+            secondaryContainer: c.pressed,
+            onSecondaryContainer: c.textPrimary,
+            tertiary: c.accentDim,
+            tertiaryContainer: c.pressed,
+            onTertiaryContainer: c.textPrimary,
+            surfaceTint: Colors.transparent,
             onSurface: c.textPrimary,
             onSurfaceVariant: c.textSecondary,
             outline: c.border,
@@ -94,6 +107,10 @@ abstract final class AppTheme {
         backgroundColor: c.background,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
+        // Content passing under the bar lifts it with a hairline shadow
+        // rather than a tint, so the steel ground stays one colour.
+        scrolledUnderElevation: 1,
+        shadowColor: c.borderStrong,
         centerTitle: false,
         titleTextStyle: TextStyle(
           color: c.textPrimary,
@@ -108,8 +125,8 @@ abstract final class AppTheme {
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: c.elevated,
         surfaceTintColor: Colors.transparent,
-        indicatorColor: c.accent.withValues(alpha: 0.14),
-        height: 64,
+        indicatorColor: c.pressed,
+        height: 72,
         labelTextStyle: WidgetStateProperty.resolveWith(
           (states) => TextStyle(
             fontSize: AppTypography.caption,
@@ -121,9 +138,9 @@ abstract final class AppTheme {
         ),
         iconTheme: WidgetStateProperty.resolveWith(
           (states) => IconThemeData(
-            size: 22,
+            size: 24,
             color: states.contains(WidgetState.selected)
-                ? c.accent
+                ? c.textPrimary
                 : c.textMuted,
           ),
         ),
@@ -183,8 +200,10 @@ abstract final class AppTheme {
         ),
         trackOutlineColor: WidgetStatePropertyAll(c.borderStrong),
       ),
+      // Round on both platforms: the iOS Reminders convention, and a punched
+      // hole in the ticket once it is done.
       checkboxTheme: CheckboxThemeData(
-        shape: AppRadii.smallShape,
+        shape: const CircleBorder(),
         side: BorderSide(color: c.textMuted, width: 1.6),
         fillColor: WidgetStateProperty.resolveWith(
           (states) => states.contains(WidgetState.selected)
@@ -232,8 +251,7 @@ abstract final class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: c.textPrimary,
-          backgroundColor: c.pressed.withValues(alpha: 0.72),
-          side: BorderSide.none,
+          side: BorderSide(color: c.borderStrong),
           minimumSize: const Size(44, 48),
           shape: AppRadii.mediumShape,
         ),
@@ -263,9 +281,12 @@ abstract final class AppTheme {
         surfaceTintColor: Colors.transparent,
         headerBackgroundColor: c.elevated,
       ),
-      // iOS does not ripple. Widgets keep their highlight fade, which reads
-      // as a native press without the Material splash.
-      splashFactory: NoSplash.splashFactory,
+      // iOS does not ripple: widgets keep their highlight fade, which reads
+      // as a native press. Android keeps Material's ripple.
+      splashFactory: switch (defaultTargetPlatform) {
+        TargetPlatform.iOS || TargetPlatform.macOS => NoSplash.splashFactory,
+        _ => InkRipple.splashFactory,
+      },
     );
   }
 }

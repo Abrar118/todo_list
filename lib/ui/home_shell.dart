@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -10,8 +11,7 @@ import 'screens/goals_screen.dart';
 import 'screens/habits_screen.dart';
 import 'screens/quick_add_sheet.dart';
 import 'screens/task_editor_screen.dart';
-import 'widgets/frosted_bottom_navigation_bar.dart';
-import 'widgets/mesh_backdrop.dart';
+import 'widgets/common.dart';
 
 class HomeShell extends StatefulWidget {
   const HomeShell({super.key});
@@ -68,51 +68,83 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
     }
   }
 
+  void _select(int index) => setState(() => _index = index);
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBody: true,
-      // The backdrop paints the background for all four tabs, so each tab's
-      // own Scaffold is transparent (see their `backgroundColor`).
-      body: MeshBackdrop(
-        child: IndexedStack(
-          index: _index,
-          children: const [
-            FocusScreen(),
-            CalendarScreen(),
-            HabitsScreen(),
-            GoalsScreen(),
+    final colors = context.colors;
+    final body = IndexedStack(
+      index: _index,
+      children: const [
+        FocusScreen(),
+        CalendarScreen(),
+        HabitsScreen(),
+        GoalsScreen(),
+      ],
+    );
+
+    // Tabs are sections, never actions: each tab owns its add action (the
+    // nav-bar + on iOS, a FAB on Android), so the bar only navigates.
+    if (isCupertino(context)) {
+      return Scaffold(
+        // The tab bar is translucent system material, so content scrolls
+        // under it; each tab pads its list by the reported inset.
+        extendBody: true,
+        body: body,
+        bottomNavigationBar: CupertinoTabBar(
+          currentIndex: _index,
+          onTap: _select,
+          activeColor: colors.textPrimary,
+          inactiveColor: colors.textMuted,
+          backgroundColor: colors.elevated.withValues(alpha: 0.86),
+          border: Border(top: BorderSide(color: colors.border, width: 0.5)),
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(CupertinoIcons.scope),
+              label: 'Focus',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(CupertinoIcons.calendar),
+              label: 'Calendar',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(CupertinoIcons.arrow_2_circlepath),
+              label: 'Habits',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(CupertinoIcons.flag),
+              activeIcon: Icon(CupertinoIcons.flag_fill),
+              label: 'Goals',
+            ),
           ],
         ),
-      ),
-      bottomNavigationBar: FrostedBottomNavigationBar(
+      );
+    }
+    return Scaffold(
+      body: body,
+      bottomNavigationBar: NavigationBar(
         selectedIndex: _index,
-        onDestinationSelected: (i) => setState(() => _index = i),
-        onAdd: () => QuickAddSheet.open(context),
-        items: [
-          FrostedNavigationItem(
-            icon: Icons.center_focus_strong_outlined,
-            selectedIcon: Icons.center_focus_strong,
+        onDestinationSelected: _select,
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.center_focus_strong_outlined),
+            selectedIcon: Icon(Icons.center_focus_strong),
             label: 'Focus',
-            color: context.colors.accent,
           ),
-          FrostedNavigationItem(
-            icon: Icons.calendar_month_outlined,
-            selectedIcon: Icons.calendar_month,
+          NavigationDestination(
+            icon: Icon(Icons.calendar_month_outlined),
+            selectedIcon: Icon(Icons.calendar_month),
             label: 'Calendar',
-            color: context.colors.low,
           ),
-          FrostedNavigationItem(
-            icon: Icons.loop_outlined,
-            selectedIcon: Icons.loop_rounded,
+          NavigationDestination(
+            icon: Icon(Icons.loop_outlined),
+            selectedIcon: Icon(Icons.loop_rounded),
             label: 'Habits',
-            color: context.colors.medium,
           ),
-          FrostedNavigationItem(
-            icon: Icons.flag_outlined,
-            selectedIcon: Icons.flag_rounded,
+          NavigationDestination(
+            icon: Icon(Icons.flag_outlined),
+            selectedIcon: Icon(Icons.flag_rounded),
             label: 'Goals',
-            color: context.colors.overdue,
           ),
         ],
       ),

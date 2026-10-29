@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/app_tokens.dart';
 import '../../core/app_colors.dart';
 import '../../domain/models/date_only.dart';
 import '../../domain/models/recurrence.dart';
@@ -96,7 +97,10 @@ class _RecurrenceSheetState extends State<_RecurrenceSheet> {
             padding: EdgeInsets.fromLTRB(4, 4, 4, 12),
             child: Text(
               'Repeat',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                fontSize: AppTypography.callout,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
           if (!_custom) ...[
@@ -146,7 +150,7 @@ class _RecurrenceSheetState extends State<_RecurrenceSheet> {
     return [
       Row(
         children: [
-          const Text('Every', style: TextStyle(fontSize: 15)),
+          const Text('Every', style: TextStyle(fontSize: AppTypography.body)),
           const SizedBox(width: 12),
           _stepper(
             value: _rule.interval,
@@ -221,7 +225,7 @@ class _RecurrenceSheetState extends State<_RecurrenceSheet> {
                     ? Text(
                         'Months without this day use their last day',
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: AppTypography.footnote,
                           color: context.colors.textMuted,
                         ),
                       )
@@ -249,7 +253,10 @@ class _RecurrenceSheetState extends State<_RecurrenceSheet> {
               title: Text('Fixed schedule'),
               subtitle: Text(
                 'Stays on its calendar dates',
-                style: TextStyle(fontSize: 12, color: context.colors.textMuted),
+                style: TextStyle(
+                  fontSize: AppTypography.footnote,
+                  color: context.colors.textMuted,
+                ),
               ),
             ),
             RadioListTile<RecurrenceBehavior>(
@@ -257,7 +264,10 @@ class _RecurrenceSheetState extends State<_RecurrenceSheet> {
               title: Text('Repeat after completion'),
               subtitle: Text(
                 'Next date counts from when you complete it',
-                style: TextStyle(fontSize: 12, color: context.colors.textMuted),
+                style: TextStyle(
+                  fontSize: AppTypography.footnote,
+                  color: context.colors.textMuted,
+                ),
               ),
             ),
           ],
@@ -375,7 +385,10 @@ class _RecurrenceSheetState extends State<_RecurrenceSheet> {
           ),
           Text(
             '$value',
-            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+            style: const TextStyle(
+              fontSize: AppTypography.body,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           IconButton(
             visualDensity: VisualDensity.compact,

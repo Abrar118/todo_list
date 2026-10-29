@@ -8,7 +8,6 @@ import '../../domain/models/goal.dart';
 import '../../domain/models/swatch.dart';
 import '../../state/goal_controller.dart';
 import '../widgets/common.dart';
-import '../widgets/frosted_bottom_navigation_bar.dart';
 
 class GoalsScreen extends StatelessWidget {
   const GoalsScreen({super.key});
@@ -24,28 +23,27 @@ class GoalsScreen extends StatelessWidget {
                   100)
               .round();
 
+    void addGoal() => GoalEditorSheet.open(context);
+
     return Scaffold(
-      // The shell's MeshBackdrop paints the background for all tabs.
       backgroundColor: Colors.transparent,
+      floatingActionButton: rootAddFab(
+        context,
+        onPressed: addGoal,
+        tooltip: 'Add goal',
+      ),
       body: CustomScrollView(
         slivers: [
           rootAppBar(
-            title: const Text('Goals'),
-            actions: [
-              IconButton(
-                tooltip: 'Add goal',
-                onPressed: () => GoalEditorSheet.open(context),
-                icon: const Icon(Icons.add_rounded),
-              ),
-              const SizedBox(width: AppSpacing.xs),
-            ],
+            context,
+            title: 'Goals',
+            onAdd: addGoal,
+            addTooltip: 'Add goal',
           ),
           if (!controller.isLoaded)
-            SliverFillRemaining(
+            const SliverFillRemaining(
               hasScrollBody: false,
-              child: Center(
-                child: CircularProgressIndicator(color: context.colors.accent),
-              ),
+              child: Center(child: CircularProgressIndicator.adaptive()),
             )
           else if (goals.isEmpty)
             SliverFillRemaining(
@@ -58,7 +56,7 @@ class GoalsScreen extends StatelessWidget {
                 AppSpacing.lg,
                 AppSpacing.xs,
                 AppSpacing.lg,
-                FrostedBottomNavigationBar.heightOf(context) + AppSpacing.sm,
+                listBottomInset(context),
               ),
               sliver: SliverList.list(
                 children: [
@@ -69,12 +67,11 @@ class GoalsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: AppSpacing.xl),
                   Text(
-                    'YOUR GOALS',
+                    'Your goals',
                     style: TextStyle(
-                      color: context.colors.textSecondary,
-                      fontSize: AppTypography.caption,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 1.1,
+                      color: context.colors.textPrimary,
+                      fontSize: AppTypography.body,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: AppSpacing.md),
@@ -130,7 +127,7 @@ class _GoalsSummary extends StatelessWidget {
                   '$average%',
                   style: TextStyle(
                     color: colors.textPrimary,
-                    fontSize: 58,
+                    fontSize: AppTypography.figure,
                     height: .95,
                     fontWeight: FontWeight.w300,
                     letterSpacing: -3,
@@ -165,11 +162,17 @@ class _Metric extends StatelessWidget {
     children: [
       Text(
         value,
-        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
+        style: const TextStyle(
+          fontSize: AppTypography.title3,
+          fontWeight: FontWeight.w700,
+        ),
       ),
       Text(
         label,
-        style: TextStyle(color: context.colors.textMuted, fontSize: 12),
+        style: TextStyle(
+          color: context.colors.textMuted,
+          fontSize: AppTypography.footnote,
+        ),
       ),
     ],
   );
@@ -242,7 +245,7 @@ class _GoalCard extends StatelessWidget {
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
-                                  fontSize: 17,
+                                  fontSize: AppTypography.callout,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
@@ -257,7 +260,7 @@ class _GoalCard extends StatelessWidget {
                                   color: days < 0
                                       ? context.colors.overdue
                                       : context.colors.textSecondary,
-                                  fontSize: 12.5,
+                                  fontSize: AppTypography.footnote,
                                 ),
                               ),
                             ],
@@ -267,7 +270,7 @@ class _GoalCard extends StatelessWidget {
                           '$percent%',
                           style: TextStyle(
                             color: color,
-                            fontSize: 20,
+                            fontSize: AppTypography.title3,
                             fontWeight: FontWeight.w800,
                           ),
                         ),
@@ -290,7 +293,7 @@ class _GoalCard extends StatelessWidget {
                           : '${goal.completedCheckpointCount} of ${goal.checkpoints.length} checkpoints',
                       style: TextStyle(
                         color: context.colors.textMuted,
-                        fontSize: 12,
+                        fontSize: AppTypography.footnote,
                       ),
                     ),
                   ],
@@ -325,7 +328,10 @@ class _EmptyGoals extends StatelessWidget {
           const Text(
             'Set your next direction.',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+            style: TextStyle(
+              fontSize: AppTypography.title3,
+              fontWeight: FontWeight.w700,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
@@ -405,12 +411,11 @@ class GoalDetailScreen extends StatelessWidget {
                       ),
                       const Spacer(),
                       Text(
-                        'GOAL  /  ${days < 0 ? 'OVERDUE' : '$days DAYS'}',
+                        days < 0 ? 'Overdue' : '$days days left',
                         style: TextStyle(
                           color: context.colors.textSecondary,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 1.1,
+                          fontSize: AppTypography.footnote,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                       const Spacer(),
@@ -441,7 +446,7 @@ class GoalDetailScreen extends StatelessWidget {
                       '$percent',
                       style: TextStyle(
                         color: context.colors.textPrimary,
-                        fontSize: 118,
+                        fontSize: AppTypography.figureLarge,
                         height: .82,
                         fontWeight: FontWeight.w200,
                         letterSpacing: -8,
@@ -456,7 +461,7 @@ class GoalDetailScreen extends StatelessWidget {
                         '%',
                         style: TextStyle(
                           color: context.colors.textSecondary,
-                          fontSize: 22,
+                          fontSize: AppTypography.title3,
                           fontWeight: FontWeight.w300,
                         ),
                       ),
@@ -464,7 +469,7 @@ class GoalDetailScreen extends StatelessWidget {
                       const Text(
                         'complete',
                         style: TextStyle(
-                          fontSize: 30,
+                          fontSize: AppTypography.title1,
                           fontWeight: FontWeight.w300,
                           letterSpacing: -1,
                         ),
@@ -529,7 +534,7 @@ class GoalDetailScreen extends StatelessWidget {
                         const Text(
                           'Your Goal',
                           style: TextStyle(
-                            fontSize: 24,
+                            fontSize: AppTypography.title3,
                             fontWeight: FontWeight.w500,
                             letterSpacing: -.7,
                           ),
@@ -542,7 +547,7 @@ class GoalDetailScreen extends StatelessWidget {
                     Text(
                       goal.title,
                       style: const TextStyle(
-                        fontSize: 27,
+                        fontSize: AppTypography.title1,
                         fontWeight: FontWeight.w700,
                         letterSpacing: -.8,
                       ),
@@ -553,7 +558,7 @@ class GoalDetailScreen extends StatelessWidget {
                         goal.description,
                         style: TextStyle(
                           color: context.colors.textSecondary,
-                          fontSize: 15,
+                          fontSize: AppTypography.body,
                           height: 1.45,
                         ),
                       ),
@@ -563,7 +568,7 @@ class GoalDetailScreen extends StatelessWidget {
                       'Target  ${MaterialLocalizations.of(context).formatMediumDate(goal.targetDate.toDateTime())}',
                       style: TextStyle(
                         color: context.colors.textSecondary,
-                        fontSize: 13,
+                        fontSize: AppTypography.footnote,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -588,9 +593,9 @@ class GoalDetailScreen extends StatelessWidget {
                     const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _ChartLabel('START'),
+                        _ChartLabel('Start'),
                         _ChartLabel('NOW'),
-                        _ChartLabel('TARGET'),
+                        _ChartLabel('Target'),
                       ],
                     ),
                     const SizedBox(height: 32),
@@ -603,7 +608,7 @@ class GoalDetailScreen extends StatelessWidget {
                               const Text(
                                 'Tracking progress',
                                 style: TextStyle(
-                                  fontSize: 20,
+                                  fontSize: AppTypography.title3,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -614,7 +619,7 @@ class GoalDetailScreen extends StatelessWidget {
                                     : '${goal.completedCheckpointCount} of ${goal.checkpoints.length} checkpoints complete',
                                 style: TextStyle(
                                   color: context.colors.textSecondary,
-                                  fontSize: 12.5,
+                                  fontSize: AppTypography.footnote,
                                 ),
                               ),
                             ],
@@ -654,7 +659,7 @@ class GoalDetailScreen extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            Slider(
+                            Slider.adaptive(
                               value: goal.manualProgress.toDouble(),
                               min: 0,
                               max: 100,
@@ -779,7 +784,7 @@ class _TargetMetric extends StatelessWidget {
       Text(
         value,
         style: const TextStyle(
-          fontSize: 22,
+          fontSize: AppTypography.title3,
           fontWeight: FontWeight.w700,
           letterSpacing: -.5,
         ),
@@ -787,7 +792,10 @@ class _TargetMetric extends StatelessWidget {
       const SizedBox(height: 3),
       Text(
         label,
-        style: TextStyle(color: context.colors.textSecondary, fontSize: 12),
+        style: TextStyle(
+          color: context.colors.textSecondary,
+          fontSize: AppTypography.footnote,
+        ),
       ),
     ],
   );
@@ -802,10 +810,9 @@ class _ChartLabel extends StatelessWidget {
   Widget build(BuildContext context) => Text(
     label,
     style: TextStyle(
-      color: context.colors.textMuted,
-      fontSize: 10,
-      fontWeight: FontWeight.w700,
-      letterSpacing: .8,
+      color: context.colors.textSecondary,
+      fontSize: AppTypography.caption,
+      fontWeight: FontWeight.w600,
     ),
   );
 }
@@ -961,7 +968,7 @@ class _CheckpointRow extends StatelessWidget {
                   child: Text(
                     checkpoint.title,
                     style: TextStyle(
-                      fontSize: 15.5,
+                      fontSize: AppTypography.body,
                       decoration: checkpoint.isCompleted
                           ? TextDecoration.lineThrough
                           : null,
@@ -1050,7 +1057,10 @@ class _GoalEditorSheetState extends State<GoalEditorSheet> {
             const SizedBox(height: 20),
             Text(
               widget.goal == null ? 'Create a goal' : 'Edit goal',
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
+              style: const TextStyle(
+                fontSize: AppTypography.title3,
+                fontWeight: FontWeight.w700,
+              ),
             ),
             const SizedBox(height: 18),
             TextField(
@@ -1092,12 +1102,11 @@ class _GoalEditorSheetState extends State<GoalEditorSheet> {
             ),
             const SizedBox(height: 12),
             Text(
-              'COLOR',
+              'Color',
               style: TextStyle(
-                color: context.colors.textSecondary,
-                fontSize: 11,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 1,
+                color: context.colors.textPrimary,
+                fontSize: AppTypography.footnote,
+                fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 10),

@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 
 /// Nudge's palette as a theme extension so widgets follow the active theme.
-/// Dark is a blue-slate base with a vivid orange accent; light is its clean
-/// paper equivalent.
+///
+/// The world is a ticket rail at the pass: a brushed-steel ground, white
+/// ticket surfaces and print-black ink. [accent] is that ink, so chrome and
+/// actions carry no colour at all. Colour has one job, heat: [medium] is the
+/// heat lamp (a ticket warming) and [overdue] the thermal-printer red (a
+/// ticket gone critical). Dark is the same pass after close.
 ///
 /// Two colour families, deliberately kept apart:
 ///
-/// * **Semantic** ([accent], [overdue], [medium], [done], [low]) carries
-///   meaning — priority, lateness, completion. Saturated and assertive.
-///   Never use these to decorate something.
+/// * **Semantic** ([overdue], [medium], [done], [low]) carries meaning —
+///   heat, completion, information. Never use these to decorate something.
 /// * **Decorative** ([decorative]) carries identity — tags, habits, goals,
 ///   task card tints. Muted and lighter, so a coral *card* can never be
 ///   mistaken for a coral *priority flag*.
@@ -87,25 +90,25 @@ class AppColors extends ThemeExtension<AppColors> {
   });
 
   static const dark = AppColors(
-    background: Color(0xFF151A21),
-    elevated: Color(0xFF1C222B),
-    card: Color(0xFF222934),
-    pressed: Color(0xFF2B3340),
-    textPrimary: Color(0xFFF3F6FA),
-    textSecondary: Color(0xFFA8B2C0),
-    textMuted: Color(0xFF94A0B0),
-    border: Color(0x14FFFFFF), // translucent white
-    borderStrong: Color(0x24FFFFFF),
-    hairline: Color(0x2EFFFFFF),
-    accent: Color(0xFFFF9452),
-    accentDim: Color(0xFFE8792C),
-    onAccent: Color(0xFF231202),
-    accentFill: Color(0xFFF97316),
-    onAccentFill: Color(0xFF231202),
-    overdue: Color(0xFFFF6F6F),
-    medium: Color(0xFFF7C85A),
+    background: Color(0xFF121619),
+    elevated: Color(0xFF1A1F23),
+    card: Color(0xFF1F252A),
+    pressed: Color(0xFF293036),
+    textPrimary: Color(0xFFEEF1F3),
+    textSecondary: Color(0xFFAAB3BB),
+    textMuted: Color(0xFF97A1AA),
+    border: Color(0x17FFFFFF), // translucent white
+    borderStrong: Color(0x29FFFFFF),
+    hairline: Color(0x29FFFFFF),
+    accent: Color(0xFFEEF1F3),
+    accentDim: Color(0xFF7D8892),
+    onAccent: Color(0xFF121619),
+    accentFill: Color(0xFFEEF1F3),
+    onAccentFill: Color(0xFF121619),
+    overdue: Color(0xFFFF7468),
+    medium: Color(0xFFF2AE45),
     done: Color(0xFF63D894),
-    low: Color(0xFF5FCBF5),
+    low: Color(0xFF86BDE0),
     decorative: [
       Color(0xFFA9C69F), // sage
       Color(0xFF9CBAC9), // mist
@@ -130,29 +133,28 @@ class AppColors extends ThemeExtension<AppColors> {
     ],
   );
 
-  /// Status colours are darkened for contrast on paper, and [accent] becomes
-  /// a deep burnt orange — the bright orange cannot carry white text at
-  /// 4.5:1, so it moves to [accentFill].
+  /// Service: steel under daylight. Heat colours are darkened so they still
+  /// carry text on the steel ground.
   static const light = AppColors(
-    background: Color(0xFFEEF1F6),
-    elevated: Color(0xFFFFFFFF),
+    background: Color(0xFFDDE2E6),
+    elevated: Color(0xFFF3F5F6),
     card: Color(0xFFFFFFFF),
-    pressed: Color(0xFFDCE2EB),
-    textPrimary: Color(0xFF141922),
-    textSecondary: Color(0xFF505B6B),
-    textMuted: Color(0xFF55606F),
-    border: Color(0x16000000), // translucent black
-    borderStrong: Color(0x26000000),
-    hairline: Color(0x66FFFFFF),
-    accent: Color(0xFFA04A05),
-    accentDim: Color(0xFF853D04),
+    pressed: Color(0xFFE8ECEE),
+    textPrimary: Color(0xFF111417),
+    textSecondary: Color(0xFF454E57),
+    textMuted: Color(0xFF4F5862),
+    border: Color(0x1F0E1A26), // translucent steel
+    borderStrong: Color(0x330E1A26),
+    hairline: Color(0x330E1A26),
+    accent: Color(0xFF111417),
+    accentDim: Color(0xFF6A747D),
     onAccent: Color(0xFFFFFFFF),
-    accentFill: Color(0xFFF97316),
-    onAccentFill: Color(0xFF231202),
-    overdue: Color(0xFFB32F2F),
-    medium: Color(0xFF7A5410),
+    accentFill: Color(0xFF111417),
+    onAccentFill: Color(0xFFFFFFFF),
+    overdue: Color(0xFFAE2A21),
+    medium: Color(0xFF7F4C00),
     done: Color(0xFF1C6B41),
-    low: Color(0xFF0E5C79),
+    low: Color(0xFF2B5574),
     decorative: [
       Color(0xFF48673C), // sage
       Color(0xFF395A6A), // mist

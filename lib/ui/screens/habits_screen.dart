@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -8,7 +9,6 @@ import '../../domain/models/habit.dart';
 import '../../domain/models/swatch.dart';
 import '../../state/habit_controller.dart';
 import '../widgets/common.dart';
-import '../widgets/frosted_bottom_navigation_bar.dart';
 import '../widgets/task_flows.dart';
 import 'habit_detail_screen.dart';
 
@@ -27,59 +27,70 @@ class _HabitsScreenState extends State<HabitsScreen> {
   Widget build(BuildContext context) {
     final controller = context.watch<HabitController>();
     final today = DateOnly.today();
+    void addHabit() => HabitEditorSheet.open(
+      context,
+      initialCadence: _range == _HabitRange.daily
+          ? HabitCadence.daily
+          : HabitCadence.monthly,
+    );
+    void select(_HabitRange? range) {
+      if (range != null) setState(() => _range = range);
+    }
+
     return Scaffold(
-      // The shell's MeshBackdrop paints the background for all tabs.
       backgroundColor: Colors.transparent,
+      floatingActionButton: rootAddFab(
+        context,
+        onPressed: addHabit,
+        tooltip: 'Add habit',
+      ),
       body: CustomScrollView(
         slivers: [
           rootAppBar(
-            title: const Text('Habits'),
-            actions: [
-              IconButton.filled(
-                tooltip: 'Add habit',
-                onPressed: () => HabitEditorSheet.open(
-                  context,
-                  initialCadence: _range == _HabitRange.daily
-                      ? HabitCadence.daily
-                      : HabitCadence.monthly,
-                ),
-                icon: const Icon(Icons.add_rounded),
-              ),
-              const SizedBox(width: AppSpacing.md),
-            ],
+            context,
+            title: 'Habits',
+            onAdd: addHabit,
+            addTooltip: 'Add habit',
           ),
           if (!controller.isLoaded)
-            SliverFillRemaining(
+            const SliverFillRemaining(
               hasScrollBody: false,
-              child: Center(
-                child: CircularProgressIndicator(color: context.colors.accent),
-              ),
+              child: Center(child: CircularProgressIndicator.adaptive()),
             )
           else ...[
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(
                   AppSpacing.lg,
-                  0,
+                  AppSpacing.sm,
                   AppSpacing.lg,
                   AppSpacing.md,
                 ),
-                child: SegmentedButton<_HabitRange>(
-                  showSelectedIcon: false,
-                  segments: const [
-                    ButtonSegment(
-                      value: _HabitRange.daily,
-                      label: Text('Daily'),
-                    ),
-                    ButtonSegment(
-                      value: _HabitRange.monthly,
-                      label: Text('Monthly'),
-                    ),
-                  ],
-                  selected: {_range},
-                  onSelectionChanged: (value) =>
-                      setState(() => _range = value.single),
-                ),
+                // The platform's own segmented control on each OS.
+                child: isCupertino(context)
+                    ? CupertinoSlidingSegmentedControl<_HabitRange>(
+                        groupValue: _range,
+                        onValueChanged: select,
+                        children: const {
+                          _HabitRange.daily: Text('Daily'),
+                          _HabitRange.monthly: Text('Monthly'),
+                        },
+                      )
+                    : SegmentedButton<_HabitRange>(
+                        showSelectedIcon: false,
+                        segments: const [
+                          ButtonSegment(
+                            value: _HabitRange.daily,
+                            label: Text('Daily'),
+                          ),
+                          ButtonSegment(
+                            value: _HabitRange.monthly,
+                            label: Text('Monthly'),
+                          ),
+                        ],
+                        selected: {_range},
+                        onSelectionChanged: (value) => select(value.single),
+                      ),
               ),
             ),
             switch (_range) {
@@ -126,7 +137,7 @@ class _DailyHabitView extends StatelessWidget {
         AppSpacing.lg,
         AppSpacing.xs,
         AppSpacing.lg,
-        FrostedBottomNavigationBar.heightOf(context) + AppSpacing.sm,
+        listBottomInset(context),
       ),
       sliver: SliverList.list(
         children: [
@@ -139,7 +150,7 @@ class _DailyHabitView extends StatelessWidget {
           const SizedBox(height: AppSpacing.xl),
           Row(
             children: [
-              const _SectionLabel('YOUR ROUTINES'),
+              const _SectionLabel('Your routines'),
               const Spacer(),
               Text(
                 '${habits.length} active',
@@ -190,13 +201,13 @@ class _MonthlyRoutineView extends StatelessWidget {
         AppSpacing.lg,
         AppSpacing.xs,
         AppSpacing.lg,
-        FrostedBottomNavigationBar.heightOf(context) + AppSpacing.sm,
+        listBottomInset(context),
       ),
       sliver: SliverList.list(
         children: [
           Row(
             children: [
-              const _SectionLabel('MONTHLY ROUTINES'),
+              const _SectionLabel('Monthly routines'),
               const Spacer(),
               Text(
                 '${habits.length} active',
@@ -260,7 +271,7 @@ class _MonthlyRoutineCard extends StatelessWidget {
                     Text(
                       habit.title,
                       style: const TextStyle(
-                        fontSize: 16,
+                        fontSize: AppTypography.body,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
@@ -270,7 +281,7 @@ class _MonthlyRoutineCard extends StatelessWidget {
                       '${habit.scheduledMinutes == null ? '' : '  •  ${formatHabitTime(context, habit.scheduledMinutes!)}'}',
                       style: TextStyle(
                         color: context.colors.textSecondary,
-                        fontSize: 12,
+                        fontSize: AppTypography.footnote,
                       ),
                     ),
                   ],
@@ -440,7 +451,7 @@ class _HabitEditorSheetState extends State<HabitEditorSheet> {
               onChanged: (_) => setState(() {}),
             ),
             const SizedBox(height: 4),
-            _SectionLabel('FREQUENCY'),
+            _SectionLabel('Frequency'),
             const SizedBox(height: 8),
             SegmentedButton<HabitCadence>(
               showSelectedIcon: false,
@@ -464,7 +475,7 @@ class _HabitEditorSheetState extends State<HabitEditorSheet> {
               const SizedBox(height: 16),
               Row(
                 children: [
-                  const _SectionLabel('DAY OF MONTH'),
+                  const _SectionLabel('Day of month'),
                   const Spacer(),
                   Text(
                     '${_monthlyDay.round()}',
@@ -475,7 +486,7 @@ class _HabitEditorSheetState extends State<HabitEditorSheet> {
                   ),
                 ],
               ),
-              Slider(
+              Slider.adaptive(
                 value: _monthlyDay,
                 min: 1,
                 max: 31,
@@ -486,7 +497,7 @@ class _HabitEditorSheetState extends State<HabitEditorSheet> {
               ),
             ],
             const SizedBox(height: 16),
-            _SectionLabel('HABIT TYPE'),
+            _SectionLabel('Habit type'),
             const SizedBox(height: 8),
             Row(
               children: [
@@ -515,7 +526,7 @@ class _HabitEditorSheetState extends State<HabitEditorSheet> {
               const SizedBox(height: 18),
               Row(
                 children: [
-                  const _SectionLabel('DAILY TARGET'),
+                  const _SectionLabel('Daily target'),
                   const Spacer(),
                   Text(
                     '${_targetMinutes.round()} min',
@@ -526,7 +537,7 @@ class _HabitEditorSheetState extends State<HabitEditorSheet> {
                   ),
                 ],
               ),
-              Slider(
+              Slider.adaptive(
                 value: _targetMinutes,
                 min: 5,
                 max: 120,
@@ -536,7 +547,7 @@ class _HabitEditorSheetState extends State<HabitEditorSheet> {
               ),
             ],
             const SizedBox(height: 14),
-            _SectionLabel('DAILY REMINDER'),
+            _SectionLabel('Daily reminder'),
             const SizedBox(height: 8),
             Material(
               color: colors.card,
@@ -574,7 +585,7 @@ class _HabitEditorSheetState extends State<HabitEditorSheet> {
               ),
             ),
             const SizedBox(height: 18),
-            _SectionLabel('COLOR'),
+            _SectionLabel('Color'),
             const SizedBox(height: 8),
             SwatchPicker(
               selected: _color,
@@ -638,7 +649,7 @@ class _TodaySummary extends StatelessWidget {
                   child: Text(
                     '${(progress * 100).round()}%',
                     style: const TextStyle(
-                      fontSize: 18,
+                      fontSize: AppTypography.callout,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
@@ -656,7 +667,7 @@ class _TodaySummary extends StatelessWidget {
                 Text(
                   '$completed of $total complete today',
                   style: const TextStyle(
-                    fontSize: 19,
+                    fontSize: AppTypography.callout,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
@@ -665,7 +676,10 @@ class _TodaySummary extends StatelessWidget {
                   completed == total
                       ? 'Perfect rhythm. Keep it going.'
                       : 'Small steps add up.',
-                  style: TextStyle(color: colors.textMuted, fontSize: 12.5),
+                  style: TextStyle(
+                    color: colors.textMuted,
+                    fontSize: AppTypography.footnote,
+                  ),
                 ),
               ],
             ),
@@ -736,7 +750,7 @@ class _HabitCard extends StatelessWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
-                                fontSize: 16,
+                                fontSize: AppTypography.body,
                                 fontWeight: FontWeight.w800,
                               ),
                             ),
@@ -747,7 +761,7 @@ class _HabitCard extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 color: colors.textSecondary,
-                                fontSize: 12,
+                                fontSize: AppTypography.footnote,
                               ),
                             ),
                           ],
@@ -834,7 +848,7 @@ class _HabitCard extends StatelessWidget {
                                     style: TextStyle(
                                       color: color,
                                       fontWeight: FontWeight.w700,
-                                      fontSize: 12.5,
+                                      fontSize: AppTypography.footnote,
                                     ),
                                   ),
                                 ),
@@ -842,7 +856,7 @@ class _HabitCard extends StatelessWidget {
                                   'Open',
                                   style: TextStyle(
                                     color: colors.textSecondary,
-                                    fontSize: 12,
+                                    fontSize: AppTypography.footnote,
                                   ),
                                 ),
                                 const SizedBox(width: 2),
@@ -909,7 +923,7 @@ class _HabitDay extends StatelessWidget {
                   weekdays[date.weekday - 1],
                   style: TextStyle(
                     color: isToday ? color : context.colors.textMuted,
-                    fontSize: 10,
+                    fontSize: AppTypography.caption,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -935,7 +949,7 @@ class _HabitDay extends StatelessWidget {
                             color: isToday
                                 ? color
                                 : context.colors.textSecondary,
-                            fontSize: 11,
+                            fontSize: AppTypography.caption,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
@@ -998,7 +1012,7 @@ class _TypeCard extends StatelessWidget {
                       caption,
                       style: TextStyle(
                         color: context.colors.textMuted,
-                        fontSize: 11,
+                        fontSize: AppTypography.caption,
                       ),
                     ),
                   ],
@@ -1027,7 +1041,11 @@ class _Pill extends StatelessWidget {
     ),
     child: Text(
       label,
-      style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w800),
+      style: TextStyle(
+        color: color,
+        fontSize: AppTypography.caption,
+        fontWeight: FontWeight.w800,
+      ),
     ),
   );
 }
@@ -1040,10 +1058,9 @@ class _SectionLabel extends StatelessWidget {
   Widget build(BuildContext context) => Text(
     text,
     style: TextStyle(
-      color: context.colors.textMuted,
-      fontSize: 11,
-      fontWeight: FontWeight.w800,
-      letterSpacing: 1,
+      color: context.colors.textPrimary,
+      fontSize: AppTypography.footnote,
+      fontWeight: FontWeight.w600,
     ),
   );
 }
@@ -1110,7 +1127,10 @@ class _EmptyHabits extends StatelessWidget {
           const SizedBox(height: 20),
           Text(
             title,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+            style: TextStyle(
+              fontSize: AppTypography.title3,
+              fontWeight: FontWeight.w800,
+            ),
           ),
           const SizedBox(height: 8),
           Text(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/app_tokens.dart';
 import '../../core/app_colors.dart';
 import '../../state/focus_timer_controller.dart';
 
@@ -39,7 +40,10 @@ class FocusTimerScreen extends StatelessWidget {
                     ? 'Session done — '
                           '${timer.completedSessions} completed. Nice work.'
                     : 'No session running.',
-                style: TextStyle(fontSize: 15, color: colors.textSecondary),
+                style: TextStyle(
+                  fontSize: AppTypography.body,
+                  color: colors.textSecondary,
+                ),
               ),
               const SizedBox(height: 20),
               OutlinedButton(
@@ -61,12 +65,11 @@ class FocusTimerScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                work ? 'FOCUS' : 'BREAK',
+                work ? 'Focus' : 'Break',
                 style: TextStyle(
-                  fontSize: 13,
-                  letterSpacing: 2,
+                  fontSize: AppTypography.callout,
                   fontWeight: FontWeight.w600,
-                  color: work ? colors.accent : colors.done,
+                  color: work ? colors.textPrimary : colors.done,
                 ),
               ),
               const SizedBox(height: 6),
@@ -78,7 +81,7 @@ class FocusTimerScreen extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    fontSize: 17,
+                    fontSize: AppTypography.callout,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -101,7 +104,7 @@ class FocusTimerScreen extends StatelessWidget {
                       child: Text(
                         format(timer.remaining),
                         style: const TextStyle(
-                          fontSize: 44,
+                          fontSize: AppTypography.display,
                           fontWeight: FontWeight.w600,
                           fontFeatures: [FontFeature.tabularFigures()],
                         ),
@@ -115,7 +118,10 @@ class FocusTimerScreen extends StatelessWidget {
                 Text(
                   '${timer.completedSessions} session'
                   '${timer.completedSessions == 1 ? '' : 's'} completed',
-                  style: TextStyle(fontSize: 13, color: colors.textMuted),
+                  style: TextStyle(
+                    fontSize: AppTypography.footnote,
+                    color: colors.textMuted,
+                  ),
                 ),
               const SizedBox(height: 24),
               Row(

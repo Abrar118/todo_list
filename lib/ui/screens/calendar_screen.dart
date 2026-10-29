@@ -8,9 +8,9 @@ import '../../domain/models/date_only.dart';
 import '../../state/app_state.dart';
 import '../../state/settings_controller.dart';
 import '../widgets/common.dart';
-import '../widgets/frosted_bottom_navigation_bar.dart';
 import '../widgets/task_row.dart';
 import '../widgets/task_flows.dart';
+import '../widgets/ticket.dart';
 import 'quick_add_sheet.dart';
 import 'task_editor_screen.dart';
 
@@ -72,30 +72,39 @@ class _CalendarScreenState extends State<CalendarScreen> {
       if (items.isEmpty) return;
       final first = entries.isEmpty;
       entries.add(() => SectionHeader(title, tight: first));
-      for (final item in items) {
-        entries.add(() => _agendaRow(state, item));
+      final list = items.toList();
+      for (final (i, item) in list.indexed) {
+        entries.add(
+          () => RailTile(
+            first: i == 0,
+            last: i == list.length - 1,
+            child: _agendaRow(state, item),
+          ),
+        );
       }
     }
 
     group('All-day', allDay);
     group('Scheduled', timed);
     group('Completed', done);
-    if (entries.isNotEmpty) {
-      entries.add(
-        () => Padding(
-          padding: const EdgeInsets.only(top: AppSpacing.sm),
-          child: _addForDayButton(),
-        ),
-      );
-    }
+
+    // The add action always adds to the selected day.
+    void addForDay() => QuickAddSheet.open(context, initialDate: _selected);
 
     return Scaffold(
-      // The shell's MeshBackdrop paints the background for all tabs.
       backgroundColor: Colors.transparent,
+      floatingActionButton: rootAddFab(
+        context,
+        onPressed: addForDay,
+        tooltip: 'Add task',
+      ),
       body: CustomScrollView(
         slivers: [
           rootAppBar(
-            title: Text(Formats.monthTitle(_year, _month)),
+            context,
+            title: Formats.monthTitle(_year, _month),
+            onAdd: addForDay,
+            addTooltip: 'Add task',
             actions: [
               if (!showingToday || _selected != today)
                 TextButton(onPressed: _goToday, child: const Text('Today')),
@@ -145,7 +154,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 AppSpacing.lg,
                 0,
                 AppSpacing.lg,
-                FrostedBottomNavigationBar.heightOf(context) + AppSpacing.sm,
+                listBottomInset(context),
               ),
               sliver: SliverList.builder(
                 itemCount: entries.length,
@@ -165,29 +174,26 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   Widget _agendaRow(AppState state, AgendaItem item) {
     final task = item.task;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: TaskRow(
-        task: task,
-        rule: state.ruleOf(task),
-        isProjection: item.isProjection,
-        onTap: item.isProjection
-            ? () {
-                // Future occurrences aren't materialized yet; edit the
-                // series' current occurrence instead.
-                final template = state.templateOf(task);
-                final active = state.allTasks
-                    .where((t) => t.seriesId == template?.id && !t.isCompleted)
-                    .toList();
-                if (active.isNotEmpty) {
-                  TaskEditorScreen.open(context, task: active.first);
-                }
+    return TaskRow(
+      task: task,
+      rule: state.ruleOf(task),
+      isProjection: item.isProjection,
+      onTap: item.isProjection
+          ? () {
+              // Future occurrences aren't materialized yet; edit the
+              // series' current occurrence instead.
+              final template = state.templateOf(task);
+              final active = state.allTasks
+                  .where((t) => t.seriesId == template?.id && !t.isCompleted)
+                  .toList();
+              if (active.isNotEmpty) {
+                TaskEditorScreen.open(context, task: active.first);
               }
-            : () => TaskEditorScreen.open(context, task: task),
-        onToggle: item.isProjection
-            ? null
-            : () => completeTaskFlow(context, state, task),
-      ),
+            }
+          : () => TaskEditorScreen.open(context, task: task),
+      onToggle: item.isProjection
+          ? null
+          : () => completeTaskFlow(context, state, task),
     );
   }
 }
@@ -230,9 +236,9 @@ class _MonthGrid extends StatelessWidget {
                     child: Text(
                       dayLetters[(startOfWeek - 1 + i) % 7],
                       style: TextStyle(
-                        fontSize: 11.5,
+                        fontSize: AppTypography.caption,
                         fontWeight: FontWeight.w600,
-                        color: context.colors.textMuted,
+                        color: context.colors.textSecondary,
                       ),
                     ),
                   ),
@@ -265,6 +271,7 @@ class _MonthGrid extends StatelessWidget {
     final isSelected = date == selected;
     final isToday = date == today;
     final m = markers[date];
+    final colors = context.colors;
 
     return Semantics(
       button: true,
@@ -275,20 +282,17 @@ class _MonthGrid extends StatelessWidget {
           '${m?.hasHighPriority == true ? ', has high priority' : ''}',
       child: InkWell(
         onTap: () => onSelect(date),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: AppRadii.smallRadius,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
+          duration: AppMotion.quick,
           height: 46,
           decoration: BoxDecoration(
-            color: isSelected
-                ? context.colors.accent.withValues(alpha: 0.16)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(10),
+            // The selected day is punched in ink; today is ringed.
+            color: isSelected ? colors.textPrimary : Colors.transparent,
+            borderRadius: AppRadii.smallRadius,
             border: Border.all(
-              color: isSelected
-                  ? context.colors.accentDim
-                  : isToday
-                  ? context.colors.borderStrong
+              color: isToday && !isSelected
+                  ? colors.textPrimary
                   : Colors.transparent,
             ),
           ),
@@ -298,13 +302,16 @@ class _MonthGrid extends StatelessWidget {
               Text(
                 '$day',
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: AppTypography.body,
                   fontWeight: isToday || isSelected
                       ? FontWeight.w700
                       : FontWeight.w400,
-                  color: isSelected || isToday
-                      ? context.colors.textPrimary
-                      : context.colors.textSecondary,
+                  color: isSelected
+                      ? colors.background
+                      : isToday
+                      ? colors.textPrimary
+                      : colors.textSecondary,
+                  fontFeatures: const [FontFeature.tabularFigures()],
                 ),
               ),
               const SizedBox(height: 3),
@@ -316,12 +323,16 @@ class _MonthGrid extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           if (m.hasHighPriority)
-                            _dot(context.colors.overdue)
+                            _dot(colors.overdue)
                           else if (!m.allCompleted)
-                            _dot(context.colors.accent),
-                          if (m.hasRecurring) _dot(context.colors.textMuted),
+                            _dot(
+                              isSelected
+                                  ? colors.background
+                                  : colors.textPrimary,
+                            ),
+                          if (m.hasRecurring) _dot(colors.textMuted),
                           if (m.hasCompleted && m.allCompleted)
-                            _dot(context.colors.done),
+                            _dot(colors.done),
                         ],
                       ),
               ),

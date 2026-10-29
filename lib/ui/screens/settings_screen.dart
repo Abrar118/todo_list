@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../core/app_tokens.dart';
 import '../../core/app_colors.dart';
 import '../../core/formats.dart';
 import '../../data/app_settings.dart';
@@ -62,7 +63,7 @@ class SettingsScreen extends StatelessWidget {
                           'Not requested yet',
                       },
                       style: TextStyle(
-                        fontSize: 12.5,
+                        fontSize: AppTypography.footnote,
                         color: context.colors.textMuted,
                       ),
                     ),
@@ -80,7 +81,7 @@ class SettingsScreen extends StatelessWidget {
                         'Device power-management settings may delay reminders '
                         'slightly.',
                         style: TextStyle(
-                          fontSize: 12.5,
+                          fontSize: AppTypography.footnote,
                           color: context.colors.textMuted,
                         ),
                       ),
@@ -96,7 +97,7 @@ class SettingsScreen extends StatelessWidget {
                     subtitle: Text(
                       _offsetLabel(settings.defaultReminderOffsetMinutes),
                       style: TextStyle(
-                        fontSize: 12.5,
+                        fontSize: AppTypography.footnote,
                         color: context.colors.textMuted,
                       ),
                     ),
@@ -120,7 +121,7 @@ class SettingsScreen extends StatelessWidget {
                     subtitle: Text(
                       Formats.time(settings.dateOnlyReminderMinutes),
                       style: TextStyle(
-                        fontSize: 12.5,
+                        fontSize: AppTypography.footnote,
                         color: context.colors.textMuted,
                       ),
                     ),
@@ -147,7 +148,7 @@ class SettingsScreen extends StatelessWidget {
                     subtitle: Text(
                       _cadenceLabel(settings.defaultAlarmCadenceMinutes),
                       style: TextStyle(
-                        fontSize: 12.5,
+                        fontSize: AppTypography.footnote,
                         color: context.colors.textMuted,
                       ),
                     ),
@@ -163,7 +164,7 @@ class SettingsScreen extends StatelessWidget {
                       }
                     },
                   ),
-                  SwitchListTile(
+                  SwitchListTile.adaptive(
                     secondary: const Icon(Icons.bedtime_outlined),
                     title: const Text('Quiet hours'),
                     subtitle: Text(
@@ -172,7 +173,7 @@ class SettingsScreen extends StatelessWidget {
                                 '${Formats.time(settings.quietHours.endMinutes)}'
                           : 'Off',
                       style: TextStyle(
-                        fontSize: 12.5,
+                        fontSize: AppTypography.footnote,
                         color: context.colors.textMuted,
                       ),
                     ),
@@ -231,13 +232,13 @@ class SettingsScreen extends StatelessWidget {
                       },
                     ),
                   ],
-                  SwitchListTile(
+                  SwitchListTile.adaptive(
                     secondary: const Icon(Icons.volume_up_outlined),
                     title: const Text('Sound'),
                     value: settings.soundEnabled,
                     onChanged: (v) => save(settings.copyWith(soundEnabled: v)),
                   ),
-                  SwitchListTile(
+                  SwitchListTile.adaptive(
                     secondary: const Icon(Icons.vibration),
                     title: const Text('Vibration'),
                     value: settings.vibrationEnabled,
@@ -334,13 +335,13 @@ class SettingsScreen extends StatelessWidget {
                       }
                     },
                   ),
-                  SwitchListTile(
+                  SwitchListTile.adaptive(
                     secondary: const Icon(Icons.animation),
                     title: const Text('Reduce motion'),
                     value: settings.reduceMotion,
                     onChanged: (v) => save(settings.copyWith(reduceMotion: v)),
                   ),
-                  SwitchListTile(
+                  SwitchListTile.adaptive(
                     secondary: const Icon(Icons.density_small),
                     title: const Text('Compact task rows'),
                     value: settings.compactRows,
@@ -353,7 +354,7 @@ class SettingsScreen extends StatelessWidget {
                       subtitle: Text(
                         'Up next or task list',
                         style: TextStyle(
-                          fontSize: 12.5,
+                          fontSize: AppTypography.footnote,
                           color: context.colors.textMuted,
                         ),
                       ),
@@ -395,7 +396,7 @@ class SettingsScreen extends StatelessWidget {
                           ? 'Fixed schedule'
                           : 'Repeat after completion',
                       style: TextStyle(
-                        fontSize: 12.5,
+                        fontSize: AppTypography.footnote,
                         color: context.colors.textMuted,
                       ),
                     ),
@@ -416,13 +417,13 @@ class SettingsScreen extends StatelessWidget {
                       }
                     },
                   ),
-                  SwitchListTile(
+                  SwitchListTile.adaptive(
                     secondary: const Icon(Icons.notification_add_outlined),
                     title: const Text('Reminder on by default'),
                     subtitle: Text(
                       'Pre-selects Reminder in quick add',
                       style: TextStyle(
-                        fontSize: 12.5,
+                        fontSize: AppTypography.footnote,
                         color: context.colors.textMuted,
                       ),
                     ),
@@ -505,7 +506,7 @@ class SettingsScreen extends StatelessWidget {
                     subtitle: Text(
                       'Open tasks with deadlines, for any calendar app',
                       style: TextStyle(
-                        fontSize: 12.5,
+                        fontSize: AppTypography.footnote,
                         color: context.colors.textMuted,
                       ),
                     ),
@@ -594,7 +595,7 @@ class SettingsScreen extends StatelessWidget {
               child: Text(
                 title,
                 style: const TextStyle(
-                  fontSize: 17,
+                  fontSize: AppTypography.callout,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -643,7 +644,10 @@ class SettingsScreen extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Add widget',
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    fontSize: AppTypography.callout,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),
@@ -653,7 +657,7 @@ class SettingsScreen extends StatelessWidget {
               subtitle: Text(
                 'Your single most important task',
                 style: TextStyle(
-                  fontSize: 12.5,
+                  fontSize: AppTypography.footnote,
                   color: context.colors.textMuted,
                 ),
               ),
@@ -665,7 +669,7 @@ class SettingsScreen extends StatelessWidget {
               subtitle: Text(
                 'Overdue and today, like the Focus screen',
                 style: TextStyle(
-                  fontSize: 12.5,
+                  fontSize: AppTypography.footnote,
                   color: context.colors.textMuted,
                 ),
               ),

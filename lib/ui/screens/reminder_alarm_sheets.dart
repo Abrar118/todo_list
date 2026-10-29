@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/app_tokens.dart';
 import '../../core/app_colors.dart';
 import '../../core/formats.dart';
 import '../../domain/models/reminders.dart';
@@ -19,7 +20,10 @@ Future<ReminderEntry?> showReminderPicker(BuildContext context) {
             padding: EdgeInsets.fromLTRB(20, 4, 20, 8),
             child: Text(
               'Remind me',
-              style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                fontSize: AppTypography.callout,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
           for (final (label, minutes) in [
@@ -148,7 +152,10 @@ class _AlarmSheetState extends State<_AlarmSheet> {
             padding: EdgeInsets.fromLTRB(12, 4, 12, 4),
             child: Text(
               'Persistent alarm',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                fontSize: AppTypography.callout,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
           Padding(
@@ -158,7 +165,7 @@ class _AlarmSheetState extends State<_AlarmSheet> {
               'You can stop it any time by completing, snoozing or editing '
               'the task.',
               style: TextStyle(
-                fontSize: 13,
+                fontSize: AppTypography.footnote,
                 color: context.colors.textSecondary,
               ),
             ),
@@ -166,11 +173,11 @@ class _AlarmSheetState extends State<_AlarmSheet> {
           Padding(
             padding: EdgeInsets.fromLTRB(12, 8, 12, 4),
             child: Text(
-              'REMIND ME',
+              'Remind me',
               style: TextStyle(
-                fontSize: 11,
-                letterSpacing: 1,
-                color: context.colors.textMuted,
+                fontSize: AppTypography.footnote,
+                fontWeight: FontWeight.w600,
+                color: context.colors.textPrimary,
               ),
             ),
           ),
@@ -212,7 +219,10 @@ class _AlarmSheetState extends State<_AlarmSheet> {
               _config.startMinutesOfDay != null
                   ? 'From ${Formats.time(_config.startMinutesOfDay!)} each day'
                   : 'At the deadline',
-              style: TextStyle(fontSize: 13, color: context.colors.textMuted),
+              style: TextStyle(
+                fontSize: AppTypography.footnote,
+                color: context.colors.textMuted,
+              ),
             ),
             trailing: _config.startMinutesOfDay != null
                 ? IconButton(
@@ -241,7 +251,10 @@ class _AlarmSheetState extends State<_AlarmSheet> {
               _config.stopMinutesOfDay != null
                   ? 'Until ${Formats.time(_config.stopMinutesOfDay!)} each day'
                   : 'No stop time',
-              style: TextStyle(fontSize: 13, color: context.colors.textMuted),
+              style: TextStyle(
+                fontSize: AppTypography.footnote,
+                color: context.colors.textMuted,
+              ),
             ),
             trailing: _config.stopMinutesOfDay != null
                 ? IconButton(
@@ -261,26 +274,29 @@ class _AlarmSheetState extends State<_AlarmSheet> {
               }
             },
           ),
-          SwitchListTile(
+          SwitchListTile.adaptive(
             secondary: const Icon(Icons.bedtime_outlined),
             title: const Text('Ignore quiet hours'),
             subtitle: Text(
               'Keep alarming during quiet hours',
-              style: TextStyle(fontSize: 13, color: context.colors.textMuted),
+              style: TextStyle(
+                fontSize: AppTypography.footnote,
+                color: context.colors.textMuted,
+              ),
             ),
             value: _config.allowInQuietHours,
             onChanged: (v) => setState(
               () => _config = _config.copyWith(allowInQuietHours: v),
             ),
           ),
-          SwitchListTile(
+          SwitchListTile.adaptive(
             secondary: const Icon(Icons.volume_up_outlined),
             title: const Text('Sound'),
             value: _config.soundEnabled,
             onChanged: (v) =>
                 setState(() => _config = _config.copyWith(soundEnabled: v)),
           ),
-          SwitchListTile(
+          SwitchListTile.adaptive(
             secondary: const Icon(Icons.vibration),
             title: const Text('Vibration'),
             value: _config.vibrationEnabled,

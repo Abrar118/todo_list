@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/app_tokens.dart';
 import '../../core/app_colors.dart';
 import '../../domain/models/date_only.dart';
 import '../../domain/models/habit.dart';
@@ -89,11 +90,10 @@ class HabitDetailScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'CHECKPOINTS',
+                    'Checkpoints',
                     style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 1,
+                      fontSize: AppTypography.footnote,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 3),
@@ -104,7 +104,7 @@ class HabitDetailScreen extends StatelessWidget {
                               '${habit.cadence == HabitCadence.monthly ? 'this month' : 'today'}',
                     style: TextStyle(
                       color: context.colors.textSecondary,
-                      fontSize: 12,
+                      fontSize: AppTypography.footnote,
                     ),
                   ),
                 ],
@@ -266,7 +266,7 @@ class _HabitHero extends StatelessWidget {
                   Text(
                     habit.title,
                     style: const TextStyle(
-                      fontSize: 26,
+                      fontSize: AppTypography.title1,
                       fontWeight: FontWeight.w900,
                       letterSpacing: -.7,
                     ),
@@ -391,7 +391,7 @@ class _TimerPanel extends StatelessWidget {
                       Text(
                         formatDuration(seconds),
                         style: const TextStyle(
-                          fontSize: 20,
+                          fontSize: AppTypography.title3,
                           fontWeight: FontWeight.w900,
                         ),
                       ),
@@ -399,7 +399,7 @@ class _TimerPanel extends StatelessWidget {
                         'today',
                         style: TextStyle(
                           color: context.colors.textMuted,
-                          fontSize: 11,
+                          fontSize: AppTypography.caption,
                         ),
                       ),
                     ],
@@ -417,7 +417,7 @@ class _TimerPanel extends StatelessWidget {
                   running ? 'Timer running' : 'Ready when you are',
                   style: const TextStyle(
                     fontWeight: FontWeight.w800,
-                    fontSize: 16,
+                    fontSize: AppTypography.body,
                   ),
                 ),
                 const SizedBox(height: 5),
@@ -425,7 +425,7 @@ class _TimerPanel extends StatelessWidget {
                   '${(targetSeconds - seconds).clamp(0, targetSeconds) ~/ 60} min remaining',
                   style: TextStyle(
                     color: context.colors.textSecondary,
-                    fontSize: 12,
+                    fontSize: AppTypography.footnote,
                   ),
                 ),
                 const SizedBox(height: 14),
@@ -596,7 +596,7 @@ class _TimelineRow extends StatelessWidget {
                                   ),
                                   style: TextStyle(
                                     color: color,
-                                    fontSize: 11.5,
+                                    fontSize: AppTypography.caption,
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
@@ -849,11 +849,10 @@ class _MonthlyProgress extends StatelessWidget {
           Row(
             children: [
               const Text(
-                'MONTHLY PROGRESS',
+                'Monthly progress',
                 style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 1,
+                  fontSize: AppTypography.footnote,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               const Spacer(),
@@ -862,7 +861,7 @@ class _MonthlyProgress extends StatelessWidget {
                 style: TextStyle(
                   color: color,
                   fontWeight: FontWeight.w800,
-                  fontSize: 12,
+                  fontSize: AppTypography.footnote,
                 ),
               ),
             ],
@@ -880,7 +879,10 @@ class _MonthlyProgress extends StatelessWidget {
           const SizedBox(height: 9),
           Text(
             detail,
-            style: TextStyle(color: context.colors.textSecondary, fontSize: 12),
+            style: TextStyle(
+              color: context.colors.textSecondary,
+              fontSize: AppTypography.footnote,
+            ),
           ),
         ],
       ),
@@ -906,11 +908,10 @@ class _WeekHistory extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'LAST 7 DAYS',
+          'Last 7 days',
           style: TextStyle(
-            fontSize: 11,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 1,
+            fontSize: AppTypography.footnote,
+            fontWeight: FontWeight.w600,
           ),
         ),
         const SizedBox(height: 10),
@@ -930,7 +931,7 @@ class _WeekHistory extends StatelessWidget {
                         ['M', 'T', 'W', 'T', 'F', 'S', 'S'][date.weekday - 1],
                         style: TextStyle(
                           color: context.colors.textMuted,
-                          fontSize: 10,
+                          fontSize: AppTypography.caption,
                         ),
                       ),
                       const SizedBox(height: 7),
@@ -954,7 +955,7 @@ class _WeekHistory extends StatelessWidget {
                                 '${date.day}',
                                 style: TextStyle(
                                   color: context.colors.textSecondary,
-                                  fontSize: 11,
+                                  fontSize: AppTypography.caption,
                                 ),
                               ),
                       ),
@@ -994,7 +995,10 @@ class _EmptyCheckpoints extends StatelessWidget {
         Text(
           'Add a sequence of steps and give each one its own time.',
           textAlign: TextAlign.center,
-          style: TextStyle(color: context.colors.textSecondary, fontSize: 12.5),
+          style: TextStyle(
+            color: context.colors.textSecondary,
+            fontSize: AppTypography.footnote,
+          ),
         ),
         const SizedBox(height: 12),
         TextButton.icon(
@@ -1033,12 +1037,15 @@ class _Metric extends StatelessWidget {
           style: TextStyle(
             color: color,
             fontWeight: FontWeight.w900,
-            fontSize: 17,
+            fontSize: AppTypography.callout,
           ),
         ),
         Text(
           label,
-          style: TextStyle(color: context.colors.textMuted, fontSize: 10.5),
+          style: TextStyle(
+            color: context.colors.textMuted,
+            fontSize: AppTypography.caption,
+          ),
         ),
       ],
     ),
@@ -1072,7 +1079,7 @@ class _InfoChip extends StatelessWidget {
           label,
           style: TextStyle(
             color: color,
-            fontSize: 12,
+            fontSize: AppTypography.footnote,
             fontWeight: FontWeight.w800,
           ),
         ),

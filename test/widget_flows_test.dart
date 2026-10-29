@@ -54,7 +54,7 @@ void main() {
 
   testWidgets('empty Focus shows the calm empty state', (tester) async {
     await buildApp(tester);
-    expect(find.text('You are clear for now.'), findsOneWidget);
+    expect(find.text('Nothing is waiting on you.'), findsOneWidget);
   });
 
   testWidgets('goals replaces completed in bottom navigation', (tester) async {
@@ -146,17 +146,19 @@ void main() {
     expect(find.text('Call the plumber'), findsOneWidget);
   });
 
-  testWidgets('the center add action opens quick add from Habits', (
-    tester,
-  ) async {
+  testWidgets('each tab adds its own kind of thing', (tester) async {
     await buildApp(tester);
+    expect(find.byTooltip('Add task'), findsOneWidget);
+
     await tester.tap(find.text('Habits'));
     await tester.pumpAndSettle();
+    // Only the visible tab's FAB is hit-testable; the others stay offstage.
+    expect(find.byTooltip('Add habit').hitTestable(), findsOneWidget);
+    expect(find.byTooltip('Add task').hitTestable(), findsNothing);
 
-    expect(find.byTooltip('Add task'), findsOneWidget);
-    await tester.tap(find.byTooltip('Add task'));
+    await tester.tap(find.text('Goals'));
     await tester.pumpAndSettle();
-    expect(find.text('Add something you cannot forget…'), findsOneWidget);
+    expect(find.byTooltip('Add goal').hitTestable(), findsOneWidget);
   });
 
   testWidgets('habit page separates daily and monthly habits', (tester) async {
@@ -216,13 +218,13 @@ void main() {
     );
     await tester.drag(find.byType(ListView).last, const Offset(0, -500));
     await tester.pumpAndSettle();
-    expect(find.text('LAST 7 DAYS'), findsNothing);
-    expect(find.text('MONTHLY PROGRESS'), findsOneWidget);
+    expect(find.text('Last 7 days'), findsNothing);
+    expect(find.text('Monthly progress'), findsOneWidget);
     expect(find.text('0%'), findsOneWidget);
     expect(find.byType(LinearProgressIndicator), findsOneWidget);
   });
 
-  testWidgets('center add action sits inside the navigation band', (
+  testWidgets('the add action sits above the navigation bar, not in it', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(390, 844);
@@ -231,12 +233,11 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
     await buildApp(tester);
 
+    // Tabs are sections, never actions: on Android the add action is the
+    // screen's FAB, floating clear of the navigation bar.
     final addRect = tester.getRect(find.byType(FloatingActionButton));
-    final focusRect = tester.getRect(find.byTooltip('Focus'));
-    final habitsRect = tester.getRect(find.byTooltip('Habits'));
-    expect(addRect.overlaps(habitsRect), isFalse);
-    expect(addRect.top, greaterThanOrEqualTo(focusRect.top));
-    expect(addRect.bottom, lessThanOrEqualTo(focusRect.bottom));
+    final navRect = tester.getRect(find.byType(NavigationBar));
+    expect(addRect.bottom, lessThanOrEqualTo(navRect.top));
   });
 
   testWidgets('settings opens from the Focus app bar', (tester) async {
@@ -251,7 +252,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Settings'));
     await tester.pumpAndSettle();
-    expect(find.text('NOTIFICATIONS'), findsOneWidget);
+    expect(find.text('Notifications'), findsOneWidget);
   });
 
   testWidgets('task editor background choice persists on the task', (
@@ -267,8 +268,22 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text('Edit task'), findsOneWidget);
-    expect(find.text('BACKGROUND'), findsOneWidget);
+    // The color row is collapsed: the least important choice in the editor.
+    await tester.scrollUntilVisible(
+      find.text('Color'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.ensureVisible(find.text('Color'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Color'));
+    await tester.pumpAndSettle();
     // Swatches carry their palette name as tooltip and semantics label.
+    await tester.scrollUntilVisible(
+      find.byTooltip('Mist'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
     await tester.tap(find.byTooltip('Mist'));
     await tester.pump(const Duration(milliseconds: 600));
 
@@ -305,8 +320,10 @@ void main() {
     await tester.tap(find.text('Done'));
     await tester.pumpAndSettle();
 
-    // Completing the parent with an incomplete subtask asks first.
-    await tester.tap(find.byType(Checkbox).first);
+    // The only task waiting sits on the pass. Completing it with an
+    // incomplete subtask asks first, once the ticket has been spiked.
+    await tester.tap(find.widgetWithText(FilledButton, 'Done'));
+    await tester.pump(const Duration(milliseconds: 400));
     await tester.pumpAndSettle();
     expect(
       find.text(

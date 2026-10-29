@@ -82,8 +82,9 @@ void main() {
         return hsl.saturation;
       }
 
+      // The accent is print-black ink by design, so only the chromatic
+      // semantic colours (heat, completion, information) are compared.
       final semantic = [
-        AppColors.dark.accent,
         AppColors.dark.overdue,
         AppColors.dark.medium,
         AppColors.dark.done,

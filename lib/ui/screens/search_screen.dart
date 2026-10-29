@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/app_tokens.dart';
 import '../../core/app_colors.dart';
 import '../../domain/logic/task_search.dart';
 import '../../domain/models/task.dart';
@@ -128,7 +129,10 @@ class _SearchHint extends StatelessWidget {
           Text(
             message,
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14.5, color: colors.textSecondary),
+            style: TextStyle(
+              fontSize: AppTypography.body,
+              color: colors.textSecondary,
+            ),
           ),
         ],
       ),

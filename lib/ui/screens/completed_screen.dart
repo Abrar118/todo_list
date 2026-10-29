@@ -13,6 +13,10 @@ import 'task_editor_screen.dart';
 class CompletedScreen extends StatelessWidget {
   const CompletedScreen({super.key});
 
+  static Future<void> open(BuildContext context) => Navigator.of(
+    context,
+  ).push(MaterialPageRoute(builder: (_) => const CompletedScreen()));
+
   @override
   Widget build(BuildContext context) {
     final state = context.watch<AppState>();
@@ -58,7 +62,7 @@ class CompletedScreen extends StatelessWidget {
                 child: Text(
                   'Completed tasks will appear here.',
                   style: TextStyle(
-                    fontSize: 15.5,
+                    fontSize: AppTypography.body,
                     color: context.colors.textSecondary,
                   ),
                 ),
@@ -133,7 +137,7 @@ class _CompletedRow extends StatelessWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
-                                fontSize: 14.5,
+                                fontSize: AppTypography.body,
                                 color: context.colors.textSecondary,
                                 decoration: TextDecoration.lineThrough,
                                 decorationColor: context.colors.textMuted,
@@ -156,7 +160,7 @@ class _CompletedRow extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: AppTypography.footnote,
                           color: context.colors.textMuted,
                         ),
                       ),
