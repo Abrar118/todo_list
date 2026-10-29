@@ -169,11 +169,52 @@ SliverAppBar rootAppBar({required Widget title, List<Widget>? actions}) =>
       pinned: true,
       title: title,
       // Transparent so the shell's backdrop runs behind the bar instead of
-      // stopping at a seam along its bottom edge.
+      // stopping at a seam along its bottom edge. Glass appears only once
+      // content scrolls under it; without it the title sat on top of the rows.
       backgroundColor: Colors.transparent,
       scrolledUnderElevation: 0,
+      flexibleSpace: const _ScrolledUnderGlass(),
       actions: actions,
     );
+
+/// Chrome glass behind a pinned app bar, shown only while content is under
+/// it. At rest it paints nothing, so there is no seam and no blur to pay for.
+class _ScrolledUnderGlass extends StatelessWidget {
+  const _ScrolledUnderGlass();
+
+  @override
+  Widget build(BuildContext context) {
+    final settings = context
+        .dependOnInheritedWidgetOfExactType<FlexibleSpaceBarSettings>();
+    if (!(settings?.isScrolledUnder ?? false)) return const SizedBox.shrink();
+    final colors = context.colors;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    // The app bar lays flexibleSpace out with loose constraints, so it has to
+    // ask for the full height itself.
+    return SizedBox.expand(
+      child: ClipRect(
+        child: BackdropFilter(
+          filter: AppGlass.chromeFilter,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: colors.background.withValues(
+                alpha: isDark
+                    ? AppGlass.fillOpacityDark
+                    : AppGlass.fillOpacityLight,
+              ),
+              border: Border(
+                bottom: BorderSide(
+                  color: colors.border,
+                  width: AppGlass.hairlineWidth,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class SectionHeader extends StatelessWidget {
   final String title;
