@@ -156,14 +156,35 @@ to `AppColors.decorative` — a swatch resolves by index via
 `swatchColor(colors, s)`, so the enum and both palettes must be reordered
 together (`test/swatch_test.dart` pins their lengths). All three editors use the
 one `SwatchPicker`. A task's `background` is `Swatch?`, where null means
-automatic (priority-derived). The per-subsystem legacy name maps in
+none; it renders as a small identity dot by the title, never as a card tint.
+The per-subsystem legacy name maps in
 `swatch.dart` exist because the old enums collided — `violet` rendered sage on a
 habit but lilac on a goal — so don't merge them. New swatches need a hex in both
-palettes (contrast- and saturation-checked by `test/design_tokens_test.dart`),
-a `NotificationTone.forSwatch` group and a motif group in `task_row.dart`; both
-switches are exhaustive so the compiler will say so. The theme choice is `AppSettings.themeMode` (default dark).
+palettes (contrast- and saturation-checked by `test/design_tokens_test.dart`)
+and a `NotificationTone.forSwatch` group; that switch is exhaustive so the
+compiler will say so. The theme choice is `AppSettings.themeMode` (default dark).
 `AppSettings.reduceMotion` is honored app-wide in `main.dart` by reporting
 `disableAnimations` through `MediaQuery`.
+
+**The visual world is the ticket rail; colour means heat.** See `DESIGN.md`
+and `PRODUCT.md`. The ground is steel, surfaces are white ticket paper, and
+`accent` is print-black ink, so chrome and actions carry no hue. Colour has one
+job on Focus: heat, from `TicketAge.heat` (`lib/domain/logic/ticket_age.dart`,
+pure and tested) — ink when cold, `medium` (heat lamp) when warming,
+`overdue` (thermal red) when critical. Don't reintroduce glass, gradients,
+background washes, watermark motifs, uppercase tracked labels or hero
+numbers; `impeccable` flags all of them. Font sizes come from `AppTypography`,
+never literals.
+
+**Chrome adapts per OS** (`PRODUCT.md` records the platform as `adaptive`).
+`isCupertino(context)` in `common.dart` picks the form: on iOS a large-title
+`CupertinoSliverNavigationBar`, `CupertinoTabBar` and the add action in the nav
+bar; on Android a `SliverAppBar`, Material `NavigationBar` and a FAB
+(`rootAddFab`, `heroTag: null` because every tab has one). Tabs are sections,
+never actions — each tab adds its own kind of thing. Use the `.adaptive`
+constructors for dialogs (`AlertDialog.adaptive` + `dialogAction`), switches,
+sliders and progress indicators. The completion control is the themed circular
+`Checkbox` on both platforms on purpose.
 
 **Home-screen widgets have a cross-language data contract.** `WidgetSnapshot`
 (pure, reuses `FocusArranger` so widgets always match the Focus screen) writes

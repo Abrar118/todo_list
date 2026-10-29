@@ -132,9 +132,9 @@ struct WidgetTask: Decodable, Identifiable {
 
     var priorityColor: Color {
         switch priority {
-        case "high": return Color(red: 0.82, green: 0.40, blue: 0.40)
-        case "medium": return Color(red: 0.85, green: 0.65, blue: 0.33)
-        case "low": return Color(red: 0.50, green: 0.66, blue: 0.85)
+        case "high": return nudgeOverdue
+        // Priority is ink except high, as in the app.
+        case "medium", "low": return nudgeSecondary
         default: return Color(white: 0.45)
         }
     }
@@ -176,11 +176,11 @@ private func loadFocus() -> FocusPayload {
 
 // MARK: - Palette
 
-private let nudgeBackground = Color(red: 0.043, green: 0.043, blue: 0.051)
-private let nudgeAccent = Color(red: 0.545, green: 0.486, blue: 0.973)
-private let nudgePrimary = Color(red: 0.961, green: 0.961, blue: 0.969)
-private let nudgeSecondary = Color(red: 0.627, green: 0.627, blue: 0.659)
-private let nudgeOverdue = Color(red: 0.82, green: 0.40, blue: 0.40)
+private let nudgeBackground = Color(red: 0.071, green: 0.086, blue: 0.098)
+private let nudgeAccent = Color(red: 0.933, green: 0.945, blue: 0.953)
+private let nudgePrimary = Color(red: 0.933, green: 0.945, blue: 0.953)
+private let nudgeSecondary = Color(red: 0.667, green: 0.702, blue: 0.733)
+private let nudgeOverdue = Color(red: 1.0, green: 0.455, blue: 0.408)
 
 // MARK: - Timeline
 
