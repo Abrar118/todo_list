@@ -233,6 +233,60 @@ Widget rootAppBar(
   );
 }
 
+/// The one empty state every tab uses: a heading that says what is true, a
+/// sentence that teaches what the screen is for, and the action that fills
+/// it. No icon medallion — the words carry it.
+class EmptyState extends StatelessWidget {
+  final String title;
+  final String message;
+  final String actionLabel;
+  final VoidCallback onAction;
+
+  const EmptyState({
+    super.key,
+    required this.title,
+    required this.message,
+    required this.actionLabel,
+    required this.onAction,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: AppTypography.title3,
+                fontWeight: FontWeight.w600,
+                color: colors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: AppTypography.body,
+                height: 1.4,
+                color: colors.textSecondary,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.xl),
+            FilledButton(onPressed: onAction, child: Text(actionLabel)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 /// A list section's heading: sentence case, set in ink. It names the group
 /// below it rather than labelling it in small capitals.
 class SectionHeader extends StatelessWidget {

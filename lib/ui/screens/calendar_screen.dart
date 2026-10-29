@@ -134,18 +134,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
           if (entries.isEmpty)
             SliverFillRemaining(
               hasScrollBody: false,
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Nothing on ${Formats.relativeDate(_selected)}',
-                      style: TextStyle(color: context.colors.textSecondary),
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    _addForDayButton(),
-                  ],
-                ),
+              child: EmptyState(
+                title: 'Nothing due ${_dayPhrase(_selected)}',
+                message:
+                    'Tasks due on a day show here, along with the next '
+                    'turns of anything that repeats.',
+                actionLabel: 'Add a task for this day',
+                onAction: addForDay,
               ),
             )
           else
@@ -166,11 +161,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  Widget _addForDayButton() => TextButton.icon(
-    onPressed: () => QuickAddSheet.open(context, initialDate: _selected),
-    icon: const Icon(Icons.add, size: 18),
-    label: const Text('Add task for this day'),
-  );
+  /// "today", "tomorrow", or "on Mon, Jul 14" — reads as part of a sentence.
+  String _dayPhrase(DateOnly date) {
+    final label = Formats.relativeDate(date);
+    return switch (label) {
+      'Today' || 'Tomorrow' || 'Yesterday' => label.toLowerCase(),
+      _ => 'on $label',
+    };
+  }
 
   Widget _agendaRow(AppState state, AgendaItem item) {
     final task = item.task;

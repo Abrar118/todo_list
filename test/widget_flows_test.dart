@@ -54,7 +54,7 @@ void main() {
 
   testWidgets('empty Focus shows the calm empty state', (tester) async {
     await buildApp(tester);
-    expect(find.text('Nothing is waiting on you.'), findsOneWidget);
+    expect(find.text('Nothing is waiting on you'), findsOneWidget);
   });
 
   testWidgets('goals replaces completed in bottom navigation', (tester) async {
@@ -64,7 +64,7 @@ void main() {
     expect(find.text('Completed'), findsNothing);
     await tester.tap(find.text('Goals'));
     await tester.pumpAndSettle();
-    expect(find.text('Set your next direction.'), findsOneWidget);
+    expect(find.text('No goals yet'), findsOneWidget);
   });
 
   testWidgets('creates a persistent goal with checkpoint progress', (

@@ -1048,52 +1048,16 @@ class _EmptyHabits extends StatelessWidget {
     required this.onAdd,
     this.title = 'No habits yet',
     this.message =
-        'Create a repeatable routine, add checkpoints, or track time.',
+        'A habit is something you do every day. Check it in and Nudge '
+        'keeps the streak.',
   });
 
   @override
-  Widget build(BuildContext context) => Center(
-    child: Padding(
-      padding: const EdgeInsets.all(32),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              color: context.colors.accent.withValues(alpha: .13),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.bolt_rounded,
-              size: 40,
-              color: context.colors.accent,
-            ),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: AppTypography.title3,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            message,
-            textAlign: TextAlign.center,
-            style: TextStyle(color: context.colors.textSecondary, height: 1.4),
-          ),
-          const SizedBox(height: 20),
-          FilledButton.icon(
-            onPressed: onAdd,
-            icon: const Icon(Icons.add_rounded),
-            label: const Text('Add habit'),
-          ),
-        ],
-      ),
-    ),
+  Widget build(BuildContext context) => EmptyState(
+    title: title,
+    message: message,
+    actionLabel: 'Add habit',
+    onAction: onAdd,
   );
 }
 

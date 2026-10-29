@@ -546,43 +546,14 @@ class _EmptyFocus extends StatelessWidget {
   const _EmptyFocus();
 
   @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'Nothing is waiting on you.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: AppTypography.title3,
-              fontWeight: FontWeight.w600,
-              color: colors.textPrimary,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            'Tasks you add land here, oldest first. Put one off and it comes '
-            'back a little louder each time, until it is done.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: AppTypography.body,
-              height: 1.4,
-              color: colors.textSecondary,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.xl),
-          // An empty screen is an invitation to act, not just a status.
-          FilledButton(
-            onPressed: () => QuickAddSheet.open(context),
-            child: const Text('Add a task'),
-          ),
-        ],
-      ),
-    );
-  }
+  Widget build(BuildContext context) => EmptyState(
+    title: 'Nothing is waiting on you',
+    message:
+        'Tasks you add land here, oldest first. Put one off and it comes '
+        'back a little louder each time, until it is done.',
+    actionLabel: 'Add a task',
+    onAction: () => QuickAddSheet.open(context),
+  );
 }
 
 class _StorageErrorBanner extends StatelessWidget {

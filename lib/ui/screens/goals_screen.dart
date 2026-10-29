@@ -259,41 +259,13 @@ class _EmptyGoals extends StatelessWidget {
   const _EmptyGoals({required this.onAdd});
 
   @override
-  Widget build(BuildContext context) => Center(
-    child: Padding(
-      padding: const EdgeInsets.all(36),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.flag_circle_rounded,
-            size: 68,
-            color: context.colors.accent,
-          ),
-          const SizedBox(height: 18),
-          const Text(
-            'Set your next direction.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: AppTypography.title3,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Create a goal, choose a target date, and move forward one checkpoint at a time.',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: context.colors.textSecondary, height: 1.4),
-          ),
-          const SizedBox(height: 22),
-          FilledButton.icon(
-            onPressed: onAdd,
-            icon: const Icon(Icons.add_rounded),
-            label: const Text('Create a goal'),
-          ),
-        ],
-      ),
-    ),
+  Widget build(BuildContext context) => EmptyState(
+    title: 'No goals yet',
+    message:
+        'A goal has a target date and a few checkpoints on the way. Tick '
+        'them off as you go.',
+    actionLabel: 'Add a goal',
+    onAction: onAdd,
   );
 }
 
