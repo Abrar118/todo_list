@@ -63,8 +63,12 @@ class TaskRow extends StatelessWidget {
     final struck = task.isCompleted || striking;
     final muted = struck || isProjection;
     final stampValue = stamp ? stampText(task, age) : null;
+    // Keyed to completion, not to the strike: a ticket being spiked keeps
+    // its stamp, so the row doesn't reflow while it slides off the rail.
     final showStamp =
-        stamp && !struck && (stampValue != null || task.deferralCount > 0);
+        stamp &&
+        !task.isCompleted &&
+        (stampValue != null || task.deferralCount > 0);
 
     final chips = <Widget>[];
     if (task.dueDate != null && !showStamp) {

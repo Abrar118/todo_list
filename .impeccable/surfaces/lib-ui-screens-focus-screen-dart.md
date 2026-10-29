@@ -16,7 +16,7 @@ Open decisions: app icon redesign (needs a real asset; out of scope).
 
 THESIS: Focus is a ticket rail. Every open task is a ticket stamped with how long it has waited; the most put-off ticket sits on the pass. It refuses the category default: a priority-coloured checklist of identical cards.
 
-OWN-WORLD: Brushed-steel ground (cool blue-grey), white ticket surfaces, print-black ink for all chrome and primary actions. Colour is reserved for heat: heat-lamp amber when a ticket is warming, thermal red when critical. System type (SF / Roboto), tabular figures on every stamp. Small square-shouldered radii, hairline steel dividers; no glass, no gradients, no washes.
+OWN-WORLD: Brushed-steel ground (cool blue-grey), white ticket surfaces, print-black ink for all chrome and primary actions. Colour is reserved for heat: heat-lamp amber when a ticket is warming, thermal red when critical. System type (SF / Roboto), tabular figures on every stamp. Small square-shouldered radii, hairline steel dividers; no glass, no gradients, no washes. Dark (adaptation: Apple HIG and Material 3 both expect a Dark Mode that follows the system, and the default theme now does): the pass after close — a mid-dark brushed steel ground (#1D2124) with tickets a clear step lighter (#2E3439), paper ink (#F1F3F5) for chrome and the primary action, the same heat ramp brightened for the dark ground. Never near-black, never blue slate.
 
 STORY: The visitor sees at a glance what has waited longest, understands that ignoring it makes it louder, and completes or deliberately defers it.
 
