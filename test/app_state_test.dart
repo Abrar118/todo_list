@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:todo_list/domain/models/swatch.dart';
 import 'package:todo_list/data/app_settings.dart';
+import 'package:todo_list/data/task_json_codec.dart';
 import 'package:todo_list/domain/logic/notification_planner.dart';
 import 'package:todo_list/domain/logic/quiet_hours.dart';
 import 'package:todo_list/domain/models/date_only.dart';
@@ -382,22 +383,17 @@ void main() {
           recurrence: RecurrenceRule.daily(),
         );
         await state.createTask(title: 'Plain', dueDate: today);
-        final exported = state.exportJson();
+        const codec = TaskJsonCodec();
+        final exported = codec.encode(state.allTasks);
 
         await state.deleteAllData();
         expect(state.allTasks, isEmpty);
 
-        final count = await state.importJson(exported);
+        final count = await state.importTasks(codec.decode(exported).tasks);
         expect(count, 2);
         expect(state.allTasks.length, 3); // template + occurrence + plain
       },
     );
-
-    test('rejects invalid imports without clearing existing data', () async {
-      await state.createTask(title: 'Keep me');
-      await expectLater(state.importJson('garbage'), throwsFormatException);
-      expect(state.allTasks.single.title, 'Keep me');
-    });
   });
 
   group('notifications', () {

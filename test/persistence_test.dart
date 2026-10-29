@@ -4,6 +4,8 @@ import 'package:todo_list/domain/models/swatch.dart';
 import 'package:todo_list/data/task_json_codec.dart';
 import 'package:todo_list/data/task_repository.dart';
 import 'package:todo_list/domain/models/date_only.dart';
+import 'package:todo_list/domain/models/goal.dart';
+import 'package:todo_list/domain/models/habit.dart';
 import 'package:todo_list/domain/models/priority.dart';
 import 'package:todo_list/domain/models/reminders.dart';
 import 'package:todo_list/domain/models/subtask.dart';
@@ -140,10 +142,44 @@ void main() {
 
     test('export/import round-trip', () {
       final tasks = [fullTask('a'), fullTask('b')];
-      final decoded = codec.decode(codec.encode(tasks));
+      final decoded = codec.decode(codec.encode(tasks)).tasks;
       expect(decoded.length, 2);
       expectTaskEquals(decoded[0], tasks[0]);
       expectTaskEquals(decoded[1], tasks[1]);
+    });
+
+    test('carries habits and goals', () {
+      final habit = Habit(
+        id: 'h1',
+        title: 'Read',
+        color: Swatch.moss,
+        createdOn: const DateOnly(2026, 7, 1),
+        completedDates: {const DateOnly(2026, 7, 2)},
+        type: HabitType.timer,
+        trackedSecondsByDate: {const DateOnly(2026, 7, 2): 1800},
+        checkpoints: const [HabitCheckpoint(id: 'c1', title: 'Chapter')],
+      );
+      final goal = Goal(
+        id: 'g1',
+        title: 'Run 10k',
+        targetDate: const DateOnly(2026, 12, 31),
+        createdOn: const DateOnly(2026, 7, 1),
+        color: Swatch.sage,
+        manualProgress: 40,
+        checkpoints: const [GoalCheckpoint(id: 'c1', title: '5k')],
+      );
+      final decoded = codec.decode(
+        codec.encode([fullTask('a')], habits: [habit], goals: [goal]),
+      );
+      expect(decoded.habits, [habit]);
+      expect(decoded.goals, [goal]);
+    });
+
+    test('a version 1 backup leaves habits and goals untouched', () {
+      final decoded = codec.decode('{"app":"nudge","version":1,"tasks":[]}');
+      expect(decoded.tasks, isEmpty);
+      expect(decoded.habits, isNull);
+      expect(decoded.goals, isNull);
     });
 
     test('older task JSON defaults to an automatic background', () {
@@ -162,6 +198,15 @@ void main() {
     test('rejects invalid task entries', () {
       expect(
         () => codec.decode('{"app":"nudge","version":1,"tasks":[{"x":1}]}'),
+        throwsFormatException,
+      );
+    });
+
+    test('rejects invalid habit entries', () {
+      expect(
+        () => codec.decode(
+          '{"app":"nudge","version":2,"tasks":[],"habits":[{"x":1}]}',
+        ),
         throwsFormatException,
       );
     });

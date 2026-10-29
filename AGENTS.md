@@ -137,9 +137,11 @@ shared_preferences, independent of `AppState` and the sqflite DB. Habits carry
 checkpoints with their own completed-date sets, tracked seconds per date, and a
 derived `currentStreak`; toggling the last checkpoint for a date marks the
 whole day done. Goal `progress` comes from checkpoints when any exist,
-otherwise `manualProgress` (0–100). Note: the JSON backup (`TaskJsonCodec`,
-`app: nudge`, `version: 1`) covers **tasks only** — habits and goals are not
-exported. "Delete all local data" does clear all three.
+otherwise `manualProgress` (0–100). The JSON backup (`TaskJsonCodec`,
+`app: nudge`, `version: 2`) carries tasks, habits and goals; Settings decodes
+the whole file before replacing anything. A version-1 (tasks-only) backup
+decodes `habits`/`goals` as null, and import then leaves the current ones
+untouched rather than wiping them. "Delete all local data" clears all three.
 
 **Calendar integration is one-way by design.** `IcsCodec` (pure, tested)
 exports open deadline tasks; `addTaskToDeviceCalendar` uses the system intent
