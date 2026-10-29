@@ -373,7 +373,7 @@ class _RecurrenceSheetState extends State<_RecurrenceSheet> {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: context.colors.borderStrong),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: AppRadii.mediumRadius,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

@@ -547,7 +547,7 @@ class _HabitEditorSheetState extends State<HabitEditorSheet> {
             const SizedBox(height: 8),
             Material(
               color: colors.card,
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: AppRadii.mediumRadius,
               child: ListTile(
                 leading: Icon(
                   Icons.notifications_active_outlined,
@@ -768,7 +768,7 @@ class _HabitCard extends StatelessWidget {
                   if (isTimer || habit.checkpoints.isNotEmpty) ...[
                     const SizedBox(height: 10),
                     InkWell(
-                      borderRadius: BorderRadius.circular(13),
+                      borderRadius: AppRadii.mediumRadius,
                       onTap: () => HabitDetailScreen.open(context, habit.id),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
@@ -777,7 +777,7 @@ class _HabitCard extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           color: color.withValues(alpha: 0.09),
-                          borderRadius: BorderRadius.circular(13),
+                          borderRadius: AppRadii.mediumRadius,
                         ),
                         child: Row(
                           children: [
@@ -860,7 +860,7 @@ class _HabitDay extends StatelessWidget {
         child: InkWell(
           onTap: () =>
               context.read<HabitController>().toggleDate(habit.id, date),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: AppRadii.mediumRadius,
           child: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: 58, minWidth: 44),
             child: Column(
@@ -934,10 +934,10 @@ class _TypeCard extends StatelessWidget {
       color: selected
           ? context.colors.accent.withValues(alpha: .12)
           : context.colors.card,
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: AppRadii.mediumRadius,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: AppRadii.mediumRadius,
         child: Padding(
           padding: const EdgeInsets.all(13),
           child: Row(
@@ -984,7 +984,7 @@ class _Pill extends StatelessWidget {
     padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
     decoration: BoxDecoration(
       color: color.withValues(alpha: .12),
-      borderRadius: BorderRadius.circular(999),
+      borderRadius: AppRadii.smallRadius,
     ),
     child: Text(
       label,
@@ -1019,9 +1019,12 @@ class _StatusWarning extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.all(12),
-    decoration: BoxDecoration(
-      color: context.colors.overdue.withValues(alpha: .11),
-      borderRadius: BorderRadius.circular(14),
+    decoration: ShapeDecoration(
+      color: context.colors.card,
+      shape: AppRadii.shape(
+        AppRadii.md,
+        side: BorderSide(color: context.colors.overdue),
+      ),
     ),
     child: Row(
       children: [

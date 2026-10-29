@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Nudge widget palette, mirrors AppColors.dark in lib/core/app_colors.dart.
-         Priority is ink except high (red), as in the app. -->
+         Priority is ink, as in the app: high in full ink, medium and low
+         in secondary ink. Red is reserved for lateness. -->
     <color name="widget_background">#1D2124</color>
     <color name="widget_border">#29FFFFFF</color>
     <color name="widget_text_primary">#F1F3F5</color>

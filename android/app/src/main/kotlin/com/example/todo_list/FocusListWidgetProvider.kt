@@ -107,7 +107,7 @@ class FocusListWidgetProvider : es.antonborri.home_widget.HomeWidgetProvider() {
                 R.id.row_priority,
                 context.getColor(
                     when (task.priority) {
-                        "high" -> R.color.widget_overdue
+                        "high" -> R.color.widget_text_primary
                         "medium" -> R.color.widget_medium
                         "low" -> R.color.widget_low
                         else -> R.color.widget_text_muted

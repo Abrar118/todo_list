@@ -1273,7 +1273,7 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
         TextButton.icon(
           style: TextButton.styleFrom(
             foregroundColor: context.colors.overdue,
-            backgroundColor: context.colors.overdue.withValues(alpha: 0.10),
+            side: BorderSide(color: context.colors.overdue),
           ),
           icon: Icon(
             Icons.delete_outline,

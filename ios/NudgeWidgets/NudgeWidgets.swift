@@ -123,17 +123,17 @@ struct WidgetTask: Decodable, Identifiable {
 
     var priorityLabel: String? {
         switch priority {
-        case "high": return "HIGH"
-        case "medium": return "MEDIUM"
-        case "low": return "LOW"
+        case "high": return "High"
+        case "medium": return "Medium"
+        case "low": return "Low"
         default: return nil
         }
     }
 
     var priorityColor: Color {
         switch priority {
-        case "high": return nudgeOverdue
-        // Priority is ink except high, as in the app.
+        case "high": return nudgePrimary
+        // Priority is ink, as in the app; red is reserved for lateness.
         case "medium", "low": return nudgeSecondary
         default: return Color(white: 0.45)
         }
@@ -233,9 +233,8 @@ struct UpNextView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
-                Text("UP NEXT")
-                    .font(.system(size: 10, weight: .bold))
-                    .kerning(1.1)
+                Text("Up next")
+                    .font(.system(size: 13, weight: .semibold))
                     .foregroundColor(nudgeAccent)
                 Spacer()
                 if let task = entry.upNext, let label = task.priorityLabel {
@@ -346,7 +345,7 @@ struct FocusListView: View {
                                         ? task.deadlineLine(now: entry.date)
                                         : task.compactMetaLine(now: entry.date)
                                 )
-                                    .font(.system(size: 10))
+                                    .font(.system(size: 11))
                                     .foregroundColor(
                                         task.isOverdue(now: entry.date)
                                             ? nudgeOverdue : nudgeSecondary)

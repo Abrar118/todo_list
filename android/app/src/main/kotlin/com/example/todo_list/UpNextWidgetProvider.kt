@@ -77,7 +77,7 @@ class UpNextWidgetProvider : es.antonborri.home_widget.HomeWidgetProvider() {
                     context.getColor(
                         if (task.isOverdue(now)) R.color.widget_overdue
                         else when (task.priority) {
-                            "high" -> R.color.widget_overdue
+                            "high" -> R.color.widget_text_primary
                             "medium" -> R.color.widget_medium
                             "low" -> R.color.widget_low
                             else -> R.color.widget_text_muted

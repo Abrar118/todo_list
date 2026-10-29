@@ -111,13 +111,13 @@ class _CompletedRow extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 8),
       child: Material(
         color: context.colors.elevated,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadii.mediumRadius,
         child: InkWell(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: AppRadii.mediumRadius,
           onTap: () => TaskEditorScreen.open(context, task: task),
           child: Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: AppRadii.mediumRadius,
               border: Border.all(color: context.colors.border),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

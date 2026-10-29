@@ -329,7 +329,7 @@ class _TimerPanel extends StatelessWidget {
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: context.colors.card,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: AppRadii.mediumRadius,
       ),
       child: Row(
         children: [
@@ -432,7 +432,7 @@ class _Timeline extends StatelessWidget {
     padding: const EdgeInsets.fromLTRB(14, 10, 10, 10),
     decoration: BoxDecoration(
       color: context.colors.card,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: AppRadii.mediumRadius,
     ),
     child: Column(
       children: [
@@ -512,7 +512,7 @@ class _TimelineRow extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: InkWell(
-              borderRadius: BorderRadius.circular(13),
+              borderRadius: AppRadii.mediumRadius,
               onTap: () => CheckpointEditorSheet.open(
                 context,
                 habit.id,
@@ -698,9 +698,12 @@ class _CheckpointEditorSheetState extends State<CheckpointEditorSheet> {
           ),
           Material(
             color: context.colors.card,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: AppRadii.mediumRadius,
             child: ListTile(
-              leading: Icon(Icons.schedule_rounded, color: context.colors.low),
+              leading: Icon(
+                Icons.schedule_rounded,
+                color: context.colors.textSecondary,
+              ),
               title: Text(
                 _minutes == null
                     ? 'No reminder'
@@ -874,7 +877,7 @@ class _WeekHistory extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: context.colors.card,
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: AppRadii.mediumRadius,
           ),
           child: Row(
             children: [
@@ -936,7 +939,7 @@ class _EmptyCheckpoints extends StatelessWidget {
     padding: const EdgeInsets.all(20),
     decoration: BoxDecoration(
       color: context.colors.card,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: AppRadii.mediumRadius,
     ),
     child: Column(
       children: [
@@ -1017,7 +1020,7 @@ class _InfoChip extends StatelessWidget {
     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
     decoration: BoxDecoration(
       color: color.withValues(alpha: .12),
-      borderRadius: BorderRadius.circular(999),
+      borderRadius: AppRadii.smallRadius,
     ),
     child: Row(
       mainAxisSize: MainAxisSize.min,
