@@ -11,6 +11,7 @@ import WidgetKit
 private let appGroup = "group.com.abrar118.nudge"
 private let upNextKey = "widget_up_next"
 private let focusKey = "widget_focus"
+private let themeKey = "widget_theme"
 
 /// Builds a deep link the home_widget plugin will actually forward to Dart.
 ///
@@ -130,11 +131,11 @@ struct WidgetTask: Decodable, Identifiable {
         }
     }
 
-    var priorityColor: Color {
+    func priorityColor(_ theme: WidgetTheme) -> Color {
         switch priority {
-        case "high": return nudgePrimary
+        case "high": return theme.primary
         // Priority is ink, as in the app; red is reserved for lateness.
-        case "medium", "low": return nudgeSecondary
+        case "medium", "low": return theme.secondary
         default: return Color(white: 0.45)
         }
     }
@@ -176,11 +177,38 @@ private func loadFocus() -> FocusPayload {
 
 // MARK: - Palette
 
-private let nudgeBackground = Color(red: 0.051, green: 0.098, blue: 0.071)
-private let nudgeAccent = Color(red: 0.525, green: 0.878, blue: 0.29)
-private let nudgePrimary = Color(red: 0.925, green: 0.957, blue: 0.937)
-private let nudgeSecondary = Color(red: 0.761, green: 0.82, blue: 0.784)
-private let nudgeOverdue = Color(red: 1.0, green: 0.541, blue: 0.494)
+/// The palette the user picked in the app, in its dark roles. The app writes
+/// it under `widget_theme` as RGB ints (`HomeWidgetService.pushTheme`); until
+/// it has, the widgets use the green palette.
+struct WidgetTheme {
+    let background: Color
+    let accent: Color
+    let primary: Color
+    let secondary: Color
+    let overdue: Color
+
+    static func load() -> WidgetTheme {
+        var rgb: [String: Int] = [:]
+        if let raw = UserDefaults(suiteName: appGroup)?.string(forKey: themeKey),
+            let data = raw.data(using: .utf8),
+            let decoded = try? JSONDecoder().decode([String: Int].self, from: data) {
+            rgb = decoded
+        }
+        func color(_ key: String, _ fallback: Int) -> Color {
+            let v = rgb[key] ?? fallback
+            return Color(
+                red: Double((v >> 16) & 0xFF) / 255,
+                green: Double((v >> 8) & 0xFF) / 255,
+                blue: Double(v & 0xFF) / 255)
+        }
+        return WidgetTheme(
+            background: color("background", 0x0D1912),
+            accent: color("accent", 0x86E04A),
+            primary: color("primary", 0xECF4EF),
+            secondary: color("secondary", 0xC2D1C8),
+            overdue: color("overdue", 0xFF8A7E))
+    }
+}
 
 // MARK: - Timeline
 
@@ -191,11 +219,14 @@ struct NudgeEntry: TimelineEntry {
     let total: Int
     let overdue: Int
     let today: Int
+    let theme: WidgetTheme
 }
 
 struct NudgeProvider: TimelineProvider {
     func placeholder(in context: Context) -> NudgeEntry {
-        NudgeEntry(date: Date(), upNext: nil, items: [], total: 0, overdue: 0, today: 0)
+        NudgeEntry(
+            date: Date(), upNext: nil, items: [], total: 0, overdue: 0, today: 0,
+            theme: WidgetTheme.load())
     }
 
     func getSnapshot(in context: Context, completion: @escaping (NudgeEntry) -> Void) {
@@ -206,7 +237,8 @@ struct NudgeProvider: TimelineProvider {
             items: focus.items,
             total: focus.total ?? focus.items.count,
             overdue: focus.overdue ?? 0,
-            today: focus.today ?? 0))
+            today: focus.today ?? 0,
+            theme: WidgetTheme.load()))
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<NudgeEntry>) -> Void) {
@@ -217,7 +249,8 @@ struct NudgeProvider: TimelineProvider {
             items: focus.items,
             total: focus.total ?? focus.items.count,
             overdue: focus.overdue ?? 0,
-            today: focus.today ?? 0)
+            today: focus.today ?? 0,
+            theme: WidgetTheme.load())
         // Refresh every 30 minutes so relative labels roll over; the app also
         // pushes updates on every change.
         let next = Calendar.current.date(byAdding: .minute, value: 30, to: Date())!
@@ -235,46 +268,46 @@ struct UpNextView: View {
             HStack {
                 Text("Up next")
                     .font(.system(size: 13, weight: .semibold))
-                    .foregroundColor(nudgeAccent)
+                    .foregroundColor(entry.theme.accent)
                 Spacer()
                 if let task = entry.upNext, let label = task.priorityLabel {
                     Text(label)
                         .font(.system(size: 8, weight: .bold))
-                        .foregroundColor(task.priorityColor)
+                        .foregroundColor(task.priorityColor(entry.theme))
                         .padding(.horizontal, 6)
                         .padding(.vertical, 3)
-                        .background(task.priorityColor.opacity(0.13), in: Capsule())
+                        .background(task.priorityColor(entry.theme).opacity(0.13), in: Capsule())
                 }
             }
             if let task = entry.upNext {
                 Text(task.title)
                     .font(.system(size: 15, weight: .semibold))
-                    .foregroundColor(nudgePrimary)
+                    .foregroundColor(entry.theme.primary)
                     .lineLimit(2)
                 Text(task.deadlineLine(now: entry.date))
                     .font(.system(size: 11))
                     .foregroundColor(
-                        task.isOverdue(now: entry.date) ? nudgeOverdue : nudgeSecondary)
+                        task.isOverdue(now: entry.date) ? entry.theme.overdue : entry.theme.secondary)
                     .lineLimit(1)
                 if !task.detailLine.isEmpty {
                     Text(task.detailLine)
                         .font(.system(size: 9.5))
-                        .foregroundColor(nudgeSecondary)
+                        .foregroundColor(entry.theme.secondary)
                         .lineLimit(1)
                 }
                 if let progress = task.progress {
                     ProgressView(value: Double(progress), total: 100)
-                        .tint(nudgeAccent)
+                        .tint(entry.theme.accent)
                 }
             } else {
                 Text("You are clear for now.")
                     .font(.system(size: 13))
-                    .foregroundColor(nudgeSecondary)
+                    .foregroundColor(entry.theme.secondary)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .widgetURL(entry.upNext.map { deepLink("task/\($0.id)") })
-        .containerBackground(nudgeBackground, for: .widget)
+        .containerBackground(entry.theme.background, for: .widget)
     }
 }
 
@@ -298,26 +331,26 @@ struct FocusListView: View {
             HStack {
                 Text("FOCUS")
                     .font(.system(size: 13, weight: .bold))
-                    .foregroundColor(nudgeAccent)
+                    .foregroundColor(entry.theme.accent)
                 Spacer()
                 if !entry.items.isEmpty {
                     Text(summary)
                         .font(.system(size: 11))
-                        .foregroundColor(nudgeSecondary)
+                        .foregroundColor(entry.theme.secondary)
                 }
                 Link(destination: deepLink("quickadd")) {
                     Image(systemName: "plus")
                         .font(.system(size: 12, weight: .bold))
                         .foregroundColor(.black)
                         .frame(width: 22, height: 22)
-                        .background(Circle().fill(nudgeAccent))
+                        .background(Circle().fill(entry.theme.accent))
                 }
             }
             if entry.items.isEmpty {
                 Spacer()
                 Text("You are clear for now.")
                     .font(.system(size: 13))
-                    .foregroundColor(nudgeSecondary)
+                    .foregroundColor(entry.theme.secondary)
                     .frame(maxWidth: .infinity)
                 Spacer()
             } else {
@@ -325,19 +358,19 @@ struct FocusListView: View {
                     Link(destination: deepLink("task/\(task.id)")) {
                         HStack(spacing: 8) {
                             Circle()
-                                .fill(task.priorityColor)
+                                .fill(task.priorityColor(entry.theme))
                                 .frame(width: 6, height: 6)
                             VStack(alignment: .leading, spacing: 1) {
                                 HStack(spacing: 5) {
                                     Text(task.title)
                                         .font(.system(size: 12.5, weight: .medium))
-                                        .foregroundColor(nudgePrimary)
+                                        .foregroundColor(entry.theme.primary)
                                         .lineLimit(1)
                                     Spacer(minLength: 2)
                                     if let label = task.priorityLabel {
                                         Text(label)
                                             .font(.system(size: 7.5, weight: .bold))
-                                            .foregroundColor(task.priorityColor)
+                                            .foregroundColor(task.priorityColor(entry.theme))
                                     }
                                 }
                                 Text(
@@ -348,12 +381,12 @@ struct FocusListView: View {
                                     .font(.system(size: 11))
                                     .foregroundColor(
                                         task.isOverdue(now: entry.date)
-                                            ? nudgeOverdue : nudgeSecondary)
+                                            ? entry.theme.overdue : entry.theme.secondary)
                                     .lineLimit(1)
                                 if family == .systemLarge && !task.detailLine.isEmpty {
                                     Text(task.detailLine)
                                         .font(.system(size: 9))
-                                        .foregroundColor(nudgeSecondary)
+                                        .foregroundColor(entry.theme.secondary)
                                         .lineLimit(1)
                                 }
                             }
@@ -365,7 +398,7 @@ struct FocusListView: View {
             }
         }
         .widgetURL(deepLink("focus"))
-        .containerBackground(nudgeBackground, for: .widget)
+        .containerBackground(entry.theme.background, for: .widget)
     }
 }
 

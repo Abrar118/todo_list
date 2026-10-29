@@ -10,7 +10,9 @@ writes
 * assets/icon/icon.png, icon_background.png, icon_foreground.png,
   icon_monochrome.png — the app
   icon, rendered from the same shapes (needs Pillow), for
-  `dart run flutter_launcher_icons`.
+  `dart run flutter_launcher_icons`;
+* ios/Runner/Assets.xcassets/AppIcon-<palette>.appiconset — the iOS
+  alternate icon for each other palette.
 
 The mascot is an original character drawn here: a round, chunky sprout
 with a solid lip under its body like the app's buttons, big eyes and a
@@ -249,7 +251,7 @@ def bezier_points(path, steps=40):
     return pts
 
 
-def render_hill(size, bg):
+def render_hill(size, bg, colour=None):
     """The icon ground: forest, with a grass hill rolling across the bottom
     third, like the meadow band at the top of every tab."""
     from PIL import Image, ImageDraw
@@ -263,13 +265,13 @@ def render_hill(size, bg):
     pts = bezier_points(([[x * big, y * big] for x, y in v],
                          [[x * big, y * big] for x, y in i],
                          [[x * big, y * big] for x, y in o], False), steps=120)
-    d.polygon(pts + [(big, big), (0, big)], fill=HILL + (255,))
+    d.polygon(pts + [(big, big), (0, big)], fill=(colour or HILL) + (255,))
     return img.resize((size, size), Image.LANCZOS)
 
 
-def render_icon(size, bg, scale, dy, silhouette=False):
+def render_icon(size, bg, scale, dy, silhouette=False, body=BODY, shade=SHADE):
     """The idle mascot's first frame on [bg] (None: transparent, or an
-    image to draw over)."""
+    image to draw over), in [body] with a [shade] lip, feet and sprout."""
     from PIL import Image, ImageDraw
 
     ss = 4
@@ -317,13 +319,13 @@ def render_icon(size, bg, scale, dy, silhouette=False):
 
     if not silhouette:
         ellipse(256, 464, 240, 30, (0, 0, 0), 40)
-    ellipse(196, 440, 80, 46, SHADE)
-    ellipse(316, 440, 80, 46, SHADE)
-    line(STEM, SHADE, 12)
-    poly(LEAF_LEFT, SHADE)
-    poly(LEAF_RIGHT, SHADE)
-    poly(shifted(BODY_PATH, LIP_OFFSET), SHADE)
-    poly(BODY_PATH, BODY)
+    ellipse(196, 440, 80, 46, shade)
+    ellipse(316, 440, 80, 46, shade)
+    line(STEM, shade, 12)
+    poly(LEAF_LEFT, shade)
+    poly(LEAF_RIGHT, shade)
+    poly(shifted(BODY_PATH, LIP_OFFSET), shade)
+    poly(BODY_PATH, body)
     if not silhouette:
         ellipse(256, 360, 150, 96, WHITE, 31)
         ellipse(170, 318, 48, 28, CHEEK, 217)
@@ -348,6 +350,52 @@ def render_icon(size, bg, scale, dy, silhouette=False):
 ICON_BG = (0x1D, 0x4D, 0x2B)  # the green palette's hero forest
 HILL = (0x2A, 0x6E, 0x3A)
 
+# iOS alternate icons, one per non-default palette, switched in when the
+# user picks that palette (lib/services/app_icon_service.dart). Ground is
+# the palette's hero, the mascot its fill (`AppColors._specs` in
+# lib/core/app_colors.dart: the light spec, or the dark one for the black
+# palettes, whose light fill would vanish on their hero). Lip and hill are
+# derived as the app derives accentEdge and the default icon's hill.
+ALT_ICONS = {
+    "lagoon": (0x134E4A, 0x14B8A6),
+    "grape": (0x3B0764, 0x9333EA),
+    "indigo": (0x1E1B4B, 0x4F46E5),
+    "berry": (0x500724, 0xF472B6),
+    "sunset": (0x7C2D12, 0xFF9600),
+    "space": (0x3A3A3C, 0xF2F2F7),
+    "midnight": (0x1E3A5F, 0xBFDBFE),
+}
+
+
+def unhex(v):
+    return ((v >> 16) & 0xFF, (v >> 8) & 0xFF, v & 0xFF)
+
+
+def lighten(c, by):
+    import colorsys
+
+    h, l, s = colorsys.rgb_to_hls(*(x / 255 for x in c))
+    r, g, b = colorsys.hls_to_rgb(h, min(max(l + by, 0), 1), s)
+    return (round(r * 255), round(g * 255), round(b * 255))
+
+
+def write_alt_icons():
+    xcassets = os.path.join(ROOT, "ios", "Runner", "Assets.xcassets")
+    for name, (hero, fill) in ALT_ICONS.items():
+        hero, fill = unhex(hero), unhex(fill)
+        ground = render_hill(1024, hero, colour=lighten(hero, 0.1))
+        icon = render_icon(1024, ground, 0.8, -10, body=fill, shade=lighten(fill, -0.1))
+        folder = os.path.join(xcassets, f"AppIcon-{name}.appiconset")
+        os.makedirs(folder, exist_ok=True)
+        icon.convert("RGB").save(os.path.join(folder, "icon.png"))
+        with open(os.path.join(folder, "Contents.json"), "w", encoding="utf-8") as f:
+            json.dump({
+                "images": [{"filename": "icon.png", "idiom": "universal",
+                            "platform": "ios", "size": "1024x1024"}],
+                "info": {"author": "xcode", "version": 1},
+            }, f, indent=2)
+            f.write("\n")
+
 
 def main():
     out = os.path.join(ROOT, "assets", "mascot")
@@ -367,6 +415,7 @@ def main():
     render_icon(1024, None, 0.6, -10).save(os.path.join(icon, "icon_foreground.png"))
     render_icon(1024, None, 0.6, -10, silhouette=True).save(
         os.path.join(icon, "icon_monochrome.png"))
+    write_alt_icons()
 
 
 if __name__ == "__main__":

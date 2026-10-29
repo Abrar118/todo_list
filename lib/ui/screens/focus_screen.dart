@@ -349,7 +349,8 @@ class _FocusScreenState extends State<FocusScreen> {
 }
 
 /// Completed and Settings are destinations, not actions, so they share one
-/// overflow: a pull-up action sheet on iOS, a Material menu on Android.
+/// overflow: a pull-down menu anchored to the button on iOS, a Material menu
+/// on Android.
 class _FocusMenu extends StatelessWidget {
   const _FocusMenu();
 
@@ -360,33 +361,24 @@ class _FocusMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isCupertino(context)) {
-      return IconButton(
-        tooltip: 'More',
-        icon: const Icon(CupertinoIcons.ellipsis_circle),
-        onPressed: () => showCupertinoModalPopup<void>(
-          context: context,
-          builder: (sheetContext) => CupertinoActionSheet(
-            actions: [
-              CupertinoActionSheetAction(
-                onPressed: () {
-                  Navigator.pop(sheetContext);
-                  _open(context, const CompletedScreen());
-                },
-                child: const Text('Completed'),
-              ),
-              CupertinoActionSheetAction(
-                onPressed: () {
-                  Navigator.pop(sheetContext);
-                  _open(context, const SettingsScreen());
-                },
-                child: const Text('Settings'),
-              ),
-            ],
-            cancelButton: CupertinoActionSheetAction(
-              onPressed: () => Navigator.pop(sheetContext),
-              child: const Text('Cancel'),
-            ),
+      return CupertinoMenuAnchor(
+        menuChildren: [
+          CupertinoMenuItem(
+            onPressed: () => _open(context, const CompletedScreen()),
+            trailing: const Icon(CupertinoIcons.checkmark_circle),
+            child: const Text('Completed'),
           ),
+          CupertinoMenuItem(
+            onPressed: () => _open(context, const SettingsScreen()),
+            trailing: const Icon(CupertinoIcons.settings),
+            child: const Text('Settings'),
+          ),
+        ],
+        builder: (context, controller, _) => IconButton(
+          tooltip: 'More',
+          icon: const Icon(CupertinoIcons.ellipsis_circle),
+          onPressed: () =>
+              controller.isOpen ? controller.close() : controller.open(),
         ),
       );
     }

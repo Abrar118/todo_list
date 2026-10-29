@@ -1,8 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
+import 'dart:ui' show Brightness, Color;
 import 'package:home_widget/home_widget.dart';
 
+import '../core/app_colors.dart';
+import '../core/app_palette.dart';
 import '../domain/logic/widget_deep_link.dart';
 import '../state/app_state.dart';
 import '../domain/models/task.dart';
@@ -23,6 +27,10 @@ class HomeWidgetService {
   /// iOS app group shared with the widget extension. Must match the App
   /// Group configured on the Runner and widget-extension targets in Xcode.
   static const iosAppGroup = 'group.com.abrar118.nudge';
+
+  /// The palette's colours for the widgets, as RGB ints. Read only by the
+  /// iOS widgets for now; Android's stay green.
+  static const themeKey = 'widget_theme';
 
   static bool get _supported => Platform.isAndroid || Platform.isIOS;
 
@@ -73,6 +81,36 @@ class HomeWidgetService {
       WidgetSnapshot.focusKey,
       snapshot.focusJson,
     );
+    await _redraw();
+  }
+
+  /// Recolours the widgets to [palette]. They stay dark, so they take the
+  /// palette's dark roles.
+  Future<void> pushTheme(AppPalette palette) async {
+    if (!_supported) return;
+    final colors = AppColors.forPalette(palette, Brightness.dark);
+    int rgb(Color c) => c.toARGB32() & 0xFFFFFF;
+    try {
+      if (Platform.isIOS) {
+        await HomeWidget.setAppGroupId(iosAppGroup);
+      }
+      await HomeWidget.saveWidgetData(
+        themeKey,
+        jsonEncode({
+          'background': rgb(colors.background),
+          'accent': rgb(colors.accent),
+          'primary': rgb(colors.textPrimary),
+          'secondary': rgb(colors.textSecondary),
+          'overdue': rgb(colors.overdue),
+        }),
+      );
+      await _redraw();
+    } catch (_) {
+      // Best-effort, like the snapshot: the app itself is unaffected.
+    }
+  }
+
+  static Future<void> _redraw() async {
     await HomeWidget.updateWidget(
       androidName: _androidUpNextProvider,
       iOSName: _iosUpNextKind,

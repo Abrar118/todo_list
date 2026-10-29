@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_quill/flutter_quill.dart';
@@ -10,6 +12,7 @@ import 'data/habit_repository.dart';
 import 'data/goal_repository.dart';
 import 'data/settings_repository.dart';
 import 'data/task_repository.dart';
+import 'services/app_icon_service.dart';
 import 'services/home_widget_service.dart';
 import 'services/local_notification_service.dart';
 import 'state/app_state.dart';
@@ -55,6 +58,19 @@ Future<void> main() async {
 
   final homeWidgets = HomeWidgetService();
   await homeWidgets.attach(appState);
+
+  // The home-screen icon and widgets follow the palette chosen in Settings.
+  final appIcon = AppIconService();
+  var palette = settingsController.settings.palette;
+  unawaited(homeWidgets.pushTheme(palette));
+  unawaited(appIcon.apply(palette));
+  settingsController.addListener(() {
+    final next = settingsController.settings.palette;
+    if (next == palette) return;
+    palette = next;
+    unawaited(homeWidgets.pushTheme(next));
+    unawaited(appIcon.apply(next));
+  });
 
   final focusTimer = FocusTimerController(
     appState,
