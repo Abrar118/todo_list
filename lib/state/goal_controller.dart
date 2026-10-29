@@ -128,6 +128,14 @@ class GoalController extends ChangeNotifier {
     await _changed();
   }
 
+  /// Swaps in a backup's goals.
+  Future<void> replaceAll(List<Goal> goals) async {
+    _goals
+      ..clear()
+      ..addAll(goals);
+    await _changed();
+  }
+
   Future<void> deleteAll() async {
     _goals.clear();
     try {

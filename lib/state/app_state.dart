@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 
-import '../data/task_json_codec.dart';
 import '../data/task_repository.dart';
 import '../domain/logic/focus_arranger.dart';
 import '../domain/logic/notification_planner.dart';
@@ -817,12 +816,9 @@ class AppState extends ChangeNotifier {
   // Import / export
   // ---------------------------------------------------------------------
 
-  String exportJson() => const TaskJsonCodec().encode(_tasks);
-
-  /// Replaces all current data with the backup contents. Throws
-  /// [FormatException] with a user-safe message when the file is invalid.
-  Future<int> importJson(String raw) async {
-    final imported = const TaskJsonCodec().decode(raw);
+  /// Replaces every task with a decoded backup's; returns how many visible
+  /// tasks it brought in.
+  Future<int> importTasks(List<Task> imported) async {
     _tasks = imported;
     _lastCompletion = null;
     notifyListeners();

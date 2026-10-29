@@ -267,6 +267,15 @@ class HabitController extends ChangeNotifier {
     await _changed();
   }
 
+  /// Swaps in a backup's habits, rescheduling their reminders.
+  Future<void> replaceAll(List<Habit> habits) async {
+    _habits
+      ..clear()
+      ..addAll(habits);
+    _updateTicker();
+    await _changed();
+  }
+
   Future<void> deleteAll() async {
     _habits.clear();
     _updateTicker();

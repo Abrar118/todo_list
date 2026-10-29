@@ -13,6 +13,7 @@ import '../../core/app_palette.dart';
 import '../../core/formats.dart';
 import '../../data/app_settings.dart';
 import '../../data/ics_codec.dart';
+import '../../data/task_json_codec.dart';
 import '../../domain/models/priority.dart';
 import '../../domain/models/recurrence.dart';
 import '../../services/home_widget_service.dart';
@@ -497,13 +498,30 @@ class SettingsScreen extends StatelessWidget {
                 children: [
                   ListTile(
                     leading: const Icon(Icons.upload_outlined),
-                    title: const Text('Export tasks as JSON'),
-                    onTap: () => _export(context, state),
+                    title: const Text('Export data as JSON'),
+                    subtitle: Text(
+                      'Tasks, habits and goals',
+                      style: TextStyle(
+                        fontSize: AppTypography.footnote,
+                        color: context.colors.textMuted,
+                      ),
+                    ),
+                    onTap: () => _export(
+                      context,
+                      state,
+                      context.read<HabitController>(),
+                      context.read<GoalController>(),
+                    ),
                   ),
                   ListTile(
                     leading: const Icon(Icons.download_outlined),
-                    title: const Text('Import tasks from JSON'),
-                    onTap: () => _import(context, state),
+                    title: const Text('Import data from JSON'),
+                    onTap: () => _import(
+                      context,
+                      state,
+                      context.read<HabitController>(),
+                      context.read<GoalController>(),
+                    ),
                   ),
                   ListTile(
                     leading: const Icon(Icons.calendar_month_outlined),
@@ -689,9 +707,18 @@ class SettingsScreen extends StatelessWidget {
     await widgets.requestPin(upNext: upNext);
   }
 
-  Future<void> _export(BuildContext context, AppState state) async {
+  Future<void> _export(
+    BuildContext context,
+    AppState state,
+    HabitController habits,
+    GoalController goals,
+  ) async {
     try {
-      final json = state.exportJson();
+      final json = const TaskJsonCodec().encode(
+        state.allTasks,
+        habits: habits.habits,
+        goals: goals.goals,
+      );
       final dir = await getTemporaryDirectory();
       final stamp = DateTime.now().toIso8601String().split('T').first;
       final file = File('${dir.path}/nudge-backup-$stamp.json');
@@ -704,7 +731,7 @@ class SettingsScreen extends StatelessWidget {
       );
     } catch (_) {
       if (context.mounted) {
-        showAppSnackBar(context, 'Could not export your tasks. Try again.');
+        showAppSnackBar(context, 'Could not export your data. Try again.');
       }
     }
   }
@@ -729,13 +756,18 @@ class SettingsScreen extends StatelessWidget {
     }
   }
 
-  Future<void> _import(BuildContext context, AppState state) async {
+  Future<void> _import(
+    BuildContext context,
+    AppState state,
+    HabitController habits,
+    GoalController goals,
+  ) async {
     final confirmed = await confirmDialog(
       context,
       title: 'Import data?',
       message:
-          'Importing replaces all current tasks with the contents of '
-          'the backup file.',
+          'Importing replaces all current tasks, habits and goals with the '
+          'contents of the backup file.',
       confirmLabel: 'Choose file',
       destructive: false,
     );
@@ -748,9 +780,21 @@ class SettingsScreen extends StatelessWidget {
       final file = files.firstOrNull;
       if (file == null) return;
       final data = await file.readAsBytes();
-      final count = await state.importJson(utf8.decode(data));
+      // Decode everything first so a bad file replaces nothing.
+      final backup = const TaskJsonCodec().decode(utf8.decode(data));
+      final count = await state.importTasks(backup.tasks);
+      final importedHabits = backup.habits;
+      final importedGoals = backup.goals;
+      if (importedHabits != null) await habits.replaceAll(importedHabits);
+      if (importedGoals != null) await goals.replaceAll(importedGoals);
       if (context.mounted) {
-        showAppSnackBar(context, 'Imported $count tasks.');
+        showAppSnackBar(
+          context,
+          importedHabits == null && importedGoals == null
+              ? 'Imported $count tasks.'
+              : 'Imported $count tasks, ${importedHabits?.length ?? 0} '
+                    'habits and ${importedGoals?.length ?? 0} goals.',
+        );
       }
     } on FormatException catch (e) {
       if (context.mounted) showAppSnackBar(context, e.message);
