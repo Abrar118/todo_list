@@ -9,6 +9,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../core/app_tokens.dart';
 import '../../core/app_colors.dart';
+import '../../core/app_palette.dart';
 import '../../core/formats.dart';
 import '../../data/app_settings.dart';
 import '../../data/ics_codec.dart';
@@ -334,6 +335,10 @@ class SettingsScreen extends StatelessWidget {
                         await save(settings.copyWith(themeMode: mode));
                       }
                     },
+                  ),
+                  _PalettePicker(
+                    selected: settings.palette,
+                    onPick: (p) => save(settings.copyWith(palette: p)),
                   ),
                   SwitchListTile.adaptive(
                     secondary: const Icon(Icons.animation),
@@ -784,5 +789,129 @@ class SettingsScreen extends StatelessWidget {
     if (context.mounted) {
       showAppSnackBar(context, 'All local data deleted.');
     }
+  }
+}
+
+/// The colour palettes as a grid of swatches, each in the palette's own
+/// button colour for the current brightness, so the choice previews itself.
+class _PalettePicker extends StatelessWidget {
+  final AppPalette selected;
+  final ValueChanged<AppPalette> onPick;
+
+  const _PalettePicker({required this.selected, required this.onPick});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final brightness = Theme.of(context).brightness;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        AppSpacing.sm,
+        AppSpacing.lg,
+        AppSpacing.md,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Colour palette',
+            style: TextStyle(
+              fontSize: AppTypography.callout,
+              fontWeight: FontWeight.w700,
+              color: colors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          Wrap(
+            spacing: AppSpacing.md,
+            runSpacing: AppSpacing.md,
+            children: [
+              for (final palette in AppPalette.values)
+                _PaletteSwatch(
+                  palette: palette,
+                  preview: AppColors.forPalette(palette, brightness),
+                  selected: palette == selected,
+                  onTap: () => onPick(palette),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PaletteSwatch extends StatelessWidget {
+  final AppPalette palette;
+  final AppColors preview;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _PaletteSwatch({
+    required this.palette,
+    required this.preview,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: '${palette.label} palette',
+      excludeSemantics: true,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: AppRadii.mediumRadius,
+        child: SizedBox(
+          width: 64,
+          child: Column(
+            children: [
+              AnimatedContainer(
+                duration: AppMotion.quick,
+                width: 52,
+                height: 52,
+                padding: const EdgeInsets.all(3),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: selected ? colors.textPrimary : Colors.transparent,
+                    width: 2.5,
+                  ),
+                ),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: preview.accentFill,
+                    border: Border.all(color: colors.border, width: 1.5),
+                  ),
+                  child: selected
+                      ? Icon(
+                          Icons.check_rounded,
+                          size: 22,
+                          color: preview.onAccentFill,
+                        )
+                      : const SizedBox.expand(),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                palette.label,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                style: TextStyle(
+                  fontSize: AppTypography.caption,
+                  fontWeight: selected ? FontWeight.w900 : FontWeight.w700,
+                  color: selected ? colors.textPrimary : colors.textSecondary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

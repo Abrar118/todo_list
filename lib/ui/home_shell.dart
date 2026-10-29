@@ -98,25 +98,28 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
             inactiveColor: colors.textMuted,
             backgroundColor: Colors.transparent,
             border: null,
-            height: 58,
-            iconSize: 26,
+            height: 56,
+            iconSize: 28,
+            // Icons only; each icon carries its tab's name for VoiceOver.
             items: const [
               BottomNavigationBarItem(
-                icon: Icon(CupertinoIcons.scope),
-                label: 'Focus',
+                icon: Icon(CupertinoIcons.scope, semanticLabel: 'Focus'),
               ),
               BottomNavigationBarItem(
-                icon: Icon(CupertinoIcons.calendar),
-                label: 'Calendar',
+                icon: Icon(CupertinoIcons.calendar, semanticLabel: 'Calendar'),
               ),
               BottomNavigationBarItem(
-                icon: Icon(CupertinoIcons.arrow_2_circlepath),
-                label: 'Habits',
+                icon: Icon(
+                  CupertinoIcons.arrow_2_circlepath,
+                  semanticLabel: 'Habits',
+                ),
               ),
               BottomNavigationBarItem(
-                icon: Icon(CupertinoIcons.flag),
-                activeIcon: Icon(CupertinoIcons.flag_fill),
-                label: 'Goals',
+                icon: Icon(CupertinoIcons.flag, semanticLabel: 'Goals'),
+                activeIcon: Icon(
+                  CupertinoIcons.flag_fill,
+                  semanticLabel: 'Goals',
+                ),
               ),
             ],
           )
@@ -124,6 +127,9 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
             selectedIndex: _index,
             onDestinationSelected: _select,
             backgroundColor: Colors.transparent,
+            // Icons only: the tab bar is a compact floating block, and each
+            // destination keeps its name as a tooltip and for screen readers.
+            labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
             destinations: const [
               NavigationDestination(
                 icon: Icon(Icons.center_focus_strong_outlined),
@@ -166,10 +172,13 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
           shadowColor: const Color(0x33000000),
           child: Padding(
             padding: const EdgeInsets.only(bottom: 4),
-            // The bar sits above the home indicator already, so it must not
-            // pad for it a second time.
+            // The block already sits above the home indicator, so the bar
+            // must not pad for it again — nor for the status bar, which this
+            // shell-level context still reports and the bar's own SafeArea
+            // would otherwise add above the icons.
             child: MediaQuery.removePadding(
               context: context,
+              removeTop: true,
               removeBottom: true,
               child: bar,
             ),

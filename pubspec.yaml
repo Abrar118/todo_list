@@ -53,6 +53,7 @@ dependencies:
     sdk: flutter
   home_widget: ^0.9.3
   add_2_calendar: ^3.1.1
+  lottie: ^3.7.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -66,13 +67,14 @@ dev_dependencies:
   sqflite_common_ffi: ^2.4.2
   flutter_launcher_icons: ^0.14.4
 
-# Launcher icons are generated from assets/icon/ (drawn in-house, no external
-# artwork): `dart run flutter_launcher_icons`
+# Launcher icons are generated from assets/icon/, which tool/mascot/mascot.py
+# renders from the mascot's own shapes: run it, then
+# `dart run flutter_launcher_icons`.
 flutter_launcher_icons:
   android: true
   ios: true
   image_path: "assets/icon/icon.png"
-  adaptive_icon_background: "#0B0B0D"
+  adaptive_icon_background: "assets/icon/icon_background.png"
   adaptive_icon_foreground: "assets/icon/icon_foreground.png"
   adaptive_icon_monochrome: "assets/icon/icon_monochrome.png"
   remove_alpha_ios: true
@@ -91,6 +93,7 @@ flutter:
   # 3D illustrations (Fluent Emoji, MIT) — provenance in the folder's README.
   assets:
     - assets/illustrations/
+    - assets/mascot/
 
   # Nunito (SIL OFL 1.1): the app's one friendly, rounded UI face.
   fonts:

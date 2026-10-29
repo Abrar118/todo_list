@@ -186,6 +186,22 @@ card; priority speaks in ink, never red. 3D illustrations (`Art` /
 stat tiles, the hero card and empty states; they never replace an icon, which
 stays Material/Cupertino.
 
+**Palettes are user-chosen; roles are derived.** `AppSettings.palette`
+(`AppPalette`, default green) feeds `AppColors.forPalette(palette,
+brightness)`, which builds every role from a few chosen colours per palette;
+`AppColors.light`/`dark` are just the green defaults. Add a role by deriving
+it there for all palettes — `test/design_tokens_test.dart` checks contrast for
+every palette in both brightnesses. Home-screen widgets and the launch screen
+can't follow the choice; they mirror the green dark palette. Dark mode is
+matte: low-saturation cards a clear step above a hue-tinted ground.
+
+**The mascot is generated.** `tool/mascot/mascot.py` owns its geometry and
+writes the Lottie files (`assets/mascot/`) and the app icon (`assets/icon/`,
+then `dart run flutter_launcher_icons`). Never hand-edit the JSON. `Mascot`
+recolours it to the palette by Lottie layer name (`Body`, `Lip`, `Feet`,
+`Sprout`), so keep those names. It loops forever, so widget flow tests run
+with Reduce Motion on (see `buildApp`) or `pumpAndSettle` never settles.
+
 **Chrome adapts per OS** (`PRODUCT.md` records the platform as `adaptive`).
 `isCupertino(context)` in `common.dart` picks the form: on iOS a large-title
 `CupertinoSliverNavigationBar`, `CupertinoTabBar` and the add action in the nav

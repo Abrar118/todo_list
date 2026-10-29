@@ -441,15 +441,31 @@ class _FocusSummary extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          line,
-          style: TextStyle(
-            fontSize: AppTypography.callout,
-            fontWeight: FontWeight.w800,
-            color: colors.textSecondary,
-          ),
+        // The mascot stands on the grass beside the day's line, and cheers
+        // when nothing is waiting.
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                child: Text(
+                  line,
+                  style: TextStyle(
+                    fontSize: AppTypography.callout,
+                    fontWeight: FontWeight.w800,
+                    color: colors.textSecondary,
+                  ),
+                ),
+              ),
+            ),
+            Mascot(
+              mood: waiting == 0 ? MascotMood.cheer : MascotMood.idle,
+              size: 84,
+            ),
+          ],
         ),
-        const SizedBox(height: AppSpacing.md),
+        const SizedBox(height: AppSpacing.xs),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -686,6 +702,7 @@ class _HeroTask extends StatelessWidget {
                       flex: 3,
                       child: FilledButton.icon(
                         onPressed: spiking ? null : onDone,
+                        style: _done(colors),
                         icon: const Icon(Icons.check_rounded, size: 22),
                         label: const Text('Done'),
                       ),
@@ -709,6 +726,22 @@ class _HeroTask extends StatelessWidget {
       ),
     );
   }
+
+  /// Done on the hero: the palette's hero action (its fill, unless that
+  /// would vanish on this hero), with its own lip.
+  static ButtonStyle _done(AppColors colors) =>
+      FilledButton.styleFrom(
+        backgroundColor: colors.heroAction,
+        foregroundColor: colors.onHeroAction,
+      ).copyWith(
+        shape: WidgetStateProperty.resolveWith(
+          (states) => ChunkyBorder(
+            radius: AppRadii.md,
+            edge: Color.alphaBlend(const Color(0x33000000), colors.heroAction),
+            depth: states.contains(WidgetState.pressed) ? 1 : 4,
+          ),
+        ),
+      );
 
   /// The quiet chunky button, re-mixed for the forest: a translucent face
   /// and a darker lip, so it never competes with Done.
@@ -798,7 +831,6 @@ class _EmptyFocus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => EmptyState(
-    art: Art.partyPopper,
     title: 'Nothing is waiting on you',
     message:
         'Tasks you add land here, oldest first. Put one off and it comes '

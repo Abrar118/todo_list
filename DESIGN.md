@@ -4,53 +4,53 @@ description: A local-first task manager where put-off work comes back hotter unt
 colors:
   leaf-fill: "#58CC02"
   on-leaf-fill: "#10270A"
-  leaf-lip: "#46A302"
-  leaf-lip-dark: "#3B8A02"
+  leaf-lip: "#429902"
+  leaf-lip-dark: "#3E8F01"
   leaf-ink: "#2A750D"
   on-leaf-ink: "#FFFFFF"
-  leaf-dim: "#578F40"
+  leaf-dim: "#55913D"
   leaf-ink-dark: "#86E04A"
   on-leaf-ink-dark: "#0E1912"
-  leaf-dim-dark: "#4D8A37"
+  leaf-dim-dark: "#68AE3C"
   forest-hero: "#1D4D2B"
   on-hero: "#FFFFFF"
-  on-hero-muted: "#BFE3C4"
+  on-hero-muted: "#C6D2CA"
   hero-warm: "#F4B04B"
   hero-hot: "#FFB0A6"
-  forest-hero-dark: "#215C30"
-  on-hero-muted-dark: "#C3E8C8"
-  hero-warm-dark: "#F7BE62"
-  hero-hot-dark: "#FFB8AE"
+  forest-hero-dark: "#235A33"
+  on-hero-muted-dark: "#CFDBD2"
+  hero-warm-dark: "#FFD08A"
+  hero-hot-dark: "#FFC4BC"
   grass: "#8BDB4A"
-  far-hill: "#6CC72E"
-  grass-dark: "#1B3F20"
-  far-hill-dark: "#24512A"
+  far-hill: "#78D52C"
+  grass-dark: "#1E3A27"
+  far-hill-dark: "#284E35"
   streak-flame: "#FF9600"
   tint-sun: "#FFEFD2"
-  tint-leaf: "#DDF4C9"
+  tint-leaf: "#D6F5E3"
   tint-sky: "#DCEBFB"
   streak-flame-dark: "#FF9F1C"
-  tint-sun-dark: "#3A2A12"
-  tint-leaf-dark: "#1F3A1E"
-  tint-sky-dark: "#172C40"
-  meadow-page: "#F2F8EA"
+  tint-sun-dark: "#423424"
+  tint-leaf-dark: "#273F31"
+  tint-sky-dark: "#253446"
+  meadow-page: "#EDF8F1"
   elevated: "#FFFFFF"
   card-white: "#FFFFFF"
-  pressed: "#E4EFD8"
-  forest-ink: "#13251A"
-  ink-secondary: "#3B5243"
-  ink-muted: "#4A604F"
+  pressed: "#DFEFE5"
+  forest-ink: "#11271A"
+  ink-secondary: "#3B5445"
+  ink-muted: "#486052"
   border: "#13251A24"
   border-strong: "#13251A38"
-  meadow-page-dark: "#0E1912"
-  elevated-dark: "#16241A"
-  card-dark: "#1A2B1F"
-  pressed-dark: "#223727"
-  moon-ink-dark: "#EDF6E8"
-  ink-secondary-dark: "#B7CBB0"
-  ink-muted-dark: "#A5BA9E"
-  border-dark: "#E6FFDC1F"
-  border-strong-dark: "#E6FFDC33"
+  meadow-page-dark: "#0D1912"
+  elevated-dark: "#1D2620"
+  card-dark: "#2A352E"
+  pressed-dark: "#2F3C34"
+  moon-ink-dark: "#ECF4EF"
+  ink-secondary-dark: "#C2D1C8"
+  ink-muted-dark: "#B0BFB6"
+  border-dark: "#EEF6F21F"
+  border-strong-dark: "#EEF6F238"
   overdue: "#B3261E"
   medium: "#8A4F00"
   done: "#21733A"
@@ -261,9 +261,11 @@ components:
 
 Nudge opens onto a field. Every root tab starts under a band of fresh grass: the app bar is painted grass green and runs straight into a painted header where a far hill swells across the width, a few daisies dot it, and the pale green page rolls up over it like a near slope. On that page sit chunky, soft blocks: white cards with a solid lip along their bottom edge, vivid leaf-green buttons that visibly sink when pressed, and 3D illustrations (a flame, a check, an alarm clock, a trophy) that make the counts feel like rewards rather than debts. The tone is playful and encouraging, in the family of Duolingo and Headspace, not a grey utility list.
 
-The one task that has waited longest sits on a dark-forest hero card near the top of Focus, printed large with how late it is and with Done and Later right there. Lateness still has a temperature: a task warms to amber and then goes red the longer it is put off, and a hollow ring under it counts each deferral. Everything else is a stack of white task cards in sentence-case sections. Dark mode is the same meadow at night: deep forest ground, moonlit ink, cards a clear step lighter, the same leaf-green buttons.
+The one task that has waited longest sits on a dark-forest hero card near the top of Focus, printed large with how late it is and with Done and Later right there. Lateness still has a temperature: a task warms to amber and then goes red the longer it is put off, and a hollow ring under it counts each deferral. Everything else is a stack of white task cards in sentence-case sections. Dark mode is the same meadow at night, matte rather than glowing: a deep ground tinted with the palette's hue, cards a clear, low-saturation step lighter, the same vivid buttons. A mascot, an original chunky sprout, stands on the grass beside the day's summary and cheers when nothing is waiting.
 
-The world is one identity across both OSes but its chrome behaves natively: an iOS large-title nav bar, `CupertinoTabBar` and nav-bar add button on iPhone; a Material app bar, `NavigationBar` and FAB on Android. Both tab bars are floated inside one chunky white block above the page.
+Green is the default, not the only meadow: the user picks one of eight palettes in Settings (green, teal, purple, indigo, pink, orange, space black, midnight black), and the grass, buttons, hero, tints and mascot all follow it.
+
+The world is one identity across both OSes but its chrome behaves natively: an iOS large-title nav bar, `CupertinoTabBar` and nav-bar add button on iPhone; a Material app bar, `NavigationBar` and FAB on Android. Both tab bars are floated inside one chunky white block above the page, icons only.
 
 **Key Characteristics:**
 - A grass band (painted hills, scattered daisies) heads every root tab and flows from the status bar into the page.
@@ -275,7 +277,16 @@ The world is one identity across both OSes but its chrome behaves natively: an i
 
 ## Colors
 
-A fresh green meadow by day and a forest at night, with one vivid leaf-green fill for actions, a warm cheer family for rewards, and a heat pair that is reserved for lateness.
+A fresh green meadow by day and a forest at night, with one vivid leaf-green fill for actions, a warm cheer family for rewards, and a heat pair that is reserved for lateness. The names and hexes below are the default green palette; every palette fills the same roles.
+
+### Palettes
+`AppPalette` (`lib/core/app_palette.dart`) is the user's choice, stored in `AppSettings.palette` (default green) and picked from a swatch grid in Settings › Appearance. `AppColors.forPalette(palette, brightness)` builds the whole set from five chosen colours per brightness (fill, text-safe accent, hero, grass band, and an optional hero action) plus a neutral hue and tint strength; everything else is derived, so the palettes stay one system:
+
+- Light: page `hsl(hue, 45%, 95%)`, white cards, pressed `hsl(hue, 32%, 90.5%)`, ink `hsl(hue, 40%, 11%)`.
+- Dark (matte): ground `hsl(hue, 30%, 7.5%)`, elevated 13%, cards `hsl(hue, 12%, 18.5%)`, pressed 21%. Low saturation on the cards keeps them solid and warm rather than neon or olive.
+- The fill's foreground is white or a deep ink of its hue, whichever contrasts more. Space black and midnight black use the Hero Action slot so Done stays visible on their near-black hero (white and ice blue); purple and indigo use their band colour there.
+- Tint Leaf takes the palette's hue, not the fill's: the green fill leans yellow-green and read olive at night.
+- Semantic heat, done and low, the sun and sky tints, and the identity swatches are shared by every palette.
 
 ### Primary
 - **Leaf Fill** (`leaf-fill`, both themes): every primary button, the Android FAB, the checked completion circle, the selected filter chip and segmented segment, the selected calendar day, switch tracks, sliders, progress fills and the focused-field border. Too light for white text; it always carries **On Leaf Fill** (`on-leaf-fill`), a near-black green.
@@ -303,7 +314,7 @@ A fresh green meadow by day and a forest at night, with one vivid leaf-green fil
 Twenty muted `swatch-*` colours (deep in light, pale in dark) give tasks, habits and goals a user-picked identity. Their order is parallel to the `Swatch` enum and `AppColors.decorative`; reorder the enum and both palettes together.
 
 ### Platform mirrors
-Home-screen widgets and launch cannot read `AppColors`, so they carry a hand-kept copy of `AppColors.dark`: `android/app/src/main/res/values/colors.xml` (widget colours and `splash_background`), the colour constants in `ios/NudgeWidgets/NudgeWidgets.swift`, and the background of `ios/Runner/Base.lproj/LaunchScreen.storyboard`. All three open on the night-meadow ground. Change `AppColors.dark` and all three together.
+Home-screen widgets and launch cannot read `AppColors` (or the chosen palette), so they carry a hand-kept copy of the green `AppColors.dark`: `android/app/src/main/res/values/colors.xml` (widget colours and `splash_background`), the colour constants in `ios/NudgeWidgets/NudgeWidgets.swift`, and the background of `ios/Runner/Base.lproj/LaunchScreen.storyboard`. All three open on the night-meadow ground. Change `AppColors.dark` and all three together.
 
 ### Named Rules
 **The Heat Rule.** Lateness is the only thing that turns a task amber or red: `heatColor` on the page, `heroHeatColor` on the hero. Nothing else borrows those two colours as decoration.
@@ -316,7 +327,7 @@ Home-screen widgets and launch cannot read `AppColors`, so they carry a hand-kep
 
 **The Identity Dot Rule.** A swatch renders as a small solid dot (8px by a task title, likewise on habit and goal cards), never as a card tint or a flag. Deferral marks are hollow rings precisely so they cannot be read as identity dots.
 
-**The Contrast Floor Rule.** Every text or meaningful-icon colour clears 4.5:1 on page, card and pressed in both themes; Leaf Dim clears 3:1; each fill clears 4.5:1 with its own foreground; on-hero colours clear 4.5:1 on forest (Leaf Fill 3:1); ink clears 4.5:1 on every tint and on the grass. `test/design_tokens_test.dart` enforces all of it.
+**The Contrast Floor Rule.** In every palette, every text or meaningful-icon colour clears 4.5:1 on page, card and pressed in both themes; Leaf Dim clears 3:1; each fill clears 4.5:1 with its own foreground; on-hero colours clear 4.5:1 on the hero (Hero Action 3:1, with its label at 4.5:1); ink clears 4.5:1 on every tint and on the grass. `test/design_tokens_test.dart` enforces all of it.
 
 ## Typography
 
@@ -333,7 +344,7 @@ Home-screen widgets and launch cannot read `AppColors`, so they carry a hand-kep
 - **Callout** (800, 17px, tracking -0.2): button labels, section headers (900), the summary line under the greeting, Cupertino nav titles.
 - **Body** (600, 15px, 1.35): running text and task titles.
 - **Footnote** (700, 13px): meta chips, chip labels, stat-tile labels (800), section counts, toast text.
-- **Caption** (800, 11px): tab labels and small stamp captions.
+- **Caption** (800, 11px): small stamp captions and palette names in Settings. The tab bar has no labels.
 
 ### Named Rules
 **The Scale-Only Rule.** Sizes come only from `AppTypography` (no literals, no half-points) and tracking from `AppTypography.trackingFor(size)`.
@@ -389,7 +400,7 @@ Chunky, cheerful and pressable.
 
 ### Navigation
 - **Root app bar:** painted Grass in both forms so it runs into the meadow header. iOS: `CupertinoSliverNavigationBar` large title (display 900), no border, actions and the add plus trailing. Android: pinned `SliverAppBar` with a title 1 900 title; the add action is the FAB.
-- **Tab bar:** the platform's own bar (`CupertinoTabBar`, 58px, or Material `NavigationBar`, 64px) on a transparent ground inside one floating white chunky block (24px, 4px lip, elevation 4). Active icon and label in Leaf Ink, inactive in Ink Muted, caption labels at 800; Android shows a Tint Leaf pill indicator.
+- **Tab bar:** the platform's own bar (`CupertinoTabBar`, 56px, or Material `NavigationBar`, 60px, `alwaysHide` labels) on a transparent ground inside one floating white chunky block (24px, 4px lip, elevation 4). Icons only: active in Leaf Ink, inactive in Ink Muted; names live on as the Material destination labels (tooltips, TalkBack) and as the Cupertino icons' `semanticLabel`. Android shows a Tint Leaf pill indicator. The block strips both top and bottom padding before the bar's own `SafeArea`, or it pads for the status bar above the icons.
 - **Secondary destinations** (Completed, Settings) open from a `CupertinoActionSheet` on iOS and a popup menu on Android.
 
 ### Meadow Header (signature)
@@ -404,8 +415,14 @@ The right edge of every Focus task card: the value ("1d", "5:00 PM", "Nov 28") i
 ### Illustrations
 Fluent Emoji 3D renders (`assets/illustrations/`, MIT, provenance in its README) through the `Art` enum and `Illustration`: 34px on stat tiles, 56px on the hero, 112px in empty states, 22px beside habit streaks. Hidden from screen readers; the words beside them carry meaning.
 
+### Mascot (signature)
+An original character: a round chunky sprout with the Lip Rule's solid lip under its body, two feet, big eyes, pink cheeks and a two-leaf sprout. `tool/mascot/mascot.py` holds its geometry and writes both the Lottie animations (`assets/mascot/idle.json`: breathing, a sprout sway and a blink over 3s; `cheer.json`: a squash-and-stretch jump with happy eyes over 1.5s) and the app icon. The `Mascot` widget plays them through the `lottie` package, recolouring the `Body` layer to the palette's fill and `Lip`, `Feet` and `Sprout` to its lip colour, so the mascot is purple on the purple palette. It stands at 84px on Focus's grass beside the summary line (cheering when nothing waits) and at 160px in Focus's empty state. It is decorative (excluded from semantics) and holds still under Reduce Motion. Edit the generator and re-run it; never hand-edit the JSON.
+
+### App icon
+Rendered by the same generator from the mascot's idle frame: the mascot standing on a grass hill over the green palette's forest hero. The adaptive icon splits it into `icon_background.png` (forest and hill) and `icon_foreground.png` (the mascot inside the 66% safe zone), plus a white monochrome silhouette with the eyes punched out. `dart run flutter_launcher_icons` writes the platform icons.
+
 ### Empty State
-One for every tab: a 112px illustration, a title 3 heading that says what is true, one teaching sentence in Ink Secondary, and a chunky Leaf Fill action.
+One for every tab: a 112px illustration (Focus: the cheering mascot), a title 3 heading that says what is true, one teaching sentence in Ink Secondary, and a chunky Leaf Fill action.
 
 ### Completion exit (signature motion)
 Completing a Focus task strikes its title through (2px), slides the card fully off to the right (ease-in cubic, 20 to 65% of 560ms) and then closes the gap (ease-out cubic, 60 to 100%). Skipped under Reduce Motion. Other motion uses `AppMotion` (140 / 240 / 360ms, ease-out cubic in, ease-in cubic out); the toast slides down 240ms and leaves in 140ms.
@@ -422,6 +439,7 @@ Completing a Focus task strikes its title through (2px), slides the card fully o
 - **Do** use illustrations for stat tiles, the hero card and empty states, and Material/Cupertino glyphs for every icon.
 - **Do** show a swatch only as a small identity dot.
 - **Do** take sizes from `AppTypography`, gaps from `AppSpacing` and corners from `AppRadii` (10/16/24, pill for chips), using the continuous `*Shape` getters.
+- **Do** derive new palette roles inside `AppColors.forPalette` and let `test/design_tokens_test.dart` check every palette in both brightnesses; never hardcode a role for one palette in a widget.
 - **Do** keep chrome native in behaviour: `isCupertino(context)` picks the large-title nav bar, `CupertinoTabBar` and nav-bar add on iOS, the app bar, `NavigationBar` and FAB on Android; use `.adaptive` dialogs, switches and progress indicators.
 - **Do** honour Reduce Motion.
 - **Do** change `AppColors.dark` together with its Android, iOS widget and launch-screen mirrors.

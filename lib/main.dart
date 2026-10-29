@@ -107,8 +107,8 @@ class NudgeApp extends StatelessWidget {
         builder: (context, settings, _) => MaterialApp(
           title: 'Nudge',
           debugShowCheckedModeBanner: false,
-          theme: AppTheme.light(),
-          darkTheme: AppTheme.dark(),
+          theme: AppTheme.light(settings.settings.palette),
+          darkTheme: AppTheme.dark(settings.settings.palette),
           themeMode: switch (settings.settings.themeMode) {
             AppThemeMode.system => ThemeMode.system,
             AppThemeMode.dark => ThemeMode.dark,

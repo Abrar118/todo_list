@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:todo_list/core/app_colors.dart';
+import 'package:todo_list/core/app_palette.dart';
 import 'package:todo_list/core/app_tokens.dart';
 
 /// WCAG 2.x contrast ratio. [Color.computeLuminance] is the spec's relative
@@ -15,8 +16,9 @@ double contrast(Color a, Color b) {
 void main() {
   group('palette contrast', () {
     for (final (themeName, c) in [
-      ('dark', AppColors.dark),
-      ('light', AppColors.light),
+      for (final palette in AppPalette.values)
+        for (final b in Brightness.values)
+          ('${palette.name} ${b.name}', AppColors.forPalette(palette, b)),
     ]) {
       final surfaces = {
         'background': c.background,
@@ -79,14 +81,19 @@ void main() {
           ('onHeroMuted', c.onHeroMuted),
           ('heroWarm', c.heroWarm),
           ('heroHot', c.heroHot),
-          ('accentFill', c.accentFill),
+          ('heroAction', c.heroAction),
         ]) {
           expect(
             contrast(fg, c.hero),
-            greaterThanOrEqualTo(name == 'accentFill' ? 3.0 : 4.5),
+            greaterThanOrEqualTo(name == 'heroAction' ? 3.0 : 4.5),
             reason: '$themeName $name on hero',
           );
         }
+        expect(
+          contrast(c.onHeroAction, c.heroAction),
+          greaterThanOrEqualTo(4.5),
+          reason: '$themeName Done label on the hero',
+        );
       });
 
       test('$themeName: text on tints and the meadow clears 4.5:1', () {

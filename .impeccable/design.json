@@ -4,52 +4,267 @@
   "title": "Design System: Nudge",
   "extensions": {
     "colorMeta": {
-      "leaf-fill": { "role": "primary", "displayName": "Leaf Fill", "canonical": "#58CC02", "tonalRamp": ["#163300", "#234F02", "#316D02", "#3E8A02", "#4CA902", "#58CC02", "#9BE36A", "#E3F7D3"] },
-      "leaf-ink": { "role": "primary", "displayName": "Leaf Ink", "canonical": "#2A750D", "tonalRamp": ["#0C2404", "#153A07", "#1F550A", "#2A750D", "#4A9430", "#79B55F", "#AED69C", "#E2F2DA"] },
-      "forest-hero": { "role": "secondary", "displayName": "Forest Hero", "canonical": "#1D4D2B", "tonalRamp": ["#0A1C10", "#12301B", "#1D4D2B", "#2C6A3E", "#478A59", "#73AC81", "#A9D1B2", "#E0F1E4"] },
-      "overdue": { "role": "secondary", "displayName": "Overdue Red", "canonical": "#B3261E", "tonalRamp": ["#3A0905", "#5E120D", "#8A1D16", "#B3261E", "#D9534A", "#F08A82", "#F9BDB8", "#FDE9E7"] },
-      "medium": { "role": "secondary", "displayName": "Warming Amber", "canonical": "#8A4F00", "tonalRamp": ["#2B1800", "#4A2B00", "#6A3D00", "#8A4F00", "#B36D12", "#DB9440", "#F4C27F", "#FCEBD2"] },
-      "streak-flame": { "role": "tertiary", "displayName": "Streak Flame", "canonical": "#FF9600", "tonalRamp": ["#3A2000", "#663800", "#995400", "#CC7600", "#FF9600", "#FFB24D", "#FFD399", "#FFF1DE"] },
-      "grass": { "role": "tertiary", "displayName": "Grass", "canonical": "#8BDB4A", "tonalRamp": ["#1B3F20", "#24512A", "#3F8A1F", "#6CC72E", "#8BDB4A", "#AEE680", "#D1F1B6", "#F0FAE6"] },
-      "tint-sun": { "role": "tertiary", "displayName": "Sun Tint", "canonical": "#FFEFD2" },
-      "tint-leaf": { "role": "tertiary", "displayName": "Leaf Tint", "canonical": "#DDF4C9" },
-      "tint-sky": { "role": "tertiary", "displayName": "Sky Tint", "canonical": "#DCEBFB" },
-      "meadow-page": { "role": "neutral", "displayName": "Meadow Page", "canonical": "#F2F8EA", "tonalRamp": ["#0E1912", "#1A2B1F", "#3B5243", "#6E8572", "#A5BA9E", "#CFE0C4", "#E4EFD8", "#F2F8EA"] },
-      "forest-ink": { "role": "neutral", "displayName": "Forest Ink", "canonical": "#13251A" },
-      "meadow-page-dark": { "role": "neutral", "displayName": "Night Meadow", "canonical": "#0E1912" },
-      "moon-ink-dark": { "role": "neutral", "displayName": "Moon Ink", "canonical": "#EDF6E8" }
+      "leaf-fill": {
+        "role": "primary",
+        "displayName": "Leaf Fill",
+        "canonical": "#58CC02",
+        "tonalRamp": [
+          "#163300",
+          "#234F02",
+          "#316D02",
+          "#3E8A02",
+          "#4CA902",
+          "#58CC02",
+          "#9BE36A",
+          "#E3F7D3"
+        ]
+      },
+      "leaf-ink": {
+        "role": "primary",
+        "displayName": "Leaf Ink",
+        "canonical": "#2A750D",
+        "tonalRamp": [
+          "#0C2404",
+          "#153A07",
+          "#1F550A",
+          "#2A750D",
+          "#4A9430",
+          "#79B55F",
+          "#AED69C",
+          "#E2F2DA"
+        ]
+      },
+      "forest-hero": {
+        "role": "secondary",
+        "displayName": "Forest Hero",
+        "canonical": "#1D4D2B",
+        "tonalRamp": [
+          "#0A1C10",
+          "#12301B",
+          "#1D4D2B",
+          "#2C6A3E",
+          "#478A59",
+          "#73AC81",
+          "#A9D1B2",
+          "#E0F1E4"
+        ]
+      },
+      "overdue": {
+        "role": "secondary",
+        "displayName": "Overdue Red",
+        "canonical": "#B3261E",
+        "tonalRamp": [
+          "#3A0905",
+          "#5E120D",
+          "#8A1D16",
+          "#B3261E",
+          "#D9534A",
+          "#F08A82",
+          "#F9BDB8",
+          "#FDE9E7"
+        ]
+      },
+      "medium": {
+        "role": "secondary",
+        "displayName": "Warming Amber",
+        "canonical": "#8A4F00",
+        "tonalRamp": [
+          "#2B1800",
+          "#4A2B00",
+          "#6A3D00",
+          "#8A4F00",
+          "#B36D12",
+          "#DB9440",
+          "#F4C27F",
+          "#FCEBD2"
+        ]
+      },
+      "streak-flame": {
+        "role": "tertiary",
+        "displayName": "Streak Flame",
+        "canonical": "#FF9600",
+        "tonalRamp": [
+          "#3A2000",
+          "#663800",
+          "#995400",
+          "#CC7600",
+          "#FF9600",
+          "#FFB24D",
+          "#FFD399",
+          "#FFF1DE"
+        ]
+      },
+      "grass": {
+        "role": "tertiary",
+        "displayName": "Grass",
+        "canonical": "#8BDB4A",
+        "tonalRamp": [
+          "#1B3F20",
+          "#24512A",
+          "#3F8A1F",
+          "#6CC72E",
+          "#8BDB4A",
+          "#AEE680",
+          "#D1F1B6",
+          "#F0FAE6"
+        ]
+      },
+      "tint-sun": {
+        "role": "tertiary",
+        "displayName": "Sun Tint",
+        "canonical": "#FFEFD2"
+      },
+      "tint-leaf": {
+        "role": "tertiary",
+        "displayName": "Leaf Tint",
+        "canonical": "#D6F5E3"
+      },
+      "tint-sky": {
+        "role": "tertiary",
+        "displayName": "Sky Tint",
+        "canonical": "#DCEBFB"
+      },
+      "meadow-page": {
+        "role": "neutral",
+        "displayName": "Meadow Page",
+        "canonical": "#EDF8F1"
+      },
+      "forest-ink": {
+        "role": "neutral",
+        "displayName": "Forest Ink",
+        "canonical": "#11271A"
+      },
+      "meadow-page-dark": {
+        "role": "neutral",
+        "displayName": "Night Meadow",
+        "canonical": "#0D1912"
+      },
+      "moon-ink-dark": {
+        "role": "neutral",
+        "displayName": "Moon Ink",
+        "canonical": "#ECF4EF"
+      }
     },
     "typographyMeta": {
-      "display": { "displayName": "Display", "purpose": "iOS large title and the hero card's lateness stamp (tabular)." },
-      "title1": { "displayName": "Title 1", "purpose": "Android app-bar title and stat-tile figures (tabular)." },
-      "title3": { "displayName": "Title 3", "purpose": "Hero task title, empty-state headings; dialog titles at 800." },
-      "callout": { "displayName": "Callout", "purpose": "Button labels, section headers (900), the greeting's summary line." },
-      "body": { "displayName": "Body", "purpose": "Running text and task titles." },
-      "footnote": { "displayName": "Footnote", "purpose": "Meta chips, chip labels, stat labels, counts, toast text." },
-      "caption": { "displayName": "Caption", "purpose": "Tab labels and stamp captions." }
+      "display": {
+        "displayName": "Display",
+        "purpose": "iOS large title and the hero card's lateness stamp (tabular)."
+      },
+      "title1": {
+        "displayName": "Title 1",
+        "purpose": "Android app-bar title and stat-tile figures (tabular)."
+      },
+      "title3": {
+        "displayName": "Title 3",
+        "purpose": "Hero task title, empty-state headings; dialog titles at 800."
+      },
+      "callout": {
+        "displayName": "Callout",
+        "purpose": "Button labels, section headers (900), the greeting's summary line."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Running text and task titles."
+      },
+      "footnote": {
+        "displayName": "Footnote",
+        "purpose": "Meta chips, chip labels, stat labels, counts, toast text."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Tab labels and stamp captions."
+      }
     },
     "shadows": [
-      { "name": "lip-button", "value": "inset 0 -4px 0 #46A302", "purpose": "Solid bottom lip on leaf-green buttons and the FAB (ChunkyBorder depth 4); 1px while pressed." },
-      { "name": "lip-card", "value": "inset 0 -3px 0 rgba(19,37,26,0.22)", "purpose": "Quiet lip on task, habit and goal cards (Border Strong over the face)." },
-      { "name": "lip-hero", "value": "inset 0 -5px 0 rgba(0,0,0,0.35)", "purpose": "The hero card's deeper lip." },
-      { "name": "tab-bar-float", "value": "0 4px 10px rgba(0,0,0,0.2)", "purpose": "Material elevation 4 under the floating tab-bar block." },
-      { "name": "fab", "value": "0 3px 6px rgba(0,0,0,0.24)", "purpose": "Material elevation 3 under the Android FAB." },
-      { "name": "toast", "value": "0 6px 14px rgba(0,0,0,0.4)", "purpose": "Material elevation 6 under the forest toast." }
+      {
+        "name": "lip-button",
+        "value": "inset 0 -4px 0 #46A302",
+        "purpose": "Solid bottom lip on leaf-green buttons and the FAB (ChunkyBorder depth 4); 1px while pressed."
+      },
+      {
+        "name": "lip-card",
+        "value": "inset 0 -3px 0 rgba(19,37,26,0.22)",
+        "purpose": "Quiet lip on task, habit and goal cards (Border Strong over the face)."
+      },
+      {
+        "name": "lip-hero",
+        "value": "inset 0 -5px 0 rgba(0,0,0,0.35)",
+        "purpose": "The hero card's deeper lip."
+      },
+      {
+        "name": "tab-bar-float",
+        "value": "0 4px 10px rgba(0,0,0,0.2)",
+        "purpose": "Material elevation 4 under the floating tab-bar block."
+      },
+      {
+        "name": "fab",
+        "value": "0 3px 6px rgba(0,0,0,0.24)",
+        "purpose": "Material elevation 3 under the Android FAB."
+      },
+      {
+        "name": "toast",
+        "value": "0 6px 14px rgba(0,0,0,0.4)",
+        "purpose": "Material elevation 6 under the forest toast."
+      }
     ],
     "motion": [
-      { "name": "quick", "value": "140ms", "purpose": "State flips: selection, checkmarks, chips; toast exit." },
-      { "name": "standard", "value": "240ms", "purpose": "Local movement: panels, nav indicator, toast entrance." },
-      { "name": "slow", "value": "360ms", "purpose": "Full-surface transitions." },
-      { "name": "press-sink", "value": "80ms", "purpose": "A chunky button's lip shrinking 4px to 1px while pressed." },
-      { "name": "ease-in", "value": "cubic-bezier(0.215, 0.61, 0.355, 1)", "purpose": "Ease-out cubic for entrances." },
-      { "name": "ease-exit", "value": "cubic-bezier(0.55, 0.055, 0.675, 0.19)", "purpose": "Ease-in cubic for exits." },
-      { "name": "completion-exit", "value": "560ms: strike, slide off 20-65% (ease-in cubic), collapse 60-100% (ease-out cubic)", "purpose": "A completed Focus task leaving the list. Skipped under Reduce Motion." }
+      {
+        "name": "quick",
+        "value": "140ms",
+        "purpose": "State flips: selection, checkmarks, chips; toast exit."
+      },
+      {
+        "name": "standard",
+        "value": "240ms",
+        "purpose": "Local movement: panels, nav indicator, toast entrance."
+      },
+      {
+        "name": "slow",
+        "value": "360ms",
+        "purpose": "Full-surface transitions."
+      },
+      {
+        "name": "press-sink",
+        "value": "80ms",
+        "purpose": "A chunky button's lip shrinking 4px to 1px while pressed."
+      },
+      {
+        "name": "ease-in",
+        "value": "cubic-bezier(0.215, 0.61, 0.355, 1)",
+        "purpose": "Ease-out cubic for entrances."
+      },
+      {
+        "name": "ease-exit",
+        "value": "cubic-bezier(0.55, 0.055, 0.675, 0.19)",
+        "purpose": "Ease-in cubic for exits."
+      },
+      {
+        "name": "completion-exit",
+        "value": "560ms: strike, slide off 20-65% (ease-in cubic), collapse 60-100% (ease-out cubic)",
+        "purpose": "A completed Focus task leaving the list. Skipped under Reduce Motion."
+      }
     ],
     "platformMirrors": [
-      { "name": "android-widgets", "path": "android/app/src/main/res/values/colors.xml", "mirrors": "AppColors.dark" },
-      { "name": "android-splash", "path": "android/app/src/main/res/values/colors.xml (splash_background)", "mirrors": "meadow-page-dark" },
-      { "name": "ios-widgets", "path": "ios/NudgeWidgets/NudgeWidgets.swift", "mirrors": "AppColors.dark" },
-      { "name": "ios-launch", "path": "ios/Runner/Base.lproj/LaunchScreen.storyboard", "mirrors": "meadow-page-dark" }
+      {
+        "name": "android-widgets",
+        "path": "android/app/src/main/res/values/colors.xml",
+        "mirrors": "AppColors.dark"
+      },
+      {
+        "name": "android-splash",
+        "path": "android/app/src/main/res/values/colors.xml (splash_background)",
+        "mirrors": "meadow-page-dark"
+      },
+      {
+        "name": "ios-widgets",
+        "path": "ios/NudgeWidgets/NudgeWidgets.swift",
+        "mirrors": "AppColors.dark"
+      },
+      {
+        "name": "ios-launch",
+        "path": "ios/Runner/Base.lproj/LaunchScreen.storyboard",
+        "mirrors": "meadow-page-dark"
+      }
     ],
     "openItems": [
       "App icon (assets/icon/) predates the meadow, and ic_launcher_background is still #0B0B0D; a meadow icon needs a real asset.",
@@ -142,16 +357,56 @@
       "Nunito throughout, heavy (800/900) for headings, figures and buttons."
     ],
     "rules": [
-      { "name": "The Heat Rule", "body": "Lateness is the only thing that turns a task amber or red: `heatColor` on the page, `heroHeatColor` on the hero. Nothing else borrows those two colours as decoration.", "section": "colors" },
-      { "name": "The Priority Speaks Ink Rule", "body": "Priority never takes a hue: high is full ink with a filled flag, medium and low are secondary ink with an outlined flag (`priorityColor`, `priorityIcon`), so a high flag can never outshout a task that is actually late. The widgets follow it too.", "section": "colors" },
-      { "name": "The Fill-Only Leaf Rule", "body": "Leaf Fill is a surface, not a text colour, and what sits on it is always On Leaf Fill; white on it fails contrast. Green text uses Leaf Ink.", "section": "colors" },
-      { "name": "The Cheer Is Fill Rule", "body": "Streak Flame and the three tints are grounds and illustration companions. Text on them is ink; they are never text themselves.", "section": "colors" },
-      { "name": "The Identity Dot Rule", "body": "A swatch renders as a small solid dot (8px by a task title, likewise on habit and goal cards), never as a card tint or a flag. Deferral marks are hollow rings precisely so they cannot be read as identity dots.", "section": "colors" },
-      { "name": "The Contrast Floor Rule", "body": "Every text or meaningful-icon colour clears 4.5:1 on page, card and pressed in both themes; Leaf Dim clears 3:1; each fill clears 4.5:1 with its own foreground; on-hero colours clear 4.5:1 on forest (Leaf Fill 3:1); ink clears 4.5:1 on every tint and on the grass. `test/design_tokens_test.dart` enforces all of it.", "section": "colors" },
-      { "name": "The Scale-Only Rule", "body": "Sizes come only from `AppTypography` (no literals, no half-points) and tracking from `AppTypography.trackingFor(size)`.", "section": "typography" },
-      { "name": "The Tabular Figures Rule", "body": "Every stamp, count, stat figure and timer is set with tabular figures.", "section": "typography" },
-      { "name": "The Sentence Case Rule", "body": "Headings and section headers are sentence case in ink. Weight carries emphasis, not case or letter-spacing.", "section": "typography" },
-      { "name": "The Lip Rule", "body": "Every pressable block carries a solid lip on its bottom edge (`ChunkyBorder`): 4px on buttons, the FAB, stat tiles and the tab bar; 3px on task, habit and goal cards; 5px on the hero. Pressed, a button's lip drops to 1px and its label drops with the face (80ms), so the block sinks. The leaf lip is Leaf Lip; quiet blocks take a lip of Border Strong blended over their own face; the hero takes 35% black over forest.", "section": "elevation" }
+      {
+        "name": "The Heat Rule",
+        "body": "Lateness is the only thing that turns a task amber or red: `heatColor` on the page, `heroHeatColor` on the hero. Nothing else borrows those two colours as decoration.",
+        "section": "colors"
+      },
+      {
+        "name": "The Priority Speaks Ink Rule",
+        "body": "Priority never takes a hue: high is full ink with a filled flag, medium and low are secondary ink with an outlined flag (`priorityColor`, `priorityIcon`), so a high flag can never outshout a task that is actually late. The widgets follow it too.",
+        "section": "colors"
+      },
+      {
+        "name": "The Fill-Only Leaf Rule",
+        "body": "Leaf Fill is a surface, not a text colour, and what sits on it is always On Leaf Fill; white on it fails contrast. Green text uses Leaf Ink.",
+        "section": "colors"
+      },
+      {
+        "name": "The Cheer Is Fill Rule",
+        "body": "Streak Flame and the three tints are grounds and illustration companions. Text on them is ink; they are never text themselves.",
+        "section": "colors"
+      },
+      {
+        "name": "The Identity Dot Rule",
+        "body": "A swatch renders as a small solid dot (8px by a task title, likewise on habit and goal cards), never as a card tint or a flag. Deferral marks are hollow rings precisely so they cannot be read as identity dots.",
+        "section": "colors"
+      },
+      {
+        "name": "The Contrast Floor Rule",
+        "body": "Every text or meaningful-icon colour clears 4.5:1 on page, card and pressed in both themes; Leaf Dim clears 3:1; each fill clears 4.5:1 with its own foreground; on-hero colours clear 4.5:1 on forest (Leaf Fill 3:1); ink clears 4.5:1 on every tint and on the grass. `test/design_tokens_test.dart` enforces all of it.",
+        "section": "colors"
+      },
+      {
+        "name": "The Scale-Only Rule",
+        "body": "Sizes come only from `AppTypography` (no literals, no half-points) and tracking from `AppTypography.trackingFor(size)`.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Figures Rule",
+        "body": "Every stamp, count, stat figure and timer is set with tabular figures.",
+        "section": "typography"
+      },
+      {
+        "name": "The Sentence Case Rule",
+        "body": "Headings and section headers are sentence case in ink. Weight carries emphasis, not case or letter-spacing.",
+        "section": "typography"
+      },
+      {
+        "name": "The Lip Rule",
+        "body": "Every pressable block carries a solid lip on its bottom edge (`ChunkyBorder`): 4px on buttons, the FAB, stat tiles and the tab bar; 3px on task, habit and goal cards; 5px on the hero. Pressed, a button's lip drops to 1px and its label drops with the face (80ms), so the block sinks. The leaf lip is Leaf Lip; quiet blocks take a lip of Border Strong blended over their own face; the hero takes 35% black over forest.",
+        "section": "elevation"
+      }
     ],
     "dos": [
       "Do route every colour through `context.colors`; never a hardcoded palette constant.",

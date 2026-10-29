@@ -12,6 +12,7 @@ import 'package:todo_list/services/home_widget_service.dart';
 import 'package:todo_list/state/app_state.dart';
 import 'package:todo_list/state/focus_timer_controller.dart';
 import 'package:todo_list/state/habit_controller.dart';
+import 'package:todo_list/data/app_settings.dart';
 import 'package:todo_list/state/goal_controller.dart';
 import 'package:todo_list/state/settings_controller.dart';
 import 'package:todo_list/ui/screens/task_editor_screen.dart';
@@ -26,7 +27,11 @@ Future<(AppState, SettingsController)> buildApp(
 }) async {
   final repo = InMemoryTaskRepository();
   final notifications = FakeNotificationService();
-  final settingsRepo = InMemorySettingsRepository()..permissionRequested = true;
+  // Flows run with Reduce Motion on: the mascot loops forever otherwise,
+  // so pumpAndSettle would never settle. Motion is not what these test.
+  final settingsRepo = InMemorySettingsRepository()
+    ..permissionRequested = true
+    ..settings = const AppSettings(reduceMotion: true);
   final settings = SettingsController(settingsRepo, notifications);
   await settings.load();
   final state = AppState(repo, notifications, settings);
@@ -60,9 +65,9 @@ void main() {
   testWidgets('goals replaces completed in bottom navigation', (tester) async {
     await buildApp(tester);
 
-    expect(find.text('Goals'), findsOneWidget);
+    expect(find.byTooltip('Goals'), findsOneWidget);
     expect(find.text('Completed'), findsNothing);
-    await tester.tap(find.text('Goals'));
+    await tester.tap(find.byTooltip('Goals'));
     await tester.pumpAndSettle();
     expect(find.text('No goals yet'), findsOneWidget);
   });
@@ -72,7 +77,7 @@ void main() {
   ) async {
     final repository = InMemoryGoalRepository();
     await buildApp(tester, goalController: GoalController(repository));
-    await tester.tap(find.text('Goals'));
+    await tester.tap(find.byTooltip('Goals'));
     await tester.pumpAndSettle();
     await tester.tap(find.byTooltip('Add goal'));
     await tester.pumpAndSettle();
@@ -119,7 +124,7 @@ void main() {
         ),
       ];
     await buildApp(tester, goalController: GoalController(repository));
-    await tester.tap(find.text('Goals'));
+    await tester.tap(find.byTooltip('Goals'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Fix sleep schedule'));
     await tester.pumpAndSettle();
@@ -150,20 +155,20 @@ void main() {
     await buildApp(tester);
     expect(find.byTooltip('Add task'), findsOneWidget);
 
-    await tester.tap(find.text('Habits'));
+    await tester.tap(find.byTooltip('Habits'));
     await tester.pumpAndSettle();
     // Only the visible tab's FAB is hit-testable; the others stay offstage.
     expect(find.byTooltip('Add habit').hitTestable(), findsOneWidget);
     expect(find.byTooltip('Add task').hitTestable(), findsNothing);
 
-    await tester.tap(find.text('Goals'));
+    await tester.tap(find.byTooltip('Goals'));
     await tester.pumpAndSettle();
     expect(find.byTooltip('Add goal').hitTestable(), findsOneWidget);
   });
 
   testWidgets('habit page separates daily and monthly habits', (tester) async {
     await buildApp(tester);
-    await tester.tap(find.text('Habits'));
+    await tester.tap(find.byTooltip('Habits'));
     await tester.pumpAndSettle();
 
     expect(find.text('Daily'), findsOneWidget);
@@ -387,7 +392,7 @@ void main() {
     await state.createTask(title: 'Calendar task', dueDate: DateOnly.today());
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Calendar'));
+    await tester.tap(find.byTooltip('Calendar'));
     await tester.pumpAndSettle();
     expect(find.text('Calendar task'), findsOneWidget);
   });
@@ -506,7 +511,7 @@ void main() {
   testWidgets('habit tracker adds and completes a daily habit', (tester) async {
     await buildApp(tester);
 
-    await tester.tap(find.text('Habits'));
+    await tester.tap(find.byTooltip('Habits'));
     await tester.pumpAndSettle();
     expect(find.text('No habits yet'), findsOneWidget);
 
@@ -540,7 +545,7 @@ void main() {
   ) async {
     await buildApp(tester);
 
-    await tester.tap(find.text('Habits'));
+    await tester.tap(find.byTooltip('Habits'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Add habit'));
     await tester.pumpAndSettle();

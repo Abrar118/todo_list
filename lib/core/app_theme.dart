@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'app_colors.dart';
+import 'app_palette.dart';
 import 'app_tokens.dart';
 import 'chunky_border.dart';
 
@@ -12,9 +13,11 @@ abstract final class AppTheme {
   /// headings carry the meadow's warmth. Bundled in `assets/fonts/`.
   static const fontFamily = 'Nunito';
 
-  static ThemeData dark() => _build(AppColors.dark, Brightness.dark);
+  static ThemeData dark([AppPalette palette = AppPalette.meadow]) =>
+      _build(AppColors.forPalette(palette, Brightness.dark), Brightness.dark);
 
-  static ThemeData light() => _build(AppColors.light, Brightness.light);
+  static ThemeData light([AppPalette palette = AppPalette.meadow]) =>
+      _build(AppColors.forPalette(palette, Brightness.light), Brightness.light);
 
   /// The lip under a pressable block: full when resting, nearly flat while
   /// the finger is down, so the block sinks.
@@ -218,7 +221,7 @@ abstract final class AppTheme {
         indicatorColor: c.tintLeaf,
         indicatorShape: AppRadii.mediumShape,
         elevation: 0,
-        height: 64,
+        height: 60,
         labelTextStyle: WidgetStateProperty.resolveWith(
           (states) => TextStyle(
             fontFamily: fontFamily,

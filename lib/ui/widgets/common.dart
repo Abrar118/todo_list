@@ -245,11 +245,12 @@ Widget rootAppBar(
   );
 }
 
-/// The one empty state every tab uses: the tab's illustration, a heading
-/// that says what is true, a sentence that teaches what the screen is for,
-/// and the chunky button that fills it.
+/// The one empty state every tab uses: the tab's illustration (or, with no
+/// [art], the mascot cheering), a heading that says what is true, a
+/// sentence that teaches what the screen is for, and the chunky button that
+/// fills it.
 class EmptyState extends StatelessWidget {
-  final Art art;
+  final Art? art;
   final String title;
   final String message;
   final String actionLabel;
@@ -257,7 +258,7 @@ class EmptyState extends StatelessWidget {
 
   const EmptyState({
     super.key,
-    required this.art,
+    this.art,
     required this.title,
     required this.message,
     required this.actionLabel,
@@ -273,7 +274,10 @@ class EmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Illustration(art, size: 112),
+            if (art case final art?)
+              Illustration(art, size: 112)
+            else
+              const Mascot(mood: MascotMood.cheer, size: 160),
             const SizedBox(height: AppSpacing.lg),
             Text(
               title,
