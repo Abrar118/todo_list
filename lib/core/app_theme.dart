@@ -207,10 +207,10 @@ abstract final class AppTheme {
         side: BorderSide(color: c.textMuted, width: 1.6),
         fillColor: WidgetStateProperty.resolveWith(
           (states) => states.contains(WidgetState.selected)
-              ? c.done
+              ? c.textPrimary
               : Colors.transparent,
         ),
-        checkColor: WidgetStatePropertyAll(c.onAccent),
+        checkColor: WidgetStatePropertyAll(c.background),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
@@ -261,18 +261,33 @@ abstract final class AppTheme {
         textColor: c.textPrimary,
         minVerticalPadding: AppSpacing.md,
       ),
+      // Selected chips are inked like a punched selection, so the active
+      // filter is the loudest chip, never the quietest.
       chipTheme: ChipThemeData(
         backgroundColor: c.card,
-        selectedColor: c.accent.withValues(alpha: 0.18),
+        selectedColor: c.textPrimary,
+        checkmarkColor: c.background,
         labelStyle: TextStyle(
           color: c.textSecondary,
           fontSize: AppTypography.footnote,
+        ),
+        secondaryLabelStyle: TextStyle(
+          color: c.background,
+          fontSize: AppTypography.footnote,
+          fontWeight: FontWeight.w600,
         ),
         side: BorderSide.none,
         shape: AppRadii.smallShape,
         padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.sm,
           vertical: AppSpacing.xs,
+        ),
+      ),
+      segmentedButtonTheme: SegmentedButtonThemeData(
+        style: SegmentedButton.styleFrom(
+          shape: AppRadii.mediumShape,
+          selectedBackgroundColor: c.textPrimary,
+          selectedForegroundColor: c.background,
         ),
       ),
       timePickerTheme: TimePickerThemeData(backgroundColor: c.card),

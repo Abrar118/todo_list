@@ -17,14 +17,14 @@ abstract final class AppSpacing {
 /// the clearest tells that an app is not native.
 abstract final class AppRadii {
   /// Chips, meta pills, calendar cells, inline fields.
-  static const sm = 8.0;
+  static const sm = 4.0;
 
   /// Ticket runs, the pass, sheets, dialogs, panels. Small and
   /// square-shouldered: a ticket is cut paper, not a pill.
-  static const md = 12.0;
+  static const md = 6.0;
 
   /// Sheet tops and other large surfaces.
-  static const lg = 20.0;
+  static const lg = 12.0;
 
   static const pill = 999.0;
 

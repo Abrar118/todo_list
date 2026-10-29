@@ -323,7 +323,7 @@ void main() {
     // The only task waiting sits on the pass. Completing it with an
     // incomplete subtask asks first, once the ticket has been spiked.
     await tester.tap(find.widgetWithText(FilledButton, 'Done'));
-    await tester.pump(const Duration(milliseconds: 400));
+    await tester.pump(const Duration(milliseconds: 700));
     await tester.pumpAndSettle();
     expect(
       find.text(

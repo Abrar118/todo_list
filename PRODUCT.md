@@ -52,8 +52,9 @@ an explicit "not today" swipe rather than letting a task sit overdue.
 - Local-first: no backend, no accounts, no analytics. Calendar integration is
   one-way export only. JSON backup covers tasks only.
 - One Flutter codebase for Android and iOS only; web and desktop are
-  deliberately unsupported. Light and dark themes exist; the default theme and
-  whether a single shared visual identity spans both OSes are undecided.
+  deliberately unsupported. Light and dark themes exist and the default follows the system
+  setting. One visual identity spans both OSes; navigation, controls and
+  materials adapt per platform.
 - Notification permission is requested only when the first reminder is
   enabled, always after an in-app explanation. The app never claims a
   notification was scheduled when it failed.

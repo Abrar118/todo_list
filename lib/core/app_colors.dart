@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 /// ticket surfaces and print-black ink. [accent] is that ink, so chrome and
 /// actions carry no colour at all. Colour has one job, heat: [medium] is the
 /// heat lamp (a ticket warming) and [overdue] the thermal-printer red (a
-/// ticket gone critical). Dark is the same pass after close.
+/// ticket gone critical). Dark is the same pass after close: neutral
+/// graphite steel, not the blue slate this world replaced.
 ///
 /// Two colour families, deliberately kept apart:
 ///
@@ -90,21 +91,21 @@ class AppColors extends ThemeExtension<AppColors> {
   });
 
   static const dark = AppColors(
-    background: Color(0xFF121619),
-    elevated: Color(0xFF1A1F23),
-    card: Color(0xFF1F252A),
-    pressed: Color(0xFF293036),
+    background: Color(0xFF141719),
+    elevated: Color(0xFF1B1F22),
+    card: Color(0xFF23282C),
+    pressed: Color(0xFF2D3337),
     textPrimary: Color(0xFFEEF1F3),
-    textSecondary: Color(0xFFAAB3BB),
-    textMuted: Color(0xFF97A1AA),
+    textSecondary: Color(0xFFAAB2B9),
+    textMuted: Color(0xFF98A1A9),
     border: Color(0x17FFFFFF), // translucent white
     borderStrong: Color(0x29FFFFFF),
     hairline: Color(0x29FFFFFF),
     accent: Color(0xFFEEF1F3),
     accentDim: Color(0xFF7D8892),
-    onAccent: Color(0xFF121619),
+    onAccent: Color(0xFF141719),
     accentFill: Color(0xFFEEF1F3),
-    onAccentFill: Color(0xFF121619),
+    onAccentFill: Color(0xFF141719),
     overdue: Color(0xFFFF7468),
     medium: Color(0xFFF2AE45),
     done: Color(0xFF63D894),

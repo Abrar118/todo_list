@@ -16,12 +16,6 @@ class GoalsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = context.watch<GoalController>();
     final goals = controller.goals;
-    final average = goals.isEmpty
-        ? 0
-        : (goals.fold<double>(0, (sum, goal) => sum + goal.progress) /
-                  goals.length *
-                  100)
-              .round();
 
     void addGoal() => GoalEditorSheet.open(context);
 
@@ -63,7 +57,6 @@ class GoalsScreen extends StatelessWidget {
                   _GoalsSummary(
                     active: goals.where((goal) => !goal.isCompleted).length,
                     completed: goals.where((goal) => goal.isCompleted).length,
-                    average: average,
                   ),
                   const SizedBox(height: AppSpacing.xl),
                   Text(
@@ -88,18 +81,14 @@ class GoalsScreen extends StatelessWidget {
   }
 }
 
-/// A status line over a thin ink rule, not a hero number: the goals list is
-/// the content, and a large 0% on day one only celebrates nothing.
+/// A one-line count, not a hero number or an average bar: each goal card
+/// already carries its own progress, and a large 0% on day one only
+/// celebrates nothing.
 class _GoalsSummary extends StatelessWidget {
   final int active;
   final int completed;
-  final int average;
 
-  const _GoalsSummary({
-    required this.active,
-    required this.completed,
-    required this.average,
-  });
+  const _GoalsSummary({required this.active, required this.completed});
 
   @override
   Widget build(BuildContext context) {
@@ -114,25 +103,6 @@ class _GoalsSummary extends StatelessWidget {
             fontWeight: FontWeight.w600,
             color: colors.textPrimary,
             fontFeatures: const [FontFeature.tabularFigures()],
-          ),
-        ),
-        const SizedBox(height: AppSpacing.xs),
-        Text(
-          'Average progress $average%',
-          style: TextStyle(
-            fontSize: AppTypography.footnote,
-            color: colors.textSecondary,
-            fontFeatures: const [FontFeature.tabularFigures()],
-          ),
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(2),
-          child: LinearProgressIndicator(
-            value: average / 100,
-            minHeight: 4,
-            color: colors.textPrimary,
-            backgroundColor: colors.pressed,
           ),
         ),
       ],

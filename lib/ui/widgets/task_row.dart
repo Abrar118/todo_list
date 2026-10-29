@@ -81,7 +81,7 @@ class TaskRow extends StatelessWidget {
     if (task.priority != TaskPriority.none) {
       chips.add(
         MetaChip(
-          icon: Icons.flag_outlined,
+          icon: priorityIcon(task.priority),
           label: task.priority.label,
           color: priorityColor(context, task.priority),
         ),
@@ -149,7 +149,7 @@ class TaskRow extends StatelessWidget {
       task.title,
       if (task.priority != TaskPriority.none) '${task.priority.label} priority',
       if (showStamp && stampValue != null)
-        '${stampValue.caption} ${stampValue.value}'
+        '${stampValue.caption} ${stampValue.value}'.trim()
       else if (overdue)
         FocusArranger.overdueLabel(task, now),
       ?escalation,

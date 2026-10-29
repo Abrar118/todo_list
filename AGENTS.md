@@ -162,7 +162,8 @@ The per-subsystem legacy name maps in
 habit but lilac on a goal — so don't merge them. New swatches need a hex in both
 palettes (contrast- and saturation-checked by `test/design_tokens_test.dart`)
 and a `NotificationTone.forSwatch` group; that switch is exhaustive so the
-compiler will say so. The theme choice is `AppSettings.themeMode` (default dark).
+compiler will say so. The theme choice is `AppSettings.themeMode` (default:
+follow the system, as an adaptive native app should).
 `AppSettings.reduceMotion` is honored app-wide in `main.dart` by reporting
 `disableAnimations` through `MediaQuery`.
 

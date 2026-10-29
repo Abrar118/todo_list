@@ -123,7 +123,11 @@ class _CompletedRow extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: Row(
               children: [
-                Icon(Icons.check_circle, size: 20, color: context.colors.done),
+                Icon(
+                  Icons.check_circle,
+                  size: 20,
+                  color: context.colors.textMuted,
+                ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Column(

@@ -59,7 +59,7 @@ class AppSettings {
     this.vibrationEnabled = true,
     this.pomodoroWorkMinutes = 25,
     this.pomodoroBreakMinutes = 5,
-    this.themeMode = AppThemeMode.dark,
+    this.themeMode = AppThemeMode.system,
     this.reduceMotion = false,
     this.compactRows = false,
     this.defaultPriority = TaskPriority.none,
@@ -147,7 +147,7 @@ class AppSettings {
         .clamp(1, 60),
     themeMode: AppThemeMode.values.firstWhere(
       (m) => m.name == json['themeMode'],
-      orElse: () => AppThemeMode.dark,
+      orElse: () => AppThemeMode.system,
     ),
     reduceMotion: json['reduceMotion'] as bool? ?? false,
     compactRows: json['compactRows'] as bool? ?? false,

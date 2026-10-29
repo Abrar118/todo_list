@@ -41,7 +41,9 @@ class _FocusScreenState extends State<FocusScreen> {
   /// completion lands and the list closes over them.
   final _spiking = <String>{};
 
-  static const _spikeDuration = Duration(milliseconds: 320);
+  /// Strike, slide off, close the gap: the whole exit, after which the
+  /// completion actually lands.
+  static const _spikeDuration = Duration(milliseconds: 560);
 
   Future<void> _complete(AppState state, Task task) async {
     if (!MediaQuery.disableAnimationsOf(context)) {
@@ -401,7 +403,7 @@ class _PassTicket extends StatelessWidget {
     final meta = <Widget>[
       if (task.priority != TaskPriority.none)
         MetaChip(
-          icon: Icons.flag_outlined,
+          icon: priorityIcon(task.priority),
           label: '${task.priority.label} priority',
           color: priorityColor(context, task.priority),
         ),
@@ -418,7 +420,7 @@ class _PassTicket extends StatelessWidget {
       container: true,
       label: [
         'Up next: ${task.title}',
-        if (stamp != null) '${stamp.caption} ${stamp.value}',
+        if (stamp != null) '${stamp.caption} ${stamp.value}'.trim(),
         ?putOff,
       ].join(', '),
       child: Material(
@@ -469,6 +471,17 @@ class _PassTicket extends StatelessWidget {
                                 children: meta,
                               ),
                             ],
+                            if (putOff != null) ...[
+                              const SizedBox(height: AppSpacing.sm),
+                              Text(
+                                putOff,
+                                style: TextStyle(
+                                  fontSize: AppTypography.footnote,
+                                  fontWeight: FontWeight.w600,
+                                  color: heatColor(colors, age.heat),
+                                ),
+                              ),
+                            ],
                           ],
                         ),
                       ),
@@ -477,19 +490,6 @@ class _PassTicket extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (putOff != null) ...[
-                  const SizedBox(height: AppSpacing.md),
-                  ExcludeSemantics(
-                    child: Text(
-                      putOff,
-                      style: TextStyle(
-                        fontSize: AppTypography.footnote,
-                        fontWeight: FontWeight.w600,
-                        color: heatColor(colors, age.heat),
-                      ),
-                    ),
-                  ),
-                ],
                 const SizedBox(height: AppSpacing.lg),
                 Row(
                   children: [
@@ -519,26 +519,68 @@ class _PassTicket extends StatelessWidget {
   }
 }
 
-/// A completed ticket slides off the rail and fades, after its strike-through
-/// has had a moment to land. Collapses to nothing under Reduce Motion,
-/// because [FocusScreen] then completes immediately.
-class _Spike extends StatelessWidget {
+/// The signature exit. A completed ticket holds its strike-through for a
+/// beat, slides fully off the rail, then the rail closes over the gap it
+/// left. Skipped entirely under Reduce Motion, because [FocusScreen] then
+/// completes immediately.
+class _Spike extends StatefulWidget {
   final bool spiking;
   final Widget child;
 
   const _Spike({required this.spiking, required this.child});
 
   @override
-  Widget build(BuildContext context) => AnimatedSlide(
-    offset: spiking ? const Offset(0.08, 0) : Offset.zero,
-    duration: AppMotion.slow,
-    curve: AppMotion.exitCurve,
-    child: AnimatedOpacity(
-      opacity: spiking ? 0.0 : 1.0,
-      duration: AppMotion.slow,
-      curve: AppMotion.exitCurve,
-      child: child,
+  State<_Spike> createState() => _SpikeState();
+}
+
+class _SpikeState extends State<_Spike> with SingleTickerProviderStateMixin {
+  late final _controller = AnimationController(
+    vsync: this,
+    duration: _FocusScreenState._spikeDuration,
+  );
+  late final _slide = Tween(begin: Offset.zero, end: const Offset(1.05, 0))
+      .animate(
+        CurvedAnimation(
+          parent: _controller,
+          curve: const Interval(0.2, 0.65, curve: AppMotion.exitCurve),
+        ),
+      );
+  late final _height = Tween(begin: 1.0, end: 0.0).animate(
+    CurvedAnimation(
+      parent: _controller,
+      curve: const Interval(0.6, 1, curve: AppMotion.curve),
     ),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.spiking) _controller.value = 1;
+  }
+
+  @override
+  void didUpdateWidget(_Spike oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.spiking && !oldWidget.spiking) {
+      _controller.forward(from: 0);
+    } else if (!widget.spiking && oldWidget.spiking) {
+      // Completion was cancelled (say, at the subtasks prompt): put the
+      // ticket back on the rail.
+      _controller.value = 0;
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => SizeTransition(
+    sizeFactor: _height,
+    alignment: Alignment.topCenter,
+    child: SlideTransition(position: _slide, child: widget.child),
   );
 }
 

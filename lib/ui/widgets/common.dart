@@ -8,16 +8,21 @@ import '../../core/app_tokens.dart';
 import '../../domain/models/priority.dart';
 import '../../domain/models/swatch.dart';
 
-/// Colour is reserved for heat, so priority speaks in ink. High priority is
-/// the one exception: a rush ticket is printed red.
+/// Colour is reserved for heat, so priority speaks in ink: high priority is
+/// set in full ink (and drawn with a filled flag, see [priorityIcon]) rather
+/// than red, so it never outshouts a ticket that is actually late.
 Color priorityColor(BuildContext context, TaskPriority priority) {
   final colors = context.colors;
   return switch (priority) {
-    TaskPriority.high => colors.overdue,
+    TaskPriority.high => colors.textPrimary,
     TaskPriority.medium || TaskPriority.low => colors.textSecondary,
     TaskPriority.none => colors.textMuted,
   };
 }
+
+/// The flag for a priority: filled for high, outlined otherwise.
+IconData priorityIcon(TaskPriority priority) =>
+    priority == TaskPriority.high ? Icons.flag : Icons.flag_outlined;
 
 /// Whether the app should speak iOS (HIG) rather than Android (Material 3).
 /// Nudge adapts its chrome per OS: tab bar and nav-bar add button on iPhone,

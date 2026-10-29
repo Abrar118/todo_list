@@ -330,7 +330,7 @@ class _MonthGrid extends StatelessWidget {
                             ),
                           if (m.hasRecurring) _dot(colors.textMuted),
                           if (m.hasCompleted && m.allCompleted)
-                            _dot(colors.done),
+                            _dot(colors.textMuted),
                         ],
                       ),
               ),

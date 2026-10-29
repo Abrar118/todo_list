@@ -33,9 +33,10 @@ Color heatColor(AppColors colors, int heat) => switch (heat) {
     value: task.dueMinutes == null ? 'Today' : Formats.time(task.dueMinutes!),
     caption: 'due',
   ),
+  // Under "Coming up" a date already means due; no caption.
   TicketTiming.upcoming => (
     value: Formats.stampDate(task.dueDate!),
-    caption: 'due',
+    caption: '',
   ),
 };
 
@@ -68,24 +69,25 @@ class TicketStamp extends StatelessWidget {
           Text(
             text.value,
             style: TextStyle(
-              fontSize: large ? AppTypography.title1 : AppTypography.body,
+              fontSize: large ? AppTypography.display : AppTypography.body,
               height: 1.1,
               fontWeight: age.heat > 0 ? FontWeight.w700 : FontWeight.w600,
               letterSpacing: large
-                  ? AppTypography.trackingFor(AppTypography.title1)
+                  ? AppTypography.trackingFor(AppTypography.display)
                   : 0,
               color: age.heat > 0 ? color : colors.textPrimary,
               fontFeatures: const [FontFeature.tabularFigures()],
             ),
           ),
-          Text(
-            text.caption,
-            style: TextStyle(
-              fontSize: AppTypography.caption,
-              color: age.heat > 0 ? color : colors.textSecondary,
-              fontWeight: FontWeight.w500,
+          if (text.caption.isNotEmpty)
+            Text(
+              text.caption,
+              style: TextStyle(
+                fontSize: AppTypography.caption,
+                color: age.heat > 0 ? color : colors.textSecondary,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-          ),
         ],
         if (task.deferralCount > 0) ...[
           const SizedBox(height: AppSpacing.xs),
@@ -116,10 +118,17 @@ class PunchMarks extends StatelessWidget {
           for (var i = 0; i < holes; i++)
             Padding(
               padding: EdgeInsets.only(left: i == 0 ? 0 : 3),
+              // A hole punched through the ticket: the steel ground shows
+              // through, rimmed in the ticket's heat colour. Hollow, so it
+              // can never be mistaken for a swatch's identity dot.
               child: Container(
-                width: 6,
-                height: 6,
-                decoration: BoxDecoration(shape: BoxShape.circle, color: color),
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: context.colors.background,
+                  border: Border.all(color: color, width: 1.5),
+                ),
               ),
             ),
           if (count > _maxHoles)
