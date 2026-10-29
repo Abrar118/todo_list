@@ -156,14 +156,61 @@ to `AppColors.decorative` — a swatch resolves by index via
 `swatchColor(colors, s)`, so the enum and both palettes must be reordered
 together (`test/swatch_test.dart` pins their lengths). All three editors use the
 one `SwatchPicker`. A task's `background` is `Swatch?`, where null means
-automatic (priority-derived). The per-subsystem legacy name maps in
+none; it renders as a small identity dot by the title, never as a card tint.
+The per-subsystem legacy name maps in
 `swatch.dart` exist because the old enums collided — `violet` rendered sage on a
 habit but lilac on a goal — so don't merge them. New swatches need a hex in both
-palettes (contrast- and saturation-checked by `test/design_tokens_test.dart`),
-a `NotificationTone.forSwatch` group and a motif group in `task_row.dart`; both
-switches are exhaustive so the compiler will say so. The theme choice is `AppSettings.themeMode` (default dark).
+palettes (contrast- and saturation-checked by `test/design_tokens_test.dart`)
+and a `NotificationTone.forSwatch` group; that switch is exhaustive so the
+compiler will say so. The theme choice is `AppSettings.themeMode` (default:
+follow the system, as an adaptive native app should).
 `AppSettings.reduceMotion` is honored app-wide in `main.dart` by reporting
 `disableAnimations` through `MediaQuery`.
+
+**The visual world is the meadow: bright, colourful, chunky.** See
+`DESIGN.md` and `PRODUCT.md`. The user rejected a quiet grey direction as
+generic, so don't pull the look back toward restraint. Each root tab opens
+under `rootAppBar` + `MeadowHeader` (`lib/ui/widgets/meadow.dart`), painted in
+`meadowTop`; cards, stat tiles, buttons and the floating tab bar are chunky
+blocks with a solid bottom lip (`ChunkyBorder` in `lib/core/chunky_border.dart`
+— the filled/outlined button themes and `chunkyCard` apply it, so don't
+hand-roll shadows for it). The font is bundled Nunito (`AppTheme.fontFamily`);
+sizes come from `AppTypography`, never literals. Colour families stay apart:
+`accentFill` (leaf green) is a fill only and always carries the dark
+`onAccentFill` — white on it fails contrast; `streak` and the `tint*` colours
+are fills, never text; lateness is still heat from `TicketAge.heat`
+(`lib/domain/logic/ticket_age.dart`, pure and tested) — `medium` when warming,
+`overdue` when critical, and `heroWarm`/`heroHot` on the dark-forest `hero`
+card; priority speaks in ink, never red. 3D illustrations (`Art` /
+`Illustration`, Fluent Emoji, MIT, `assets/illustrations/README.md`) decorate
+stat tiles, the hero card and empty states; they never replace an icon, which
+stays Material/Cupertino.
+
+**Palettes are user-chosen; roles are derived.** `AppSettings.palette`
+(`AppPalette`, default green) feeds `AppColors.forPalette(palette,
+brightness)`, which builds every role from a few chosen colours per palette;
+`AppColors.light`/`dark` are just the green defaults. Add a role by deriving
+it there for all palettes — `test/design_tokens_test.dart` checks contrast for
+every palette in both brightnesses. Home-screen widgets and the launch screen
+can't follow the choice; they mirror the green dark palette. Dark mode is
+matte: low-saturation cards a clear step above a hue-tinted ground.
+
+**The mascot is generated.** `tool/mascot/mascot.py` owns its geometry and
+writes the Lottie files (`assets/mascot/`) and the app icon (`assets/icon/`,
+then `dart run flutter_launcher_icons`). Never hand-edit the JSON. `Mascot`
+recolours it to the palette by Lottie layer name (`Body`, `Lip`, `Feet`,
+`Sprout`), so keep those names. It loops forever, so widget flow tests run
+with Reduce Motion on (see `buildApp`) or `pumpAndSettle` never settles.
+
+**Chrome adapts per OS** (`PRODUCT.md` records the platform as `adaptive`).
+`isCupertino(context)` in `common.dart` picks the form: on iOS a large-title
+`CupertinoSliverNavigationBar`, `CupertinoTabBar` and the add action in the nav
+bar; on Android a `SliverAppBar`, Material `NavigationBar` and a FAB
+(`rootAddFab`, `heroTag: null` because every tab has one). Tabs are sections,
+never actions — each tab adds its own kind of thing. Use the `.adaptive`
+constructors for dialogs (`AlertDialog.adaptive` + `dialogAction`), switches,
+sliders and progress indicators. The completion control is the themed circular
+`Checkbox` on both platforms on purpose.
 
 **Home-screen widgets have a cross-language data contract.** `WidgetSnapshot`
 (pure, reuses `FocusArranger` so widgets always match the Focus screen) writes

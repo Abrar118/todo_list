@@ -13,6 +13,10 @@ import 'task_editor_screen.dart';
 class CompletedScreen extends StatelessWidget {
   const CompletedScreen({super.key});
 
+  static Future<void> open(BuildContext context) => Navigator.of(
+    context,
+  ).push(MaterialPageRoute(builder: (_) => const CompletedScreen()));
+
   @override
   Widget build(BuildContext context) {
     final state = context.watch<AppState>();
@@ -58,7 +62,7 @@ class CompletedScreen extends StatelessWidget {
                 child: Text(
                   'Completed tasks will appear here.',
                   style: TextStyle(
-                    fontSize: 15.5,
+                    fontSize: AppTypography.body,
                     color: context.colors.textSecondary,
                   ),
                 ),
@@ -107,19 +111,23 @@ class _CompletedRow extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 8),
       child: Material(
         color: context.colors.elevated,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadii.mediumRadius,
         child: InkWell(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: AppRadii.mediumRadius,
           onTap: () => TaskEditorScreen.open(context, task: task),
           child: Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: AppRadii.mediumRadius,
               border: Border.all(color: context.colors.border),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: Row(
               children: [
-                Icon(Icons.check_circle, size: 20, color: context.colors.done),
+                Icon(
+                  Icons.check_circle,
+                  size: 20,
+                  color: context.colors.textMuted,
+                ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Column(
@@ -133,7 +141,7 @@ class _CompletedRow extends StatelessWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
-                                fontSize: 14.5,
+                                fontSize: AppTypography.body,
                                 color: context.colors.textSecondary,
                                 decoration: TextDecoration.lineThrough,
                                 decorationColor: context.colors.textMuted,
@@ -156,7 +164,7 @@ class _CompletedRow extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: AppTypography.footnote,
                           color: context.colors.textMuted,
                         ),
                       ),

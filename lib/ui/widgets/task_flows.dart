@@ -1,12 +1,11 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/app_colors.dart';
 import '../../core/app_tokens.dart';
+import '../../core/app_colors.dart';
 import '../../core/formats.dart';
 import '../../domain/models/date_only.dart';
 import '../../domain/models/task.dart';
@@ -32,30 +31,30 @@ Future<void> completeTaskFlow(
   var completeSubtasks = false;
   final incomplete = task.subtasks.where((s) => !s.isCompleted).length;
   if (incomplete > 0) {
-    final choice = await showCupertinoDialog<String>(
+    final choice = await showAdaptiveDialog<String>(
       context: context,
       barrierDismissible: true,
-      builder: (context) => CupertinoAlertDialog(
+      builder: (context) => AlertDialog.adaptive(
         title: const Text('Incomplete subtasks'),
-        content: const Padding(
-          padding: EdgeInsets.only(top: AppSpacing.sm),
-          child: Text(
-            'This task still has incomplete subtasks. Complete everything?',
-          ),
+        content: const Text(
+          'This task still has incomplete subtasks. Complete everything?',
         ),
         actions: [
-          CupertinoDialogAction(
+          dialogAction(
+            context,
+            label: 'Cancel',
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
           ),
-          CupertinoDialogAction(
+          dialogAction(
+            context,
+            label: 'Only this task',
             onPressed: () => Navigator.pop(context, 'parent'),
-            child: const Text('Only this task'),
           ),
-          CupertinoDialogAction(
-            isDefaultAction: true,
+          dialogAction(
+            context,
+            label: 'Complete everything',
+            isDefault: true,
             onPressed: () => Navigator.pop(context, 'all'),
-            child: const Text('Complete everything'),
           ),
         ],
       ),
@@ -91,7 +90,10 @@ Future<void> snoozeFlow(BuildContext context, AppState state, Task task) async {
               alignment: Alignment.centerLeft,
               child: Text(
                 'Snooze reminders',
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  fontSize: AppTypography.callout,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),
@@ -166,7 +168,10 @@ Future<void> deferFlow(BuildContext context, AppState state, Task task) async {
               alignment: Alignment.centerLeft,
               child: Text(
                 'Move deadline',
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  fontSize: AppTypography.callout,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),
@@ -312,7 +317,7 @@ Future<SeriesEditScope?> showSeriesScopeSheet(
               child: Text(
                 title,
                 style: const TextStyle(
-                  fontSize: 17,
+                  fontSize: AppTypography.callout,
                   fontWeight: FontWeight.w600,
                 ),
               ),

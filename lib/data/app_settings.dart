@@ -1,3 +1,4 @@
+import '../core/app_palette.dart';
 import '../domain/logic/quiet_hours.dart';
 import '../domain/models/priority.dart';
 import '../domain/models/recurrence.dart';
@@ -40,6 +41,7 @@ class AppSettings {
 
   // Appearance
   final AppThemeMode themeMode;
+  final AppPalette palette;
   final bool reduceMotion;
   final bool compactRows;
 
@@ -59,7 +61,8 @@ class AppSettings {
     this.vibrationEnabled = true,
     this.pomodoroWorkMinutes = 25,
     this.pomodoroBreakMinutes = 5,
-    this.themeMode = AppThemeMode.dark,
+    this.themeMode = AppThemeMode.system,
+    this.palette = AppPalette.meadow,
     this.reduceMotion = false,
     this.compactRows = false,
     this.defaultPriority = TaskPriority.none,
@@ -79,6 +82,7 @@ class AppSettings {
     int? pomodoroWorkMinutes,
     int? pomodoroBreakMinutes,
     AppThemeMode? themeMode,
+    AppPalette? palette,
     bool? reduceMotion,
     bool? compactRows,
     TaskPriority? defaultPriority,
@@ -99,6 +103,7 @@ class AppSettings {
     pomodoroWorkMinutes: pomodoroWorkMinutes ?? this.pomodoroWorkMinutes,
     pomodoroBreakMinutes: pomodoroBreakMinutes ?? this.pomodoroBreakMinutes,
     themeMode: themeMode ?? this.themeMode,
+    palette: palette ?? this.palette,
     reduceMotion: reduceMotion ?? this.reduceMotion,
     compactRows: compactRows ?? this.compactRows,
     defaultPriority: defaultPriority ?? this.defaultPriority,
@@ -120,6 +125,7 @@ class AppSettings {
     'pomodoroWorkMinutes': pomodoroWorkMinutes,
     'pomodoroBreakMinutes': pomodoroBreakMinutes,
     'themeMode': themeMode.name,
+    'palette': palette.name,
     'reduceMotion': reduceMotion,
     'compactRows': compactRows,
     'defaultPriority': defaultPriority.name,
@@ -147,7 +153,11 @@ class AppSettings {
         .clamp(1, 60),
     themeMode: AppThemeMode.values.firstWhere(
       (m) => m.name == json['themeMode'],
-      orElse: () => AppThemeMode.dark,
+      orElse: () => AppThemeMode.system,
+    ),
+    palette: AppPalette.values.firstWhere(
+      (p) => p.name == json['palette'],
+      orElse: () => AppPalette.meadow,
     ),
     reduceMotion: json['reduceMotion'] as bool? ?? false,
     compactRows: json['compactRows'] as bool? ?? false,

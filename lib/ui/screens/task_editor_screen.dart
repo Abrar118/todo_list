@@ -76,6 +76,7 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
   RecurrenceRule? _rule;
   bool _seriesContentChanged = false;
   bool _showCompletedSubtasks = false;
+  bool _showSwatches = false;
   _SaveStatus _status = _SaveStatus.idle;
   Timer? _debounce;
 
@@ -439,7 +440,6 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
     final pending = (_draft.subtasks.where((s) => !s.isCompleted).toList()
       ..sort((a, b) => a.sortIndex.compareTo(b.sortIndex)));
     final completed = (_draft.subtasks.where((s) => s.isCompleted).toList()
@@ -466,148 +466,136 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
             TextButton(onPressed: _finish, child: const Text('Done')),
           ],
         ),
-        body: DecoratedBox(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                colors.background,
-                Color.lerp(colors.background, colors.accent, 0.045)!,
-                colors.background,
-              ],
-              stops: const [0, 0.48, 1],
-            ),
-          ),
-          child: SafeArea(
-            child: ListView(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 48),
-              children: [
-                _titleSection(),
-                SectionHeader('Background', color: colors.accent),
-                _backgroundSection(),
-                SectionHeader('Schedule', color: colors.low),
-                _card([
-                  _dateTile(),
-                  if (_draft.dueDate != null) _timeTile(),
-                  _recurrenceTile(),
-                  if (_draft.dueDate != null) _calendarTile(),
-                ], tint: colors.low),
-                SectionHeader('Reminders', color: colors.medium),
-                _card([..._reminderTiles(), _alarmTile()], tint: colors.medium),
-                SectionHeader('Subtasks', color: colors.done),
-                _card([
-                  if (pending.isEmpty && completed.isEmpty)
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(16, 14, 16, 4),
-                      child: Text(
-                        'Break this task into steps.',
-                        style: TextStyle(
-                          color: context.colors.textMuted,
-                          fontSize: 13,
-                        ),
-                      ),
-                    ),
-                  if (_draft.subtasks.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '${completed.length} of ${_draft.subtasks.length} completed',
-                            style: TextStyle(
-                              fontSize: 12.5,
-                              color: context.colors.textMuted,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(3),
-                            child: LinearProgressIndicator(
-                              value: completed.length / _draft.subtasks.length,
-                              minHeight: 5,
-                              color: context.colors.done,
-                              backgroundColor: context.colors.pressed,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ReorderableListView(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    buildDefaultDragHandles: false,
-                    onReorderItem: (a, b) => _reorderSubtasks(a, b, pending),
-                    children: [
-                      for (var i = 0; i < pending.length; i++)
-                        _subtaskRow(
-                          pending[i],
-                          index: i,
-                          key: ValueKey(pending[i].id),
-                        ),
-                    ],
-                  ),
-                  if (completed.isNotEmpty)
-                    TextButton.icon(
-                      onPressed: () => setState(
-                        () => _showCompletedSubtasks = !_showCompletedSubtasks,
-                      ),
-                      icon: Icon(
-                        _showCompletedSubtasks
-                            ? Icons.expand_less
-                            : Icons.expand_more,
-                        size: 18,
-                      ),
-                      label: Text(
-                        '${_showCompletedSubtasks ? 'Hide' : 'Show'} completed (${completed.length})',
-                        style: const TextStyle(fontSize: 13),
-                      ),
-                    ),
-                  if (_showCompletedSubtasks)
-                    for (final s in completed)
-                      _subtaskRow(s, key: ValueKey(s.id)),
+        body: SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 48),
+            children: [
+              // When, then what: the order of questions people actually
+              // ask about a task. Its colour is the last and least of them.
+              _titleSection(),
+              const SectionHeader('Schedule'),
+              _card([
+                _dateTile(),
+                if (_draft.dueDate != null) _timeTile(),
+                _recurrenceTile(),
+                if (_draft.dueDate != null) _calendarTile(),
+              ]),
+              const SectionHeader('Reminders'),
+              _card([..._reminderTiles(), _alarmTile()]),
+              const SectionHeader('Subtasks'),
+              _card([
+                if (pending.isEmpty && completed.isEmpty)
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
-                    child: TextField(
-                      controller: _newSubtask,
-                      onSubmitted: (_) => _addSubtask(),
-                      textInputAction: TextInputAction.done,
-                      decoration: InputDecoration(
-                        hintText: 'Add subtask',
-                        isDense: true,
-                        prefixIcon: const Icon(Icons.add, size: 20),
-                        suffixIcon: IconButton(
-                          icon: const Icon(Icons.check, size: 20),
-                          tooltip: 'Add subtask',
-                          onPressed: _addSubtask,
-                        ),
+                    padding: EdgeInsets.fromLTRB(16, 14, 16, 4),
+                    child: Text(
+                      'Break this task into steps.',
+                      style: TextStyle(
+                        color: context.colors.textMuted,
+                        fontSize: AppTypography.footnote,
                       ),
                     ),
                   ),
-                ], tint: colors.done),
-                SectionHeader('Details', color: colors.low),
-                _detailsSection(),
-                SectionHeader('Priority', color: colors.medium),
-                _prioritySection(),
-                SectionHeader('Tags', color: colors.accent),
-                _tagsSection(),
-                if (_draft.subtasks.isEmpty) ...[
-                  SectionHeader('Progress', color: colors.done),
-                  _progressSection(),
-                ],
-                if (_persisted && !_draft.isCompleted) ...[
-                  SectionHeader('Focus timer', color: colors.accent),
-                  _timerSection(),
-                ],
-                if (_persisted) ...[
-                  const SizedBox(height: 24),
-                  _footerActions(),
-                  const SizedBox(height: 12),
-                  _metadata(),
-                ],
+                if (_draft.subtasks.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${completed.length} of ${_draft.subtasks.length} completed',
+                          style: TextStyle(
+                            fontSize: AppTypography.footnote,
+                            color: context.colors.textMuted,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(3),
+                          child: LinearProgressIndicator(
+                            value: completed.length / _draft.subtasks.length,
+                            minHeight: 5,
+                            color: context.colors.done,
+                            backgroundColor: context.colors.pressed,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ReorderableListView(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  buildDefaultDragHandles: false,
+                  onReorderItem: (a, b) => _reorderSubtasks(a, b, pending),
+                  children: [
+                    for (var i = 0; i < pending.length; i++)
+                      _subtaskRow(
+                        pending[i],
+                        index: i,
+                        key: ValueKey(pending[i].id),
+                      ),
+                  ],
+                ),
+                if (completed.isNotEmpty)
+                  TextButton.icon(
+                    onPressed: () => setState(
+                      () => _showCompletedSubtasks = !_showCompletedSubtasks,
+                    ),
+                    icon: Icon(
+                      _showCompletedSubtasks
+                          ? Icons.expand_less
+                          : Icons.expand_more,
+                      size: 18,
+                    ),
+                    label: Text(
+                      '${_showCompletedSubtasks ? 'Hide' : 'Show'} completed (${completed.length})',
+                      style: const TextStyle(fontSize: AppTypography.footnote),
+                    ),
+                  ),
+                if (_showCompletedSubtasks)
+                  for (final s in completed)
+                    _subtaskRow(s, key: ValueKey(s.id)),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
+                  child: TextField(
+                    controller: _newSubtask,
+                    onSubmitted: (_) => _addSubtask(),
+                    textInputAction: TextInputAction.done,
+                    decoration: InputDecoration(
+                      hintText: 'Add subtask',
+                      isDense: true,
+                      prefixIcon: const Icon(Icons.add, size: 20),
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.check, size: 20),
+                        tooltip: 'Add subtask',
+                        onPressed: _addSubtask,
+                      ),
+                    ),
+                  ),
+                ),
+              ]),
+              const SectionHeader('Details'),
+              _detailsSection(),
+              const SectionHeader('Priority'),
+              _prioritySection(),
+              const SectionHeader('Tags'),
+              _tagsSection(),
+              if (_draft.subtasks.isEmpty) ...[
+                const SectionHeader('Progress'),
+                _progressSection(),
               ],
-            ),
+              if (_persisted && !_draft.isCompleted) ...[
+                const SectionHeader('Focus timer'),
+                _timerSection(),
+              ],
+              const SectionHeader('Appearance'),
+              _backgroundSection(),
+              if (_persisted) ...[
+                const SizedBox(height: 24),
+                _footerActions(),
+                const SizedBox(height: 12),
+                _metadata(),
+              ],
+            ],
           ),
         ),
       ),
@@ -624,60 +612,24 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
     return AnimatedOpacity(
       opacity: label.isEmpty ? 0 : 1,
       duration: const Duration(milliseconds: 200),
-      child: Text(label, style: TextStyle(fontSize: 12.5, color: color)),
-    );
-  }
-
-  Widget _frostedPanel({
-    required Widget child,
-    Color? tint,
-    EdgeInsetsGeometry? padding,
-  }) {
-    final colors = context.colors;
-    final panelTint = tint ?? colors.accent;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: AppRadii.mediumRadius,
-        boxShadow: [
-          BoxShadow(
-            color: panelTint.withValues(alpha: 0.08),
-            blurRadius: 22,
-            spreadRadius: -6,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      // Not glass: the editor's panels sit on the flat scaffold background,
-      // so the blur returned that same colour at the cost of a saveLayer.
-      child: ClipRSuperellipse(
-        borderRadius: AppRadii.mediumRadius,
-        child: Container(
-          padding: padding,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Color.lerp(colors.card, panelTint, isDark ? 0.12 : 0.08)!,
-                colors.elevated,
-              ],
-            ),
-          ),
-          foregroundDecoration: ShapeDecoration(
-            shape: RoundedSuperellipseBorder(
-              borderRadius: AppRadii.mediumRadius,
-              side: BorderSide(color: colors.borderStrong),
-            ),
-          ),
-          child: child,
-        ),
+      child: Text(
+        label,
+        style: TextStyle(fontSize: AppTypography.footnote, color: color),
       ),
     );
   }
 
-  Widget _card(List<Widget> children, {Color? tint}) => _frostedPanel(
-    tint: tint,
+  /// One sheet of ticket paper on the steel ground: the same white run the
+  /// Focus rail uses, so the editor and the list read as one material.
+  Widget _panel({required Widget child, EdgeInsetsGeometry? padding}) =>
+      Material(
+        color: context.colors.card,
+        shape: AppRadii.mediumShape,
+        clipBehavior: Clip.antiAlias,
+        child: Padding(padding: padding ?? EdgeInsets.zero, child: child),
+      );
+
+  Widget _card(List<Widget> children) => _panel(
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: children,
@@ -685,10 +637,7 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
   );
 
   Widget _titleSection() {
-    return _frostedPanel(
-      tint:
-          _backgroundColor(_draft.background) ??
-          priorityColor(context, _draft.priority),
+    return _panel(
       padding: const EdgeInsets.fromLTRB(8, 4, 12, 4),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -718,7 +667,10 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
             child: TextField(
               controller: _title,
               maxLines: null,
-              style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w600),
+              style: const TextStyle(
+                fontSize: AppTypography.callout,
+                fontWeight: FontWeight.w600,
+              ),
               decoration: const InputDecoration(
                 hintText: 'Task title',
                 filled: false,
@@ -733,39 +685,53 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
     );
   }
 
+  /// The task's identity colour: a single collapsed row, because it is the
+  /// least important choice in the editor. It opens onto the swatch grid.
   Widget _backgroundSection() {
-    final selectedColor = _backgroundColor(_draft.background);
-    return _frostedPanel(
-      tint: selectedColor ?? context.colors.accent,
-      padding: const EdgeInsets.all(12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Give this task a distinct card treatment on Focus.',
-            style: TextStyle(
-              color: context.colors.textSecondary,
-              fontSize: 12.5,
+    final colors = context.colors;
+    final swatch = _draft.background;
+    return _card([
+      ListTile(
+        leading: Icon(
+          Icons.circle,
+          size: 20,
+          color: swatch == null
+              ? colors.textMuted
+              : swatchColor(colors, swatch),
+        ),
+        title: const Text('Color'),
+        subtitle: const Text('A dot by the title on Focus'),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              swatch?.label ?? 'None',
+              style: TextStyle(color: colors.textSecondary),
             ),
-          ),
-          const SizedBox(height: 10),
-          SwatchPicker(
-            selected: _draft.background,
+            Icon(
+              _showSwatches ? Icons.expand_less : Icons.expand_more,
+              color: colors.textSecondary,
+            ),
+          ],
+        ),
+        onTap: () => setState(() => _showSwatches = !_showSwatches),
+      ),
+      if (_showSwatches)
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          child: SwatchPicker(
+            selected: swatch,
             allowAutomatic: true,
-            onPick: (swatch) => _update(
+            onPick: (picked) => _update(
               _draft.copyWith(
-                background: swatch,
-                clearBackground: swatch == null,
+                background: picked,
+                clearBackground: picked == null,
               ),
             ),
           ),
-        ],
-      ),
-    );
+        ),
+    ]);
   }
-
-  Color? _backgroundColor(domain.Swatch? background) =>
-      background == null ? null : swatchColor(context.colors, background);
 
   Widget _dateTile() {
     return ListTile(
@@ -797,7 +763,10 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
       subtitle: _draft.dueMinutes == null
           ? Text(
               'All-day',
-              style: TextStyle(fontSize: 12.5, color: context.colors.textMuted),
+              style: TextStyle(
+                fontSize: AppTypography.footnote,
+                color: context.colors.textMuted,
+              ),
             )
           : null,
       trailing: _draft.dueMinutes != null
@@ -833,7 +802,10 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
           subtitle: !settings.notificationsUsable
               ? Text(
                   'Device notifications are off',
-                  style: TextStyle(fontSize: 12, color: context.colors.medium),
+                  style: TextStyle(
+                    fontSize: AppTypography.footnote,
+                    color: context.colors.medium,
+                  ),
                 )
               : null,
           trailing: IconButton(
@@ -853,7 +825,10 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
         subtitle: _draft.dueDate == null
             ? Text(
                 'Set a deadline first',
-                style: TextStyle(fontSize: 12, color: context.colors.textMuted),
+                style: TextStyle(
+                  fontSize: AppTypography.footnote,
+                  color: context.colors.textMuted,
+                ),
               )
             : null,
         onTap: _draft.dueDate == null ? null : _addReminder,
@@ -876,13 +851,13 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
             ? '${alarm.describeCadence()} until handled'
             : 'Keep reminding until handled',
         style: TextStyle(
-          fontSize: 12.5,
+          fontSize: AppTypography.footnote,
           color: alarm.enabled
               ? context.colors.accent
               : context.colors.textMuted,
         ),
       ),
-      trailing: Switch(
+      trailing: Switch.adaptive(
         value: alarm.enabled,
         onChanged: _draft.dueDate == null
             ? null
@@ -922,7 +897,7 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
               child: Text(
                 subtask.title,
                 style: TextStyle(
-                  fontSize: 14.5,
+                  fontSize: AppTypography.body,
                   color: subtask.isCompleted
                       ? context.colors.textMuted
                       : context.colors.textPrimary,
@@ -960,8 +935,7 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _frostedPanel(
-          tint: context.colors.low,
+        _panel(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           child: QuillEditor.basic(
             controller: _details,
@@ -973,7 +947,10 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
               onLaunchUrl: (url) => launchUrlString(url),
               customStyles: DefaultStyles(
                 placeHolder: DefaultTextBlockStyle(
-                  TextStyle(color: context.colors.textMuted, fontSize: 14.5),
+                  TextStyle(
+                    color: context.colors.textMuted,
+                    fontSize: AppTypography.body,
+                  ),
                   HorizontalSpacing.zero,
                   VerticalSpacing.zero,
                   VerticalSpacing.zero,
@@ -984,8 +961,7 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
           ),
         ),
         const SizedBox(height: 8),
-        _frostedPanel(
-          tint: context.colors.accent,
+        _panel(
           child: QuillSimpleToolbar(
             controller: _details,
             config: const QuillSimpleToolbarConfig(
@@ -1031,9 +1007,18 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
       children: [
         for (final p in TaskPriority.values)
           ChoiceChip(
+            // The flag already marks the choice; a checkmark would sit on
+            // top of it.
+            showCheckmark: false,
             avatar: p == TaskPriority.none
                 ? null
-                : Icon(Icons.flag, size: 15, color: priorityColor(context, p)),
+                : Icon(
+                    Icons.flag,
+                    size: 15,
+                    color: _draft.priority == p
+                        ? context.colors.onAccentFill
+                        : priorityColor(context, p),
+                  ),
             label: Text(p.label),
             selected: _draft.priority == p,
             onSelected: (_) => _update(_draft.copyWith(priority: p)),
@@ -1108,7 +1093,7 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
         )
       else
         const SizedBox(height: 8),
-    ], tint: context.colors.accent);
+    ]);
   }
 
   Widget _progressSection() {
@@ -1119,7 +1104,7 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
         child: Row(
           children: [
             Expanded(
-              child: Slider(
+              child: Slider.adaptive(
                 value: (percent ?? 0) / 100,
                 divisions: 20,
                 label: '${percent ?? 0}%',
@@ -1135,7 +1120,7 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
                 percent == null ? '—' : '$percent%',
                 textAlign: TextAlign.end,
                 style: TextStyle(
-                  fontSize: 13.5,
+                  fontSize: AppTypography.footnote,
                   color: percent == null
                       ? context.colors.textMuted
                       : context.colors.textPrimary,
@@ -1157,14 +1142,14 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
               ),
               child: const Text(
                 'Clear progress',
-                style: TextStyle(fontSize: 13),
+                style: TextStyle(fontSize: AppTypography.footnote),
               ),
             ),
           ),
         )
       else
         const SizedBox(height: 6),
-    ], tint: context.colors.done);
+    ]);
   }
 
   static String _formatSpent(int seconds) {
@@ -1199,7 +1184,7 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
                 '${settings.pomodoroWorkMinutes} min focus, '
                 '${settings.pomodoroBreakMinutes} min break',
                 style: TextStyle(
-                  fontSize: 12.5,
+                  fontSize: AppTypography.footnote,
                   color: context.colors.textMuted,
                 ),
               ),
@@ -1230,7 +1215,7 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
           leading: const Icon(Icons.hourglass_bottom_outlined),
           title: Text('Time spent: ${_formatSpent(_draft.timeSpentSeconds)}'),
         ),
-    ], tint: context.colors.accent);
+    ]);
   }
 
   Widget _calendarTile() {
@@ -1242,7 +1227,10 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
       title: const Text('Add to device calendar'),
       subtitle: Text(
         'Review and save it in your calendar app',
-        style: TextStyle(fontSize: 12.5, color: context.colors.textMuted),
+        style: TextStyle(
+          fontSize: AppTypography.footnote,
+          color: context.colors.textMuted,
+        ),
       ),
       onTap: () async {
         final minutes = context
@@ -1294,7 +1282,7 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
         TextButton.icon(
           style: TextButton.styleFrom(
             foregroundColor: context.colors.overdue,
-            backgroundColor: context.colors.overdue.withValues(alpha: 0.10),
+            side: BorderSide(color: context.colors.overdue),
           ),
           icon: Icon(
             Icons.delete_outline,
@@ -1318,7 +1306,10 @@ class _TaskEditorScreenState extends State<TaskEditorScreen> {
   }
 
   Widget _metadata() {
-    final style = TextStyle(fontSize: 12, color: context.colors.textMuted);
+    final style = TextStyle(
+      fontSize: AppTypography.footnote,
+      color: context.colors.textMuted,
+    );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

@@ -5,28 +5,35 @@ import '../../core/app_tokens.dart';
 import '../../core/formats.dart';
 import '../../domain/logic/escalation.dart';
 import '../../domain/logic/focus_arranger.dart';
+import '../../domain/logic/ticket_age.dart';
 import '../../domain/models/priority.dart';
 import '../../domain/models/recurrence.dart';
-import '../../domain/models/swatch.dart';
 import '../../domain/models/task.dart';
 import 'common.dart';
+import 'ticket.dart';
 
-/// The shared task row used by Focus, Calendar and Completed. The
-/// [spotlight] variant gets a stronger card treatment with a very subtle
-/// accent glow.
+/// The shared task row used by Focus, Calendar, Search and Completed. It
+/// draws no surface of its own: on Focus and Calendar a [TaskCard] supplies
+/// the chunky white block around it.
 ///
-/// Deliberately not a glass surface: rows sit directly on the scaffold
-/// background, so a blur would sample a flat colour and return it unchanged
-/// while costing a `saveLayer` per row on every frame. The tinted fill plus
-/// the hairline does the same visual job for free.
+/// With [stamp], the row prints its ticket stamp at the right edge: when it
+/// is due or how late it is, coloured by heat, with a punch mark per time it
+/// was put off. Calendar and search rows already sit under a date, so they
+/// leave it off and show the deadline inline instead.
 class TaskRow extends StatelessWidget {
   final Task task;
   final RecurrenceRule? rule;
-  final bool spotlight;
   final bool compact;
   final bool showOverdue;
   final bool isProjection;
+
+  /// Shows the user's chosen swatch as a small identity mark by the title.
   final bool showTaskBackground;
+  final bool stamp;
+
+  /// Strikes the title through ahead of completion, so a ticket is visibly
+  /// spiked before it leaves the rail.
+  final bool striking;
   final VoidCallback? onTap;
   final VoidCallback? onToggle;
   final VoidCallback? onSnooze;
@@ -35,11 +42,12 @@ class TaskRow extends StatelessWidget {
     super.key,
     required this.task,
     this.rule,
-    this.spotlight = false,
     this.compact = false,
     this.showOverdue = false,
     this.isProjection = false,
     this.showTaskBackground = false,
+    this.stamp = false,
+    this.striking = false,
     this.onTap,
     this.onToggle,
     this.onSnooze,
@@ -49,40 +57,34 @@ class TaskRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final now = DateTime.now();
+    final age = TicketAge.of(task, now);
     final overdue = showOverdue && task.isOverdue(now);
-    final muted = task.isCompleted || isProjection;
-    final severityColor = task.isCompleted
-        ? colors.done
-        : priorityColor(context, task.priority);
-    final customBackground = showTaskBackground && task.background != null;
-    final surfaceColor = customBackground
-        ? swatchColor(colors, task.background!)
-        : severityColor;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final radius = spotlight ? AppRadii.md : AppRadii.sm + 2;
-    final borderRadius = BorderRadius.circular(radius);
-    final tintAmount = customBackground
-        ? (isDark ? 0.26 : 0.18)
-        : task.priority == TaskPriority.none
-        ? 0.04
-        : 0.16;
+    final struck = task.isCompleted || striking;
+    final muted = struck || isProjection;
+    final stampValue = stamp ? stampText(task, age) : null;
+    // Keyed to completion, not to the strike: a ticket being spiked keeps
+    // its stamp, so the row doesn't reflow while it slides off the rail.
+    final showStamp =
+        stamp &&
+        !task.isCompleted &&
+        (stampValue != null || task.deferralCount > 0);
 
     final chips = <Widget>[];
-    if (task.dueDate != null) {
+    if (task.dueDate != null && !showStamp) {
       chips.add(
         MetaChip(
           icon: Icons.schedule_outlined,
           label: overdue
               ? FocusArranger.overdueLabel(task, now)
               : Formats.deadline(task.dueDate!, task.dueMinutes),
-          color: overdue ? colors.overdue : null,
+          color: overdue ? heatColor(colors, age.heat) : null,
         ),
       );
     }
     if (task.priority != TaskPriority.none) {
       chips.add(
         MetaChip(
-          icon: Icons.flag_outlined,
+          icon: priorityIcon(task.priority),
           label: task.priority.label,
           color: priorityColor(context, task.priority),
         ),
@@ -97,8 +99,10 @@ class TaskRow extends StatelessWidget {
       );
     }
     if (task.tags.isNotEmpty) {
-      for (final tag in task.tags.take(3)) {
-        chips.add(MetaChip(label: '#$tag', color: colors.decorativeFor(tag)));
+      if (!compact) {
+        for (final tag in task.tags.take(3)) {
+          chips.add(MetaChip(label: '#$tag'));
+        }
       }
       if (task.tags.length > 3) {
         chips.add(MetaChip(label: '+${task.tags.length - 3}'));
@@ -108,16 +112,15 @@ class TaskRow extends StatelessWidget {
       chips.add(
         MetaChip(
           icon: Icons.repeat,
-          label: rule != null && spotlight ? rule!.describe() : 'Repeats',
+          label: rule != null && !compact ? rule!.describe() : 'Repeats',
         ),
       );
     }
     if (task.hasAlarm) {
       chips.add(
-        MetaChip(
+        const MetaChip(
           icon: Icons.notifications_active_outlined,
           label: 'Alarm on',
-          color: colors.accent,
         ),
       );
     } else if (task.hasReminders) {
@@ -130,19 +133,17 @@ class TaskRow extends StatelessWidget {
         MetaChip(
           icon: Icons.snooze,
           label: 'Snoozed until ${Formats.timeOf(task.snoozedUntil!)}',
-          color: colors.medium,
         ),
       );
     }
     final escalation = task.isCompleted ? null : Escalation.describe(task, now);
-    if (escalation != null) {
+    // With a stamp, the punch marks already say this.
+    if (escalation != null && !showStamp) {
       chips.add(
         MetaChip(
           icon: Icons.local_fire_department_outlined,
           label: escalation,
-          color: Escalation.level(task, now) >= 2
-              ? colors.overdue
-              : colors.medium,
+          color: heatColor(colors, age.heat),
         ),
       );
     }
@@ -150,251 +151,158 @@ class TaskRow extends StatelessWidget {
     final semanticsLabel = [
       task.title,
       if (task.priority != TaskPriority.none) '${task.priority.label} priority',
-      if (overdue) FocusArranger.overdueLabel(task, now),
+      if (showStamp && stampValue != null)
+        '${stampValue.caption} ${stampValue.value}'.trim()
+      else if (overdue)
+        FocusArranger.overdueLabel(task, now),
       ?escalation,
       if (task.isCompleted) 'completed',
     ].join(', ');
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: borderRadius,
-        boxShadow: [
-          BoxShadow(
-            color: surfaceColor.withValues(alpha: spotlight ? 0.16 : 0.10),
-            blurRadius: spotlight ? 24 : 18,
-            spreadRadius: -4,
-            offset: const Offset(0, 7),
-          ),
-        ],
-      ),
-      child: ClipRSuperellipse(
-        borderRadius: borderRadius,
-        child: Material(
-          color: Colors.transparent,
-          child: Ink(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color.lerp(colors.card, surfaceColor, tintAmount)!,
-                  Color.lerp(colors.elevated, surfaceColor, tintAmount * 0.55)!,
-                ],
-              ),
-            ),
-            child: Stack(
-              children: [
-                if (customBackground)
-                  Positioned.fill(
-                    child: IgnorePointer(
-                      child: _BackgroundMotif(
-                        background: task.background!,
-                        color: surfaceColor,
-                      ),
-                    ),
+    final swatch = showTaskBackground ? task.background : null;
+
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(
+          AppSpacing.xs,
+          compact ? AppSpacing.xs / 2 : AppSpacing.sm,
+          AppSpacing.md,
+          compact ? AppSpacing.xs / 2 : AppSpacing.sm,
+        ),
+        child: Row(
+          children: [
+            if (isProjection)
+              SizedBox(
+                width: 44,
+                height: 44,
+                child: Icon(Icons.repeat, size: 20, color: colors.textMuted),
+              )
+            else
+              Semantics(
+                label: task.isCompleted
+                    ? 'Mark ${task.title} as not completed'
+                    : 'Complete ${task.title}',
+                child: SizedBox(
+                  // 44pt: the iOS minimum. The box is the tap target; the
+                  // checkbox itself draws smaller.
+                  width: 44,
+                  height: 44,
+                  child: Checkbox(
+                    value: struck,
+                    onChanged: onToggle == null ? null : (_) => onToggle!(),
                   ),
-                InkWell(
-                  onTap: onTap,
-                  borderRadius: borderRadius,
-                  highlightColor: colors.pressed,
-                  splashColor: surfaceColor.withValues(alpha: 0.12),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: AppSpacing.md,
-                      vertical: compact
-                          ? AppSpacing.xs
-                          : (spotlight ? AppSpacing.md : AppSpacing.sm),
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                ),
+              ),
+            const SizedBox(width: AppSpacing.xs),
+            Expanded(
+              child: Semantics(
+                label: semanticsLabel,
+                excludeSemantics: true,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
                       children: [
-                        if (isProjection)
-                          const Padding(
-                            padding: EdgeInsets.only(right: AppSpacing.sm),
-                            child: SizedBox(
-                              width: 44,
-                              height: 44,
-                              child: Icon(Icons.repeat, size: 20),
-                            ),
-                          )
-                        else
-                          Semantics(
-                            label: task.isCompleted
-                                ? 'Mark ${task.title} as not completed'
-                                : 'Complete ${task.title}',
-                            child: SizedBox(
-                              // 44pt: the iOS minimum. The box is the tap
-                              // target; the checkbox itself draws smaller.
-                              width: 44,
-                              height: 44,
-                              child: Checkbox(
-                                value: task.isCompleted,
-                                onChanged: onToggle == null
-                                    ? null
-                                    : (_) => onToggle!(),
-                              ),
+                        if (swatch != null) ...[
+                          Container(
+                            width: 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: swatchColor(colors, swatch),
                             ),
                           ),
-                        const SizedBox(width: AppSpacing.xs),
+                          const SizedBox(width: 6),
+                        ],
                         Expanded(
-                          child: Semantics(
-                            label: semanticsLabel,
-                            excludeSemantics: true,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  task.title,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontSize: spotlight
-                                        ? AppTypography.callout
-                                        : AppTypography.body,
-                                    fontWeight: spotlight
-                                        ? FontWeight.w600
-                                        : FontWeight.w500,
-                                    letterSpacing: AppTypography.trackingFor(
-                                      spotlight
-                                          ? AppTypography.callout
-                                          : AppTypography.body,
-                                    ),
-                                    color: muted
-                                        ? colors.textMuted
-                                        : colors.textPrimary,
-                                    decoration: task.isCompleted
-                                        ? TextDecoration.lineThrough
-                                        : null,
-                                    decorationColor: colors.textMuted,
-                                  ),
-                                ),
-                                if (chips.isNotEmpty && !compact) ...[
-                                  const SizedBox(height: AppSpacing.xs),
-                                  Wrap(
-                                    spacing: AppSpacing.sm,
-                                    runSpacing: AppSpacing.xs,
-                                    children: chips,
-                                  ),
-                                ],
-                                if (!compact && !task.isCompleted)
-                                  if (task.progress case final progress?
-                                      when progress > 0) ...[
-                                    const SizedBox(height: AppSpacing.sm),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: ClipRRect(
-                                            borderRadius: BorderRadius.circular(
-                                              2,
-                                            ),
-                                            child: LinearProgressIndicator(
-                                              value: progress,
-                                              minHeight: 4,
-                                              color: colors.done,
-                                              backgroundColor: colors.pressed,
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: AppSpacing.sm),
-                                        Text(
-                                          '${(progress * 100).round()}%',
-                                          style: TextStyle(
-                                            fontSize: AppTypography.caption,
-                                            color: colors.textMuted,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                              ],
+                          child: Text(
+                            task.title,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: AppTypography.callout,
+                              fontWeight: FontWeight.w800,
+                              color: muted
+                                  ? colors.textMuted
+                                  : colors.textPrimary,
+                              decoration: struck
+                                  ? TextDecoration.lineThrough
+                                  : null,
+                              decorationColor: colors.textMuted,
+                              decorationThickness: 2,
                             ),
                           ),
                         ),
-                        if (onSnooze != null &&
-                            (task.hasAlarm || task.isSnoozed))
-                          IconButton(
-                            tooltip: 'Snooze reminder',
-                            onPressed: onSnooze,
-                            icon: Icon(
-                              Icons.snooze,
-                              size: 20,
-                              color: colors.textSecondary,
-                            ),
-                          ),
                       ],
                     ),
-                  ),
-                ),
-                // The lit edge. Without it a light-mode card sits at ~1:1
-                // against the page and is held up only by its shadow.
-                Positioned.fill(
-                  child: IgnorePointer(
-                    child: DecoratedBox(
-                      decoration: ShapeDecoration(
-                        shape: RoundedSuperellipseBorder(
-                          borderRadius: borderRadius,
-                          side: BorderSide(
-                            color: colors.borderStrong,
-                            width: AppGlass.hairlineWidth,
-                          ),
-                        ),
+                    if (chips.isNotEmpty && !compact) ...[
+                      const SizedBox(height: 2),
+                      Wrap(
+                        spacing: AppSpacing.sm,
+                        runSpacing: 2,
+                        children: chips,
                       ),
-                    ),
-                  ),
+                    ],
+                    if (!compact && !task.isCompleted)
+                      if (task.progress case final progress?
+                          when progress > 0) ...[
+                        const SizedBox(height: AppSpacing.sm),
+                        _Progress(progress: progress),
+                      ],
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
+            if (showStamp)
+              Padding(
+                padding: const EdgeInsets.only(left: AppSpacing.md),
+                child: ExcludeSemantics(
+                  child: TicketStamp(task: task, age: age),
+                ),
+              ),
+            if (onSnooze != null && (task.hasAlarm || task.isSnoozed))
+              IconButton(
+                tooltip: 'Snooze reminder',
+                onPressed: onSnooze,
+                icon: Icon(Icons.snooze, size: 20, color: colors.textSecondary),
+              ),
+          ],
         ),
       ),
     );
   }
 }
 
-class _BackgroundMotif extends StatelessWidget {
-  final Swatch background;
-  final Color color;
+class _Progress extends StatelessWidget {
+  final double progress;
 
-  const _BackgroundMotif({required this.background, required this.color});
+  const _Progress({required this.progress});
 
   @override
   Widget build(BuildContext context) {
-    // One motif per colour family rather than per swatch, so the twenty
-    // choices stay four recognisable card treatments.
-    final icon = switch (background) {
-      Swatch.sage ||
-      Swatch.moss ||
-      Swatch.fern ||
-      Swatch.olive ||
-      Swatch.seafoam => Icons.eco_outlined,
-      Swatch.mist ||
-      Swatch.teal ||
-      Swatch.sky ||
-      Swatch.denim => Icons.water_drop_outlined,
-      Swatch.sand ||
-      Swatch.ochre ||
-      Swatch.apricot ||
-      Swatch.clay ||
-      Swatch.stone => Icons.light_mode_outlined,
-      Swatch.rose ||
-      Swatch.lilac ||
-      Swatch.iris ||
-      Swatch.plum ||
-      Swatch.berry ||
-      Swatch.brick => Icons.favorite_border_rounded,
-    };
-    return Stack(
-      clipBehavior: Clip.hardEdge,
+    final colors = context.colors;
+    return Row(
       children: [
-        Positioned(
-          right: -12,
-          top: -24,
-          child: Icon(icon, size: 104, color: color.withValues(alpha: .075)),
+        Expanded(
+          child: ClipRRect(
+            borderRadius: AppRadii.pillRadius,
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 6,
+              color: colors.accentFill,
+              backgroundColor: colors.pressed,
+            ),
+          ),
         ),
-        Positioned(
-          right: 78,
-          bottom: -18,
-          child: Icon(icon, size: 52, color: color.withValues(alpha: .045)),
+        const SizedBox(width: AppSpacing.sm),
+        Text(
+          '${(progress * 100).round()}%',
+          style: TextStyle(
+            fontSize: AppTypography.caption,
+            color: colors.textSecondary,
+            fontFeatures: const [FontFeature.tabularFigures()],
+          ),
         ),
       ],
     );

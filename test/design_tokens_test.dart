@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:todo_list/core/app_colors.dart';
+import 'package:todo_list/core/app_palette.dart';
 import 'package:todo_list/core/app_tokens.dart';
 
 /// WCAG 2.x contrast ratio. [Color.computeLuminance] is the spec's relative
@@ -15,8 +16,9 @@ double contrast(Color a, Color b) {
 void main() {
   group('palette contrast', () {
     for (final (themeName, c) in [
-      ('dark', AppColors.dark),
-      ('light', AppColors.light),
+      for (final palette in AppPalette.values)
+        for (final b in Brightness.values)
+          ('${palette.name} ${b.name}', AppColors.forPalette(palette, b)),
     ]) {
       final surfaces = {
         'background': c.background,
@@ -72,6 +74,45 @@ void main() {
           greaterThanOrEqualTo(4.5),
         );
       });
+
+      test('$themeName: text on the hero card clears 4.5:1', () {
+        for (final (name, fg) in [
+          ('onHero', c.onHero),
+          ('onHeroMuted', c.onHeroMuted),
+          ('heroWarm', c.heroWarm),
+          ('heroHot', c.heroHot),
+          ('heroAction', c.heroAction),
+        ]) {
+          expect(
+            contrast(fg, c.hero),
+            greaterThanOrEqualTo(name == 'heroAction' ? 3.0 : 4.5),
+            reason: '$themeName $name on hero',
+          );
+        }
+        expect(
+          contrast(c.onHeroAction, c.heroAction),
+          greaterThanOrEqualTo(4.5),
+          reason: '$themeName Done label on the hero',
+        );
+      });
+
+      test('$themeName: text on tints and the meadow clears 4.5:1', () {
+        for (final (name, bg) in [
+          ('tintSun', c.tintSun),
+          ('tintLeaf', c.tintLeaf),
+          ('tintSky', c.tintSky),
+          // Text sits on the grass band, never on the hill below it.
+          ('meadowTop', c.meadowTop),
+        ]) {
+          for (final fg in [c.textPrimary, c.textSecondary]) {
+            expect(
+              contrast(fg, bg),
+              greaterThanOrEqualTo(4.5),
+              reason: '$themeName text on $name',
+            );
+          }
+        }
+      });
     }
   });
 
@@ -82,8 +123,9 @@ void main() {
         return hsl.saturation;
       }
 
+      // The semantic colours (heat, completion, information) must out-shout
+      // every identity colour.
       final semantic = [
-        AppColors.dark.accent,
         AppColors.dark.overdue,
         AppColors.dark.medium,
         AppColors.dark.done,

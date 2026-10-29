@@ -32,6 +32,19 @@ abstract final class Formats {
     return minutesOfDay == null ? base : '$base at ${time(minutesOfDay)}';
   }
 
+  /// The short date on a ticket stamp: "Tomorrow", a weekday within the
+  /// week, otherwise "Nov 28".
+  static String stampDate(DateOnly date, {DateOnly? from}) {
+    final today = from ?? DateOnly.today();
+    final diff = date.differenceInDays(today);
+    if (diff == 1) return 'Tomorrow';
+    final dt = date.toDateTime();
+    if (diff > 1 && diff < 7) return DateFormat('EEEE').format(dt);
+    return date.year == today.year
+        ? DateFormat('MMM d').format(dt)
+        : DateFormat('MMM d, y').format(dt);
+  }
+
   static String monthTitle(int year, int month) =>
       DateFormat.yMMMM().format(DateTime(year, month));
 

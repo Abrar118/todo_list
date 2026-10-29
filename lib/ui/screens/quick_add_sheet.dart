@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/app_tokens.dart';
 import '../../core/app_colors.dart';
 import '../../core/formats.dart';
 import '../../domain/logic/quick_add_parser.dart';
@@ -177,7 +178,7 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
             textInputAction: TextInputAction.done,
             onChanged: _onTextChanged,
             onSubmitted: (_) => _submit(),
-            style: const TextStyle(fontSize: 16),
+            style: const TextStyle(fontSize: AppTypography.body),
             decoration: const InputDecoration(
               hintText: 'Add something you cannot forget…',
             ),
@@ -196,7 +197,7 @@ class _QuickAddSheetState extends State<QuickAddSheet> {
                   child: Text(
                     _detectedLabel(parse),
                     style: TextStyle(
-                      fontSize: 12.5,
+                      fontSize: AppTypography.footnote,
                       color: context.colors.textSecondary,
                     ),
                   ),

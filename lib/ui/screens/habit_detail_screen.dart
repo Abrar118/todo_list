@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/app_tokens.dart';
 import '../../core/app_colors.dart';
 import '../../domain/models/date_only.dart';
 import '../../domain/models/habit.dart';
@@ -89,11 +90,10 @@ class HabitDetailScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'CHECKPOINTS',
+                    'Checkpoints',
                     style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 1,
+                      fontSize: AppTypography.footnote,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 3),
@@ -104,7 +104,7 @@ class HabitDetailScreen extends StatelessWidget {
                               '${habit.cadence == HabitCadence.monthly ? 'this month' : 'today'}',
                     style: TextStyle(
                       color: context.colors.textSecondary,
-                      fontSize: 12,
+                      fontSize: AppTypography.footnote,
                     ),
                   ),
                 ],
@@ -175,168 +175,130 @@ class _HabitHero extends StatelessWidget {
     final monthlyStatus = done
         ? ('Done', 'this month', context.colors.done)
         : daysUntilScheduled == 0
-        ? ('Today', 'scheduled', color)
+        ? ('Today', 'scheduled', context.colors.textPrimary)
         : daysUntilScheduled > 0
         ? (
             '$daysUntilScheduled',
             daysUntilScheduled == 1 ? 'day remaining' : 'days remaining',
-            context.colors.low,
+            context.colors.textPrimary,
           )
         : (
             '${-daysUntilScheduled}',
             daysUntilScheduled == -1 ? 'day overdue' : 'days overdue',
             context.colors.overdue,
           );
-    final backgroundIcon = habit.type == HabitType.timer
-        ? Icons.timer_rounded
-        : Icons.auto_awesome_rounded;
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(24),
-      child: Container(
-        key: const ValueKey('habit-detail-background'),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              color.withValues(alpha: .28),
-              context.colors.card.withValues(alpha: .96),
-            ],
-          ),
-        ),
-        child: Stack(
+    final colors = context.colors;
+    // Ticket paper like the rest of the app: the habit's colour is its
+    // identity dot, and the numbers speak in ink.
+    return Material(
+      key: const ValueKey('habit-detail-background'),
+      color: colors.card,
+      shape: AppRadii.mediumShape,
+      clipBehavior: Clip.antiAlias,
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Positioned(
-              right: -26,
-              top: -34,
-              child: ExcludeSemantics(
-                child: Icon(
-                  backgroundIcon,
-                  size: 156,
-                  color: color.withValues(alpha: .09),
-                ),
-              ),
-            ),
-            Positioned(
-              right: 92,
-              bottom: -25,
-              child: ExcludeSemantics(
-                child: Icon(
-                  backgroundIcon,
-                  size: 62,
-                  color: color.withValues(alpha: .055),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 48,
-                        height: 48,
-                        decoration: BoxDecoration(
-                          color: color.withValues(alpha: .18),
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Icon(
-                          habit.type == HabitType.timer
-                              ? Icons.timer_rounded
-                              : Icons.auto_awesome_rounded,
-                          color: color,
-                          size: 26,
-                        ),
-                      ),
-                      const Spacer(),
-                      if (habit.scheduledMinutes != null)
-                        _InfoChip(
-                          icon: Icons.notifications_active_outlined,
-                          label: formatHabitTime(
-                            context,
-                            habit.scheduledMinutes!,
-                          ),
-                          color: color,
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: 18),
-                  Text(
-                    habit.title,
-                    style: const TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: -.7,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: Container(
+                    width: 12,
+                    height: 12,
+                    decoration: BoxDecoration(
+                      color: color,
+                      shape: BoxShape.circle,
                     ),
                   ),
-                  const SizedBox(height: 7),
-                  Text(switch ((habit.cadence, habit.type)) {
-                    (HabitCadence.monthly, HabitType.timer) =>
-                      '${habit.timerTargetMinutes} minute monthly target',
-                    (HabitCadence.monthly, HabitType.checkIn) =>
-                      habit.checkpoints.isEmpty
-                          ? 'Monthly check-in habit'
-                          : '${habit.checkpoints.length} step monthly routine',
-                    (HabitCadence.daily, HabitType.timer) =>
-                      '${habit.timerTargetMinutes} minute daily target',
-                    (HabitCadence.daily, HabitType.checkIn) =>
-                      habit.checkpoints.isEmpty
-                          ? 'Daily check-in habit'
-                          : '${habit.checkpoints.length} step daily routine',
-                  }, style: TextStyle(color: context.colors.textSecondary)),
-                  const SizedBox(height: 18),
-                  Row(
-                    children: [
-                      if (habit.cadence == HabitCadence.monthly) ...[
-                        _Metric(
-                          value: 'Day ${habit.monthlyDay}',
-                          label: 'monthly date',
-                          color: color,
-                        ),
-                        const SizedBox(width: 10),
-                        _Metric(
-                          value: monthlyStatus.$1,
-                          label: monthlyStatus.$2,
-                          color: monthlyStatus.$3,
-                        ),
-                      ] else ...[
-                        _Metric(
-                          value: '${habit.currentStreak(today)}',
-                          label: 'day streak',
-                          color: color,
-                        ),
-                        const SizedBox(width: 10),
-                        _Metric(
-                          value: '${habit.completedDates.length}',
-                          label: 'total days',
-                          color: context.colors.low,
-                        ),
-                      ],
-                      const Spacer(),
-                      if (habit.type == HabitType.checkIn)
-                        FilledButton.icon(
-                          style: FilledButton.styleFrom(
-                            backgroundColor: done
-                                ? context.colors.pressed
-                                : color,
-                            foregroundColor: done
-                                ? context.colors.textPrimary
-                                : context.colors.onAccent,
-                          ),
+                ),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: Text(
+                    habit.title,
+                    style: TextStyle(
+                      fontSize: AppTypography.title1,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: AppTypography.trackingFor(
+                        AppTypography.title1,
+                      ),
+                    ),
+                  ),
+                ),
+                if (habit.scheduledMinutes != null)
+                  _InfoChip(
+                    icon: Icons.notifications_active_outlined,
+                    label: formatHabitTime(context, habit.scheduledMinutes!),
+                    color: colors.textSecondary,
+                  ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Padding(
+              padding: const EdgeInsets.only(left: 24),
+              child: Text(switch ((habit.cadence, habit.type)) {
+                (HabitCadence.monthly, HabitType.timer) =>
+                  '${habit.timerTargetMinutes} minute monthly target',
+                (HabitCadence.monthly, HabitType.checkIn) =>
+                  habit.checkpoints.isEmpty
+                      ? 'Monthly check-in habit'
+                      : '${habit.checkpoints.length} step monthly routine',
+                (HabitCadence.daily, HabitType.timer) =>
+                  '${habit.timerTargetMinutes} minute daily target',
+                (HabitCadence.daily, HabitType.checkIn) =>
+                  habit.checkpoints.isEmpty
+                      ? 'Daily check-in habit'
+                      : '${habit.checkpoints.length} step daily routine',
+              }, style: TextStyle(color: colors.textSecondary)),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            Row(
+              children: [
+                if (habit.cadence == HabitCadence.monthly) ...[
+                  _Metric(
+                    value: 'Day ${habit.monthlyDay}',
+                    label: 'monthly date',
+                    color: colors.textPrimary,
+                  ),
+                  const SizedBox(width: AppSpacing.md),
+                  _Metric(
+                    value: monthlyStatus.$1,
+                    label: monthlyStatus.$2,
+                    color: monthlyStatus.$3,
+                  ),
+                ] else ...[
+                  _Metric(
+                    value: '${habit.currentStreak(today)}',
+                    label: 'day streak',
+                    color: colors.textPrimary,
+                  ),
+                  const SizedBox(width: AppSpacing.md),
+                  _Metric(
+                    value: '${habit.completedDates.length}',
+                    label: 'total days',
+                    color: colors.textPrimary,
+                  ),
+                ],
+                const Spacer(),
+                if (habit.type == HabitType.checkIn)
+                  done
+                      ? OutlinedButton.icon(
                           onPressed: () => context
                               .read<HabitController>()
                               .toggleDate(habit.id, today),
-                          icon: Icon(
-                            done ? Icons.undo_rounded : Icons.check_rounded,
-                          ),
-                          label: Text(done ? 'Undo today' : 'Complete'),
+                          icon: const Icon(Icons.undo_rounded),
+                          label: const Text('Undo today'),
+                        )
+                      : FilledButton.icon(
+                          onPressed: () => context
+                              .read<HabitController>()
+                              .toggleDate(habit.id, today),
+                          icon: const Icon(Icons.check_rounded),
+                          label: const Text('Complete'),
                         ),
-                    ],
-                  ),
-                ],
-              ),
+              ],
             ),
           ],
         ),
@@ -367,7 +329,7 @@ class _TimerPanel extends StatelessWidget {
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: context.colors.card,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: AppRadii.mediumRadius,
       ),
       child: Row(
         children: [
@@ -391,7 +353,7 @@ class _TimerPanel extends StatelessWidget {
                       Text(
                         formatDuration(seconds),
                         style: const TextStyle(
-                          fontSize: 20,
+                          fontSize: AppTypography.title3,
                           fontWeight: FontWeight.w900,
                         ),
                       ),
@@ -399,7 +361,7 @@ class _TimerPanel extends StatelessWidget {
                         'today',
                         style: TextStyle(
                           color: context.colors.textMuted,
-                          fontSize: 11,
+                          fontSize: AppTypography.caption,
                         ),
                       ),
                     ],
@@ -417,7 +379,7 @@ class _TimerPanel extends StatelessWidget {
                   running ? 'Timer running' : 'Ready when you are',
                   style: const TextStyle(
                     fontWeight: FontWeight.w800,
-                    fontSize: 16,
+                    fontSize: AppTypography.body,
                   ),
                 ),
                 const SizedBox(height: 5),
@@ -425,7 +387,7 @@ class _TimerPanel extends StatelessWidget {
                   '${(targetSeconds - seconds).clamp(0, targetSeconds) ~/ 60} min remaining',
                   style: TextStyle(
                     color: context.colors.textSecondary,
-                    fontSize: 12,
+                    fontSize: AppTypography.footnote,
                   ),
                 ),
                 const SizedBox(height: 14),
@@ -470,7 +432,7 @@ class _Timeline extends StatelessWidget {
     padding: const EdgeInsets.fromLTRB(14, 10, 10, 10),
     decoration: BoxDecoration(
       color: context.colors.card,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: AppRadii.mediumRadius,
     ),
     child: Column(
       children: [
@@ -550,7 +512,7 @@ class _TimelineRow extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: InkWell(
-              borderRadius: BorderRadius.circular(13),
+              borderRadius: AppRadii.mediumRadius,
               onTap: () => CheckpointEditorSheet.open(
                 context,
                 habit.id,
@@ -596,7 +558,7 @@ class _TimelineRow extends StatelessWidget {
                                   ),
                                   style: TextStyle(
                                     color: color,
-                                    fontSize: 11.5,
+                                    fontSize: AppTypography.caption,
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
@@ -736,9 +698,12 @@ class _CheckpointEditorSheetState extends State<CheckpointEditorSheet> {
           ),
           Material(
             color: context.colors.card,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: AppRadii.mediumRadius,
             child: ListTile(
-              leading: Icon(Icons.schedule_rounded, color: context.colors.low),
+              leading: Icon(
+                Icons.schedule_rounded,
+                color: context.colors.textSecondary,
+              ),
               title: Text(
                 _minutes == null
                     ? 'No reminder'
@@ -832,16 +797,9 @@ class _MonthlyProgress extends StatelessWidget {
     final percent = (progress * 100).round();
     return Container(
       padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            color.withValues(alpha: .14),
-            context.colors.card.withValues(alpha: .96),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(20),
+      decoration: ShapeDecoration(
+        color: context.colors.card,
+        shape: AppRadii.mediumShape,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -849,11 +807,10 @@ class _MonthlyProgress extends StatelessWidget {
           Row(
             children: [
               const Text(
-                'MONTHLY PROGRESS',
+                'Monthly progress',
                 style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 1,
+                  fontSize: AppTypography.footnote,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               const Spacer(),
@@ -862,7 +819,7 @@ class _MonthlyProgress extends StatelessWidget {
                 style: TextStyle(
                   color: color,
                   fontWeight: FontWeight.w800,
-                  fontSize: 12,
+                  fontSize: AppTypography.footnote,
                 ),
               ),
             ],
@@ -880,7 +837,10 @@ class _MonthlyProgress extends StatelessWidget {
           const SizedBox(height: 9),
           Text(
             detail,
-            style: TextStyle(color: context.colors.textSecondary, fontSize: 12),
+            style: TextStyle(
+              color: context.colors.textSecondary,
+              fontSize: AppTypography.footnote,
+            ),
           ),
         ],
       ),
@@ -906,11 +866,10 @@ class _WeekHistory extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'LAST 7 DAYS',
+          'Last 7 days',
           style: TextStyle(
-            fontSize: 11,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 1,
+            fontSize: AppTypography.footnote,
+            fontWeight: FontWeight.w600,
           ),
         ),
         const SizedBox(height: 10),
@@ -918,7 +877,7 @@ class _WeekHistory extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: context.colors.card,
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: AppRadii.mediumRadius,
           ),
           child: Row(
             children: [
@@ -930,7 +889,7 @@ class _WeekHistory extends StatelessWidget {
                         ['M', 'T', 'W', 'T', 'F', 'S', 'S'][date.weekday - 1],
                         style: TextStyle(
                           color: context.colors.textMuted,
-                          fontSize: 10,
+                          fontSize: AppTypography.caption,
                         ),
                       ),
                       const SizedBox(height: 7),
@@ -954,7 +913,7 @@ class _WeekHistory extends StatelessWidget {
                                 '${date.day}',
                                 style: TextStyle(
                                   color: context.colors.textSecondary,
-                                  fontSize: 11,
+                                  fontSize: AppTypography.caption,
                                 ),
                               ),
                       ),
@@ -980,7 +939,7 @@ class _EmptyCheckpoints extends StatelessWidget {
     padding: const EdgeInsets.all(20),
     decoration: BoxDecoration(
       color: context.colors.card,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: AppRadii.mediumRadius,
     ),
     child: Column(
       children: [
@@ -994,7 +953,10 @@ class _EmptyCheckpoints extends StatelessWidget {
         Text(
           'Add a sequence of steps and give each one its own time.',
           textAlign: TextAlign.center,
-          style: TextStyle(color: context.colors.textSecondary, fontSize: 12.5),
+          style: TextStyle(
+            color: context.colors.textSecondary,
+            fontSize: AppTypography.footnote,
+          ),
         ),
         const SizedBox(height: 12),
         TextButton.icon(
@@ -1019,29 +981,26 @@ class _Metric extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
-    decoration: BoxDecoration(
-      color: color.withValues(alpha: .11),
-      borderRadius: BorderRadius.circular(13),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          value,
-          style: TextStyle(
-            color: color,
-            fontWeight: FontWeight.w900,
-            fontSize: 17,
-          ),
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        value,
+        style: TextStyle(
+          color: color,
+          fontWeight: FontWeight.w700,
+          fontSize: AppTypography.title3,
+          fontFeatures: const [FontFeature.tabularFigures()],
         ),
-        Text(
-          label,
-          style: TextStyle(color: context.colors.textMuted, fontSize: 10.5),
+      ),
+      Text(
+        label,
+        style: TextStyle(
+          color: context.colors.textSecondary,
+          fontSize: AppTypography.footnote,
         ),
-      ],
-    ),
+      ),
+    ],
   );
 }
 
@@ -1061,7 +1020,7 @@ class _InfoChip extends StatelessWidget {
     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
     decoration: BoxDecoration(
       color: color.withValues(alpha: .12),
-      borderRadius: BorderRadius.circular(999),
+      borderRadius: AppRadii.smallRadius,
     ),
     child: Row(
       mainAxisSize: MainAxisSize.min,
@@ -1072,7 +1031,7 @@ class _InfoChip extends StatelessWidget {
           label,
           style: TextStyle(
             color: color,
-            fontSize: 12,
+            fontSize: AppTypography.footnote,
             fontWeight: FontWeight.w800,
           ),
         ),

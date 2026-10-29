@@ -7,17 +7,56 @@ import '../../core/app_colors.dart';
 import '../../core/app_tokens.dart';
 import '../../domain/models/priority.dart';
 import '../../domain/models/swatch.dart';
-import 'glass_surface.dart';
+import 'meadow.dart';
 
+/// Red and amber are reserved for lateness, so priority speaks in ink: high
+/// priority is set in full ink (and drawn with a filled flag, see
+/// [priorityIcon]) so it never outshouts a task that is actually late.
 Color priorityColor(BuildContext context, TaskPriority priority) {
   final colors = context.colors;
   return switch (priority) {
-    TaskPriority.high => colors.overdue,
-    TaskPriority.medium => colors.medium,
-    TaskPriority.low => colors.low,
+    TaskPriority.high => colors.textPrimary,
+    TaskPriority.medium || TaskPriority.low => colors.textSecondary,
     TaskPriority.none => colors.textMuted,
   };
 }
+
+/// The flag for a priority: filled for high, outlined otherwise.
+IconData priorityIcon(TaskPriority priority) =>
+    priority == TaskPriority.high ? Icons.flag : Icons.flag_outlined;
+
+/// Whether the app should speak iOS (HIG) rather than Android (Material 3).
+/// Nudge adapts its chrome per OS: tab bar and nav-bar add button on iPhone,
+/// navigation bar and FAB on Android.
+bool isCupertino(BuildContext context) => switch (Theme.of(context).platform) {
+  TargetPlatform.iOS || TargetPlatform.macOS => true,
+  _ => false,
+};
+
+/// Bottom padding for a root tab's scrolling content: clears the home
+/// indicator when there is one and, on Android, the FAB.
+double listBottomInset(BuildContext context) =>
+    MediaQuery.paddingOf(context).bottom +
+    AppSpacing.lg +
+    (isCupertino(context) ? 0 : 72);
+
+/// The add action for a root tab on Android, where a screen's single primary
+/// action is a FAB. Null on iOS, where the same action sits in the nav bar
+/// (see [rootAppBar]'s `onAdd`).
+Widget? rootAddFab(
+  BuildContext context, {
+  required VoidCallback onPressed,
+  required String tooltip,
+}) => isCupertino(context)
+    ? null
+    : FloatingActionButton(
+        // Every tab in the shell's IndexedStack has its own FAB, so they
+        // cannot share the default hero tag.
+        heroTag: null,
+        tooltip: tooltip,
+        onPressed: onPressed,
+        child: const Icon(Icons.add_rounded),
+      );
 
 /// Resolves a [Swatch] against the active theme. Decorative, never semantic —
 /// a task tinted "Rose" must not be mistaken for a high-priority one. Shared
@@ -113,9 +152,7 @@ class _SwatchCell extends StatelessWidget {
                     size: 20,
                     // On a filled swatch the glyph sits on the colour; the
                     // automatic cell is only tinted, so it needs ink.
-                    color: icon == null
-                        ? colors.background
-                        : colors.textPrimary,
+                    color: icon == null ? colors.card : colors.textPrimary,
                   )
                 : icon == null
                 ? null
@@ -151,7 +188,7 @@ class MetaChip extends StatelessWidget {
           style: TextStyle(
             fontSize: AppTypography.footnote,
             color: c,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ],
@@ -159,26 +196,121 @@ class MetaChip extends StatelessWidget {
   }
 }
 
-/// A root screen's header. The title sits inline in the toolbar row next to
-/// the actions. An iOS large title puts it in a 104pt header below that row,
-/// which leaves the toolbar visibly empty on the left until the page is
-/// scrolled, so the pattern is deliberately not used here. Pushed screens use
-/// a plain [AppBar], which already looks like this.
-SliverAppBar rootAppBar({required Widget title, List<Widget>? actions}) =>
-    SliverAppBar(
-      pinned: true,
-      title: title,
-      // Transparent so the shell's backdrop runs behind the bar instead of
-      // stopping at a seam along its bottom edge.
-      backgroundColor: Colors.transparent,
-      scrolledUnderElevation: 0,
-      actions: actions,
+/// A root tab's header, in each platform's own form: an iOS large title
+/// that collapses on scroll, or a Material top app bar. Both are painted the
+/// meadow's grass green so they run straight into the tab's [MeadowHeader].
+/// [onAdd] puts the tab's add action in the iOS nav bar; Android shows it as
+/// a FAB instead (see [rootAddFab]).
+Widget rootAppBar(
+  BuildContext context, {
+  required String title,
+  List<Widget> actions = const [],
+  VoidCallback? onAdd,
+  String addTooltip = 'Add',
+}) {
+  final colors = context.colors;
+  if (isCupertino(context)) {
+    return CupertinoSliverNavigationBar(
+      largeTitle: Text(title),
+      backgroundColor: colors.meadowTop,
+      border: null,
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ...actions,
+          if (onAdd != null)
+            IconButton(
+              tooltip: addTooltip,
+              onPressed: onAdd,
+              icon: const Icon(CupertinoIcons.add),
+            ),
+        ],
+      ),
     );
+  }
+  return SliverAppBar(
+    pinned: true,
+    backgroundColor: colors.meadowTop,
+    title: Text(
+      title,
+      style: const TextStyle(
+        fontSize: AppTypography.title1,
+        fontWeight: FontWeight.w900,
+      ),
+    ),
+    actions: [
+      ...actions,
+      const SizedBox(width: AppSpacing.xs),
+    ],
+  );
+}
 
+/// The one empty state every tab uses: the tab's illustration (or, with no
+/// [art], the mascot cheering), a heading that says what is true, a
+/// sentence that teaches what the screen is for, and the chunky button that
+/// fills it.
+class EmptyState extends StatelessWidget {
+  final Art? art;
+  final String title;
+  final String message;
+  final String actionLabel;
+  final VoidCallback onAction;
+
+  const EmptyState({
+    super.key,
+    this.art,
+    required this.title,
+    required this.message,
+    required this.actionLabel,
+    required this.onAction,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (art case final art?)
+              Illustration(art, size: 112)
+            else
+              const Mascot(mood: MascotMood.cheer, size: 160),
+            const SizedBox(height: AppSpacing.lg),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: AppTypography.title3,
+                fontWeight: FontWeight.w900,
+                color: colors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: AppTypography.body,
+                height: 1.4,
+                color: colors.textSecondary,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.xl),
+            FilledButton(onPressed: onAction, child: Text(actionLabel)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// A list section's heading: sentence case, heavy, set in ink.
 class SectionHeader extends StatelessWidget {
   final String title;
   final String? trailing;
-  final Color? color;
 
   /// Drops the leading air for the first header in a list, where the header
   /// already has the app bar above it and does not need separating from a
@@ -189,7 +321,6 @@ class SectionHeader extends StatelessWidget {
     this.title, {
     super.key,
     this.trailing,
-    this.color,
     this.tight = false,
   });
 
@@ -206,12 +337,11 @@ class SectionHeader extends StatelessWidget {
       child: Row(
         children: [
           Text(
-            title.toUpperCase(),
+            title,
             style: TextStyle(
-              fontSize: AppTypography.caption,
-              letterSpacing: 1.1,
-              fontWeight: FontWeight.w600,
-              color: color ?? colors.textMuted,
+              fontSize: AppTypography.callout,
+              fontWeight: FontWeight.w900,
+              color: colors.textPrimary,
             ),
           ),
           const Spacer(),
@@ -219,8 +349,10 @@ class SectionHeader extends StatelessWidget {
             Text(
               trailing!,
               style: TextStyle(
-                fontSize: AppTypography.caption,
-                color: colors.textMuted,
+                fontSize: AppTypography.footnote,
+                fontWeight: FontWeight.w800,
+                color: colors.textSecondary,
+                fontFeatures: const [FontFeature.tabularFigures()],
               ),
             ),
         ],
@@ -236,29 +368,55 @@ Future<bool> confirmDialog(
   String confirmLabel = 'Delete',
   bool destructive = true,
 }) async {
-  final result = await showCupertinoDialog<bool>(
+  final result = await showAdaptiveDialog<bool>(
     context: context,
     barrierDismissible: true,
-    builder: (context) => CupertinoAlertDialog(
+    builder: (context) => AlertDialog.adaptive(
       title: Text(title),
-      content: Padding(
-        padding: const EdgeInsets.only(top: AppSpacing.sm),
-        child: Text(message),
-      ),
+      content: Text(message),
       actions: [
-        CupertinoDialogAction(
+        dialogAction(
+          context,
+          label: 'Cancel',
           onPressed: () => Navigator.pop(context, false),
-          child: const Text('Cancel'),
         ),
-        CupertinoDialogAction(
-          isDestructiveAction: destructive,
+        dialogAction(
+          context,
+          label: confirmLabel,
+          destructive: destructive,
+          isDefault: !destructive,
           onPressed: () => Navigator.pop(context, true),
-          child: Text(confirmLabel),
         ),
       ],
     ),
   );
   return result ?? false;
+}
+
+/// A dialog button in the platform's own form, for [AlertDialog.adaptive]:
+/// a [CupertinoDialogAction] on iOS, a [TextButton] on Android.
+Widget dialogAction(
+  BuildContext context, {
+  required String label,
+  required VoidCallback onPressed,
+  bool destructive = false,
+  bool isDefault = false,
+}) {
+  if (isCupertino(context)) {
+    return CupertinoDialogAction(
+      isDestructiveAction: destructive,
+      isDefaultAction: isDefault,
+      onPressed: onPressed,
+      child: Text(label),
+    );
+  }
+  return TextButton(
+    onPressed: onPressed,
+    style: destructive
+        ? TextButton.styleFrom(foregroundColor: context.colors.overdue)
+        : null,
+    child: Text(label),
+  );
 }
 
 OverlayEntry? _currentToast;
@@ -365,32 +523,29 @@ class _ToastState extends State<_Toast> with SingleTickerProviderStateMixin {
             begin: const Offset(0, -0.4),
             end: Offset.zero,
           ).animate(curved),
-          child: GlassSurface.panel(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.lg,
-              vertical: AppSpacing.md,
-            ),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x40000000),
-                blurRadius: 24,
-                offset: Offset(0, 8),
-                spreadRadius: -6,
+          // A dark-forest slip, the hero card's colour. It sits in an
+          // overlay outside the app's Material, so the Material here also
+          // supplies the text defaults — without it the text falls back to
+          // monospace with yellow underlines.
+          child: Material(
+            color: colors.hero,
+            shape: AppRadii.mediumShape,
+            elevation: 6,
+            shadowColor: const Color(0x66000000),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.lg,
+                vertical: AppSpacing.md,
               ),
-            ],
-            // An overlay sits outside the app's Material, so without this the
-            // text falls back to Flutter's unstyled default — monospace with
-            // yellow underlines.
-            child: Material(
-              type: MaterialType.transparency,
               child: Row(
                 children: [
                   Expanded(
                     child: Text(
                       widget.message,
                       style: TextStyle(
-                        color: colors.textPrimary,
+                        color: colors.onHero,
                         fontSize: AppTypography.footnote,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
@@ -405,9 +560,9 @@ class _ToastState extends State<_Toast> with SingleTickerProviderStateMixin {
                         child: Text(
                           widget.actionLabel!,
                           style: TextStyle(
-                            color: colors.accent,
+                            color: colors.accentFill,
                             fontSize: AppTypography.footnote,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w900,
                           ),
                         ),
                       ),

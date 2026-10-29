@@ -8,9 +8,10 @@ import '../../domain/models/date_only.dart';
 import '../../state/app_state.dart';
 import '../../state/settings_controller.dart';
 import '../widgets/common.dart';
-import '../widgets/frosted_bottom_navigation_bar.dart';
+import '../widgets/meadow.dart';
 import '../widgets/task_row.dart';
 import '../widgets/task_flows.dart';
+import '../widgets/ticket.dart';
 import 'quick_add_sheet.dart';
 import 'task_editor_screen.dart';
 
@@ -55,6 +56,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     final state = context.watch<AppState>();
     final settings = context.watch<SettingsController>().settings;
     final markers = state.monthMarkers(_year, _month);
+    final colors = context.colors;
     final agenda = state.agendaFor(_selected);
     final today = DateOnly.today();
     final showingToday = _year == today.year && _month == today.month;
@@ -72,30 +74,33 @@ class _CalendarScreenState extends State<CalendarScreen> {
       if (items.isEmpty) return;
       final first = entries.isEmpty;
       entries.add(() => SectionHeader(title, tight: first));
-      for (final item in items) {
-        entries.add(() => _agendaRow(state, item));
+      final list = items.toList();
+      for (final item in list) {
+        entries.add(() => TaskCard(child: _agendaRow(state, item)));
       }
     }
 
     group('All-day', allDay);
     group('Scheduled', timed);
     group('Completed', done);
-    if (entries.isNotEmpty) {
-      entries.add(
-        () => Padding(
-          padding: const EdgeInsets.only(top: AppSpacing.sm),
-          child: _addForDayButton(),
-        ),
-      );
-    }
+
+    // The add action always adds to the selected day.
+    void addForDay() => QuickAddSheet.open(context, initialDate: _selected);
 
     return Scaffold(
-      // The shell's MeshBackdrop paints the background for all tabs.
       backgroundColor: Colors.transparent,
+      floatingActionButton: rootAddFab(
+        context,
+        onPressed: addForDay,
+        tooltip: 'Add task',
+      ),
       body: CustomScrollView(
         slivers: [
           rootAppBar(
-            title: Text(Formats.monthTitle(_year, _month)),
+            context,
+            title: Formats.monthTitle(_year, _month),
+            onAdd: addForDay,
+            addTooltip: 'Add task',
             actions: [
               if (!showingToday || _selected != today)
                 TextButton(onPressed: _goToday, child: const Text('Today')),
@@ -111,32 +116,37 @@ class _CalendarScreenState extends State<CalendarScreen> {
               ),
             ],
           ),
+          // The month sits on the grass as one chunky white block.
           SliverToBoxAdapter(
-            child: _MonthGrid(
-              year: _year,
-              month: _month,
-              selected: _selected,
-              startOfWeek: settings.startOfWeek,
-              markers: markers,
-              onSelect: (d) => setState(() => _selected = d),
+            child: MeadowHeader(
+              child: Material(
+                color: colors.card,
+                shape: chunkyCard(colors, radius: AppRadii.lg, depth: 4),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(0, AppSpacing.md, 0, 16),
+                  child: _MonthGrid(
+                    year: _year,
+                    month: _month,
+                    selected: _selected,
+                    startOfWeek: settings.startOfWeek,
+                    markers: markers,
+                    onSelect: (d) => setState(() => _selected = d),
+                  ),
+                ),
+              ),
             ),
           ),
-          const SliverToBoxAdapter(child: Divider()),
           if (entries.isEmpty)
             SliverFillRemaining(
               hasScrollBody: false,
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Nothing on ${Formats.relativeDate(_selected)}',
-                      style: TextStyle(color: context.colors.textSecondary),
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    _addForDayButton(),
-                  ],
-                ),
+              child: EmptyState(
+                art: Art.calendar,
+                title: 'Nothing due ${_dayPhrase(_selected)}',
+                message:
+                    'Tasks due on a day show here, along with the next '
+                    'turns of anything that repeats.',
+                actionLabel: 'Add a task for this day',
+                onAction: addForDay,
               ),
             )
           else
@@ -145,7 +155,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 AppSpacing.lg,
                 0,
                 AppSpacing.lg,
-                FrostedBottomNavigationBar.heightOf(context) + AppSpacing.sm,
+                listBottomInset(context),
               ),
               sliver: SliverList.builder(
                 itemCount: entries.length,
@@ -157,37 +167,37 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  Widget _addForDayButton() => TextButton.icon(
-    onPressed: () => QuickAddSheet.open(context, initialDate: _selected),
-    icon: const Icon(Icons.add, size: 18),
-    label: const Text('Add task for this day'),
-  );
+  /// "today", "tomorrow", or "on Mon, Jul 14" — reads as part of a sentence.
+  String _dayPhrase(DateOnly date) {
+    final label = Formats.relativeDate(date);
+    return switch (label) {
+      'Today' || 'Tomorrow' || 'Yesterday' => label.toLowerCase(),
+      _ => 'on $label',
+    };
+  }
 
   Widget _agendaRow(AppState state, AgendaItem item) {
     final task = item.task;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: TaskRow(
-        task: task,
-        rule: state.ruleOf(task),
-        isProjection: item.isProjection,
-        onTap: item.isProjection
-            ? () {
-                // Future occurrences aren't materialized yet; edit the
-                // series' current occurrence instead.
-                final template = state.templateOf(task);
-                final active = state.allTasks
-                    .where((t) => t.seriesId == template?.id && !t.isCompleted)
-                    .toList();
-                if (active.isNotEmpty) {
-                  TaskEditorScreen.open(context, task: active.first);
-                }
+    return TaskRow(
+      task: task,
+      rule: state.ruleOf(task),
+      isProjection: item.isProjection,
+      onTap: item.isProjection
+          ? () {
+              // Future occurrences aren't materialized yet; edit the
+              // series' current occurrence instead.
+              final template = state.templateOf(task);
+              final active = state.allTasks
+                  .where((t) => t.seriesId == template?.id && !t.isCompleted)
+                  .toList();
+              if (active.isNotEmpty) {
+                TaskEditorScreen.open(context, task: active.first);
               }
-            : () => TaskEditorScreen.open(context, task: task),
-        onToggle: item.isProjection
-            ? null
-            : () => completeTaskFlow(context, state, task),
-      ),
+            }
+          : () => TaskEditorScreen.open(context, task: task),
+      onToggle: item.isProjection
+          ? null
+          : () => completeTaskFlow(context, state, task),
     );
   }
 }
@@ -230,9 +240,9 @@ class _MonthGrid extends StatelessWidget {
                     child: Text(
                       dayLetters[(startOfWeek - 1 + i) % 7],
                       style: TextStyle(
-                        fontSize: 11.5,
-                        fontWeight: FontWeight.w600,
-                        color: context.colors.textMuted,
+                        fontSize: AppTypography.caption,
+                        fontWeight: FontWeight.w800,
+                        color: context.colors.textSecondary,
                       ),
                     ),
                   ),
@@ -265,6 +275,7 @@ class _MonthGrid extends StatelessWidget {
     final isSelected = date == selected;
     final isToday = date == today;
     final m = markers[date];
+    final colors = context.colors;
 
     return Semantics(
       button: true,
@@ -275,20 +286,18 @@ class _MonthGrid extends StatelessWidget {
           '${m?.hasHighPriority == true ? ', has high priority' : ''}',
       child: InkWell(
         onTap: () => onSelect(date),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: AppRadii.smallRadius,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
+          duration: AppMotion.quick,
           height: 46,
           decoration: BoxDecoration(
-            color: isSelected
-                ? context.colors.accent.withValues(alpha: 0.16)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(10),
+            // The selected day is a leaf-green block; today is ringed.
+            color: isSelected ? colors.accentFill : Colors.transparent,
+            borderRadius: AppRadii.smallRadius,
             border: Border.all(
-              color: isSelected
-                  ? context.colors.accentDim
-                  : isToday
-                  ? context.colors.borderStrong
+              width: 2,
+              color: isToday && !isSelected
+                  ? colors.accentFill
                   : Colors.transparent,
             ),
           ),
@@ -298,13 +307,16 @@ class _MonthGrid extends StatelessWidget {
               Text(
                 '$day',
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: AppTypography.body,
                   fontWeight: isToday || isSelected
-                      ? FontWeight.w700
-                      : FontWeight.w400,
-                  color: isSelected || isToday
-                      ? context.colors.textPrimary
-                      : context.colors.textSecondary,
+                      ? FontWeight.w900
+                      : FontWeight.w600,
+                  color: isSelected
+                      ? colors.onAccentFill
+                      : isToday
+                      ? colors.textPrimary
+                      : colors.textSecondary,
+                  fontFeatures: const [FontFeature.tabularFigures()],
                 ),
               ),
               const SizedBox(height: 3),
@@ -316,12 +328,16 @@ class _MonthGrid extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           if (m.hasHighPriority)
-                            _dot(context.colors.overdue)
+                            _dot(colors.overdue)
                           else if (!m.allCompleted)
-                            _dot(context.colors.accent),
-                          if (m.hasRecurring) _dot(context.colors.textMuted),
+                            _dot(
+                              isSelected
+                                  ? colors.onAccentFill
+                                  : colors.textPrimary,
+                            ),
+                          if (m.hasRecurring) _dot(colors.textMuted),
                           if (m.hasCompleted && m.allCompleted)
-                            _dot(context.colors.done),
+                            _dot(colors.textMuted),
                         ],
                       ),
               ),

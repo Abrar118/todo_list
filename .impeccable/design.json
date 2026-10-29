@@ -1,0 +1,435 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-29T12:00:00Z",
+  "title": "Design System: Nudge",
+  "extensions": {
+    "colorMeta": {
+      "leaf-fill": {
+        "role": "primary",
+        "displayName": "Leaf Fill",
+        "canonical": "#58CC02",
+        "tonalRamp": [
+          "#163300",
+          "#234F02",
+          "#316D02",
+          "#3E8A02",
+          "#4CA902",
+          "#58CC02",
+          "#9BE36A",
+          "#E3F7D3"
+        ]
+      },
+      "leaf-ink": {
+        "role": "primary",
+        "displayName": "Leaf Ink",
+        "canonical": "#2A750D",
+        "tonalRamp": [
+          "#0C2404",
+          "#153A07",
+          "#1F550A",
+          "#2A750D",
+          "#4A9430",
+          "#79B55F",
+          "#AED69C",
+          "#E2F2DA"
+        ]
+      },
+      "forest-hero": {
+        "role": "secondary",
+        "displayName": "Forest Hero",
+        "canonical": "#1D4D2B",
+        "tonalRamp": [
+          "#0A1C10",
+          "#12301B",
+          "#1D4D2B",
+          "#2C6A3E",
+          "#478A59",
+          "#73AC81",
+          "#A9D1B2",
+          "#E0F1E4"
+        ]
+      },
+      "overdue": {
+        "role": "secondary",
+        "displayName": "Overdue Red",
+        "canonical": "#B3261E",
+        "tonalRamp": [
+          "#3A0905",
+          "#5E120D",
+          "#8A1D16",
+          "#B3261E",
+          "#D9534A",
+          "#F08A82",
+          "#F9BDB8",
+          "#FDE9E7"
+        ]
+      },
+      "medium": {
+        "role": "secondary",
+        "displayName": "Warming Amber",
+        "canonical": "#8A4F00",
+        "tonalRamp": [
+          "#2B1800",
+          "#4A2B00",
+          "#6A3D00",
+          "#8A4F00",
+          "#B36D12",
+          "#DB9440",
+          "#F4C27F",
+          "#FCEBD2"
+        ]
+      },
+      "streak-flame": {
+        "role": "tertiary",
+        "displayName": "Streak Flame",
+        "canonical": "#FF9600",
+        "tonalRamp": [
+          "#3A2000",
+          "#663800",
+          "#995400",
+          "#CC7600",
+          "#FF9600",
+          "#FFB24D",
+          "#FFD399",
+          "#FFF1DE"
+        ]
+      },
+      "grass": {
+        "role": "tertiary",
+        "displayName": "Grass",
+        "canonical": "#8BDB4A",
+        "tonalRamp": [
+          "#1B3F20",
+          "#24512A",
+          "#3F8A1F",
+          "#6CC72E",
+          "#8BDB4A",
+          "#AEE680",
+          "#D1F1B6",
+          "#F0FAE6"
+        ]
+      },
+      "tint-sun": {
+        "role": "tertiary",
+        "displayName": "Sun Tint",
+        "canonical": "#FFEFD2"
+      },
+      "tint-leaf": {
+        "role": "tertiary",
+        "displayName": "Leaf Tint",
+        "canonical": "#D6F5E3"
+      },
+      "tint-sky": {
+        "role": "tertiary",
+        "displayName": "Sky Tint",
+        "canonical": "#DCEBFB"
+      },
+      "meadow-page": {
+        "role": "neutral",
+        "displayName": "Meadow Page",
+        "canonical": "#EDF8F1"
+      },
+      "forest-ink": {
+        "role": "neutral",
+        "displayName": "Forest Ink",
+        "canonical": "#11271A"
+      },
+      "meadow-page-dark": {
+        "role": "neutral",
+        "displayName": "Night Meadow",
+        "canonical": "#0D1912"
+      },
+      "moon-ink-dark": {
+        "role": "neutral",
+        "displayName": "Moon Ink",
+        "canonical": "#ECF4EF"
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "iOS large title and the hero card's lateness stamp (tabular)."
+      },
+      "title1": {
+        "displayName": "Title 1",
+        "purpose": "Android app-bar title and stat-tile figures (tabular)."
+      },
+      "title3": {
+        "displayName": "Title 3",
+        "purpose": "Hero task title, empty-state headings; dialog titles at 800."
+      },
+      "callout": {
+        "displayName": "Callout",
+        "purpose": "Button labels, section headers (900), the greeting's summary line."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Running text and task titles."
+      },
+      "footnote": {
+        "displayName": "Footnote",
+        "purpose": "Meta chips, chip labels, stat labels, counts, toast text."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Tab labels and stamp captions."
+      }
+    },
+    "shadows": [
+      {
+        "name": "lip-button",
+        "value": "inset 0 -4px 0 #46A302",
+        "purpose": "Solid bottom lip on leaf-green buttons and the FAB (ChunkyBorder depth 4); 1px while pressed."
+      },
+      {
+        "name": "lip-card",
+        "value": "inset 0 -3px 0 rgba(19,37,26,0.22)",
+        "purpose": "Quiet lip on task, habit and goal cards (Border Strong over the face)."
+      },
+      {
+        "name": "lip-hero",
+        "value": "inset 0 -5px 0 rgba(0,0,0,0.35)",
+        "purpose": "The hero card's deeper lip."
+      },
+      {
+        "name": "tab-bar-float",
+        "value": "0 4px 10px rgba(0,0,0,0.2)",
+        "purpose": "Material elevation 4 under the floating tab-bar block."
+      },
+      {
+        "name": "fab",
+        "value": "0 3px 6px rgba(0,0,0,0.24)",
+        "purpose": "Material elevation 3 under the Android FAB."
+      },
+      {
+        "name": "toast",
+        "value": "0 6px 14px rgba(0,0,0,0.4)",
+        "purpose": "Material elevation 6 under the forest toast."
+      }
+    ],
+    "motion": [
+      {
+        "name": "quick",
+        "value": "140ms",
+        "purpose": "State flips: selection, checkmarks, chips; toast exit."
+      },
+      {
+        "name": "standard",
+        "value": "240ms",
+        "purpose": "Local movement: panels, nav indicator, toast entrance."
+      },
+      {
+        "name": "slow",
+        "value": "360ms",
+        "purpose": "Full-surface transitions."
+      },
+      {
+        "name": "press-sink",
+        "value": "80ms",
+        "purpose": "A chunky button's lip shrinking 4px to 1px while pressed."
+      },
+      {
+        "name": "ease-in",
+        "value": "cubic-bezier(0.215, 0.61, 0.355, 1)",
+        "purpose": "Ease-out cubic for entrances."
+      },
+      {
+        "name": "ease-exit",
+        "value": "cubic-bezier(0.55, 0.055, 0.675, 0.19)",
+        "purpose": "Ease-in cubic for exits."
+      },
+      {
+        "name": "completion-exit",
+        "value": "560ms: strike, slide off 20-65% (ease-in cubic), collapse 60-100% (ease-out cubic)",
+        "purpose": "A completed Focus task leaving the list. Skipped under Reduce Motion."
+      }
+    ],
+    "platformMirrors": [
+      {
+        "name": "android-widgets",
+        "path": "android/app/src/main/res/values/colors.xml",
+        "mirrors": "AppColors.dark"
+      },
+      {
+        "name": "android-splash",
+        "path": "android/app/src/main/res/values/colors.xml (splash_background)",
+        "mirrors": "meadow-page-dark"
+      },
+      {
+        "name": "ios-widgets",
+        "path": "ios/NudgeWidgets/NudgeWidgets.swift",
+        "mirrors": "AppColors.dark"
+      },
+      {
+        "name": "ios-launch",
+        "path": "ios/Runner/Base.lproj/LaunchScreen.storyboard",
+        "mirrors": "meadow-page-dark"
+      }
+    ],
+    "openItems": [
+      "App icon (assets/icon/) predates the meadow, and ic_launcher_background is still #0B0B0D; a meadow icon needs a real asset.",
+      "Illustrations are borrowed Fluent Emoji 3D renders; a Nudge mascot would replace them once real artwork exists."
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Leaf-green chunky block with a solid lip; sinks when pressed. Done, empty-state actions.",
+      "html": "<button class=\"ds-btn-primary\">Add a goal</button>",
+      "css": ".ds-btn-primary { font-family: Nunito, sans-serif; font-size: 17px; font-weight: 800; height: 52px; padding: 0 20px 4px; background: #58CC02; color: #10270A; border: none; border-radius: 16px; box-shadow: inset 0 -4px 0 #46A302; cursor: pointer; transition: box-shadow 80ms, padding 80ms; } .ds-btn-primary:active { padding: 3px 20px 1px; box-shadow: inset 0 -1px 0 #46A302; } .ds-btn-primary:focus-visible { outline: 3px solid #2A750D; outline-offset: 2px; }"
+    },
+    {
+      "name": "Outlined Button",
+      "kind": "button",
+      "refersTo": "button-outlined",
+      "description": "The quiet chunky block: white face, strong border, quiet lip.",
+      "html": "<button class=\"ds-btn-outlined\">Later</button>",
+      "css": ".ds-btn-outlined { font-family: Nunito, sans-serif; font-size: 17px; font-weight: 800; height: 52px; padding: 0 20px 4px; background: #FFFFFF; color: #13251A; border: 1.5px solid rgba(19,37,26,0.22); border-radius: 16px; box-shadow: inset 0 -4px 0 #C9CECA; cursor: pointer; transition: box-shadow 80ms, padding 80ms; } .ds-btn-outlined:active { padding: 3px 20px 1px; box-shadow: inset 0 -1px 0 #C9CECA; } .ds-btn-outlined:focus-visible { outline: 3px solid #2A750D; outline-offset: 2px; }"
+    },
+    {
+      "name": "Hero Card",
+      "kind": "custom",
+      "refersTo": "hero-card",
+      "description": "The longest-waiting task on dark forest, stamped in heat, with Done and Later.",
+      "html": "<div class=\"ds-hero\"><div class=\"ds-hero-title\">Submit project proposal</div><div class=\"ds-hero-meta\">High priority &middot; 0 of 2</div><div class=\"ds-hero-stamp\"><span class=\"ds-hero-value\">1d</span> <span class=\"ds-hero-cap\">late</span></div><div class=\"ds-hero-actions\"><button class=\"ds-hero-done\">Done</button><button class=\"ds-hero-later\">Later</button></div></div>",
+      "css": ".ds-hero { font-family: Nunito, sans-serif; background: #1D4D2B; color: #FFFFFF; border-radius: 24px; padding: 20px 20px 25px; box-shadow: inset 0 -5px 0 rgba(0,0,0,0.35); max-width: 340px; } .ds-hero-title { font-size: 20px; font-weight: 900; letter-spacing: -0.4px; line-height: 1.2; } .ds-hero-meta { font-size: 13px; font-weight: 700; color: #BFE3C4; margin-top: 8px; } .ds-hero-stamp { margin-top: 12px; } .ds-hero-value { font-size: 34px; font-weight: 900; letter-spacing: -0.8px; color: #F4B04B; font-variant-numeric: tabular-nums; } .ds-hero-cap { font-size: 17px; font-weight: 800; color: #F4B04B; } .ds-hero-actions { display: flex; gap: 8px; margin-top: 16px; } .ds-hero-done, .ds-hero-later { font-family: inherit; font-size: 17px; font-weight: 800; height: 52px; padding: 0 20px 4px; border: none; border-radius: 16px; cursor: pointer; } .ds-hero-done { flex: 3; background: #58CC02; color: #10270A; box-shadow: inset 0 -4px 0 #46A302; } .ds-hero-later { flex: 2; background: rgba(255,255,255,0.12); color: #FFFFFF; box-shadow: inset 0 -4px 0 rgba(0,0,0,0.25); } .ds-hero-done:active, .ds-hero-later:active { padding: 3px 20px 1px; }"
+    },
+    {
+      "name": "Stat Tile",
+      "kind": "card",
+      "refersTo": "stat-tile-sun",
+      "description": "Illustration, figure and label on a cheer tint with a 4px lip.",
+      "html": "<div class=\"ds-stat\"><div class=\"ds-stat-art\" aria-hidden=\"true\"></div><div class=\"ds-stat-value\">4</div><div class=\"ds-stat-label\">day streak</div></div>",
+      "css": ".ds-stat { font-family: Nunito, sans-serif; width: 104px; background: #FFEFD2; border: 1.5px solid rgba(19,37,26,0.14); border-radius: 16px; padding: 12px 8px 16px 12px; box-shadow: inset 0 -4px 0 #E2D2B8; } .ds-stat-art { width: 34px; height: 34px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #FFD24D, #FF9600); } .ds-stat-value { margin-top: 8px; font-size: 28px; font-weight: 900; line-height: 1; letter-spacing: -0.8px; color: #13251A; font-variant-numeric: tabular-nums; } .ds-stat-label { margin-top: 2px; font-size: 13px; font-weight: 800; color: #3B5243; }"
+    },
+    {
+      "name": "Task Card",
+      "kind": "card",
+      "refersTo": "task-card",
+      "description": "One task as a chunky white block: completion circle, identity dot, title, meta, stamp.",
+      "html": "<div class=\"ds-task\"><span class=\"ds-task-check\"></span><div class=\"ds-task-body\"><div class=\"ds-task-title\"><span class=\"ds-task-dot\"></span>Review monthly expenses</div><div class=\"ds-task-meta\">0 of 3 &middot; Every month on day 28</div></div><div class=\"ds-task-stamp\">Nov 28</div></div>",
+      "css": ".ds-task { font-family: Nunito, sans-serif; display: flex; align-items: center; gap: 12px; background: #FFFFFF; border: 1.5px solid rgba(19,37,26,0.14); border-radius: 16px; padding: 10px 12px 13px; box-shadow: inset 0 -3px 0 #D3D7D4; max-width: 340px; } .ds-task-check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #4A604F; flex: none; } .ds-task-body { flex: 1; } .ds-task-title { font-size: 15px; font-weight: 800; color: #13251A; } .ds-task-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #395A6A; margin-right: 6px; vertical-align: middle; } .ds-task-meta { font-size: 13px; font-weight: 700; color: #3B5243; } .ds-task-stamp { font-size: 15px; font-weight: 600; color: #13251A; font-variant-numeric: tabular-nums; } .ds-task:active { background: #E4EFD8; }"
+    },
+    {
+      "name": "Filter Chip",
+      "kind": "chip",
+      "refersTo": "chip-filter",
+      "description": "Tag filter pill; the selected one is leaf green.",
+      "html": "<span class=\"ds-chip ds-chip-on\">All</span> <span class=\"ds-chip\">#work</span>",
+      "css": ".ds-chip { font-family: Nunito, sans-serif; display: inline-block; font-size: 13px; font-weight: 700; color: #3B5243; background: #FFFFFF; border: 1.5px solid rgba(19,37,26,0.22); border-radius: 999px; padding: 4px 12px; cursor: pointer; } .ds-chip-on { background: #58CC02; color: #10270A; font-weight: 800; border-color: transparent; } .ds-chip:focus-visible { outline: 3px solid #2A750D; outline-offset: 2px; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Filled white field; the stroke turns leaf green on focus.",
+      "html": "<input class=\"ds-input\" placeholder=\"Add subtask\">",
+      "css": ".ds-input { font-family: Nunito, sans-serif; font-size: 15px; font-weight: 600; color: #13251A; background: #FFFFFF; border: 1.5px solid rgba(19,37,26,0.22); border-radius: 10px; padding: 12px; outline: none; } .ds-input::placeholder { color: #4A604F; } .ds-input:focus-visible { border: 2px solid #58CC02; }"
+    },
+    {
+      "name": "Floating Tab Bar",
+      "kind": "nav",
+      "refersTo": "tab-bar",
+      "description": "The native tab bar inside one floating white chunky block.",
+      "html": "<nav class=\"ds-tabs\"><a class=\"ds-tab ds-tab-on\"><span class=\"ds-tab-pill\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"4\" fill=\"currentColor\"/><path d=\"M3 7V3h4M17 3h4v4M21 17v4h-4M7 21H3v-4\" stroke=\"currentColor\" stroke-width=\"2\" fill=\"none\"/></svg></span>Focus</a><a class=\"ds-tab\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\"><rect x=\"3\" y=\"5\" width=\"18\" height=\"16\" rx=\"2\" stroke=\"currentColor\" stroke-width=\"2\" fill=\"none\"/><path d=\"M3 10h18M8 3v4M16 3v4\" stroke=\"currentColor\" stroke-width=\"2\"/></svg>Calendar</a></nav>",
+      "css": ".ds-tabs { font-family: Nunito, sans-serif; display: flex; justify-content: space-around; background: #FFFFFF; border: 1.5px solid rgba(19,37,26,0.14); border-radius: 24px; height: 64px; padding-bottom: 4px; box-shadow: inset 0 -4px 0 #D3D7D4, 0 4px 10px rgba(0,0,0,0.2); max-width: 340px; } .ds-tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 11px; font-weight: 800; color: #4A604F; text-decoration: none; cursor: pointer; } .ds-tab-on { color: #2A750D; } .ds-tab-pill { background: #DDF4C9; border-radius: 16px; padding: 2px 16px; } .ds-tab:focus-visible { outline: 3px solid #2A750D; border-radius: 12px; }"
+    },
+    {
+      "name": "Toast",
+      "kind": "custom",
+      "refersTo": "toast",
+      "description": "Forest confirmation slip at the top of the screen, with a leaf-green action.",
+      "html": "<div class=\"ds-toast\"><span>Task completed</span><button class=\"ds-toast-action\">Undo</button></div>",
+      "css": ".ds-toast { font-family: Nunito, sans-serif; display: flex; align-items: center; justify-content: space-between; gap: 12px; background: #1D4D2B; color: #FFFFFF; font-size: 13px; font-weight: 700; border-radius: 16px; padding: 12px 16px; box-shadow: 0 6px 14px rgba(0,0,0,0.4); max-width: 340px; } .ds-toast-action { font-family: inherit; background: none; border: none; color: #58CC02; font-size: 13px; font-weight: 900; cursor: pointer; } .ds-toast-action:focus-visible { outline: 2px solid #58CC02; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Meadow",
+    "overview": "Nudge opens onto a field. Every root tab starts under a band of fresh grass: the app bar is painted grass green and runs straight into a painted header where a far hill swells across the width, a few daisies dot it, and the pale green page rolls up over it like a near slope. On that page sit chunky, soft blocks: white cards with a solid lip along their bottom edge, vivid leaf-green buttons that visibly sink when pressed, and 3D illustrations (a flame, a check, an alarm clock, a trophy) that make the counts feel like rewards rather than debts. The tone is playful and encouraging, in the family of Duolingo and Headspace, not a grey utility list.\n\nThe one task that has waited longest sits on a dark-forest hero card near the top of Focus, printed large with how late it is and with Done and Later right there. Lateness still has a temperature: a task warms to amber and then goes red the longer it is put off, and a hollow ring under it counts each deferral. Everything else is a stack of white task cards in sentence-case sections. Dark mode is the same meadow at night: deep forest ground, moonlit ink, cards a clear step lighter, the same leaf-green buttons.\n\nThe world is one identity across both OSes but its chrome behaves natively: an iOS large-title nav bar, `CupertinoTabBar` and nav-bar add button on iPhone; a Material app bar, `NavigationBar` and FAB on Android. Both tab bars are floated inside one chunky white block above the page.",
+    "keyCharacteristics": [
+      "A grass band (painted hills, scattered daisies) heads every root tab and flows from the status bar into the page.",
+      "Chunky blocks: generous continuous corners (10/16/24px) and a solid bottom lip on everything pressable; pressed, the lip shrinks and the block sinks.",
+      "Vivid leaf green is a fill with dark glyphs on it, never a text colour; a deeper leaf green carries green text.",
+      "Lateness is heat (amber, then red); priority stays in ink.",
+      "Cheerful 3D illustrations decorate stat tiles, the hero card and empty states; icons stay Material/Cupertino.",
+      "Nunito throughout, heavy (800/900) for headings, figures and buttons."
+    ],
+    "rules": [
+      {
+        "name": "The Heat Rule",
+        "body": "Lateness is the only thing that turns a task amber or red: `heatColor` on the page, `heroHeatColor` on the hero. Nothing else borrows those two colours as decoration.",
+        "section": "colors"
+      },
+      {
+        "name": "The Priority Speaks Ink Rule",
+        "body": "Priority never takes a hue: high is full ink with a filled flag, medium and low are secondary ink with an outlined flag (`priorityColor`, `priorityIcon`), so a high flag can never outshout a task that is actually late. The widgets follow it too.",
+        "section": "colors"
+      },
+      {
+        "name": "The Fill-Only Leaf Rule",
+        "body": "Leaf Fill is a surface, not a text colour, and what sits on it is always On Leaf Fill; white on it fails contrast. Green text uses Leaf Ink.",
+        "section": "colors"
+      },
+      {
+        "name": "The Cheer Is Fill Rule",
+        "body": "Streak Flame and the three tints are grounds and illustration companions. Text on them is ink; they are never text themselves.",
+        "section": "colors"
+      },
+      {
+        "name": "The Identity Dot Rule",
+        "body": "A swatch renders as a small solid dot (8px by a task title, likewise on habit and goal cards), never as a card tint or a flag. Deferral marks are hollow rings precisely so they cannot be read as identity dots.",
+        "section": "colors"
+      },
+      {
+        "name": "The Contrast Floor Rule",
+        "body": "Every text or meaningful-icon colour clears 4.5:1 on page, card and pressed in both themes; Leaf Dim clears 3:1; each fill clears 4.5:1 with its own foreground; on-hero colours clear 4.5:1 on forest (Leaf Fill 3:1); ink clears 4.5:1 on every tint and on the grass. `test/design_tokens_test.dart` enforces all of it.",
+        "section": "colors"
+      },
+      {
+        "name": "The Scale-Only Rule",
+        "body": "Sizes come only from `AppTypography` (no literals, no half-points) and tracking from `AppTypography.trackingFor(size)`.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Figures Rule",
+        "body": "Every stamp, count, stat figure and timer is set with tabular figures.",
+        "section": "typography"
+      },
+      {
+        "name": "The Sentence Case Rule",
+        "body": "Headings and section headers are sentence case in ink. Weight carries emphasis, not case or letter-spacing.",
+        "section": "typography"
+      },
+      {
+        "name": "The Lip Rule",
+        "body": "Every pressable block carries a solid lip on its bottom edge (`ChunkyBorder`): 4px on buttons, the FAB, stat tiles and the tab bar; 3px on task, habit and goal cards; 5px on the hero. Pressed, a button's lip drops to 1px and its label drops with the face (80ms), so the block sinks. The leaf lip is Leaf Lip; quiet blocks take a lip of Border Strong blended over their own face; the hero takes 35% black over forest.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do route every colour through `context.colors`; never a hardcoded palette constant.",
+      "Do colour lateness only through `heatColor` on the page and `heroHeatColor` on the hero.",
+      "Do set priority in ink: full ink and a filled flag for high, secondary ink and an outlined flag otherwise.",
+      "Do put On Leaf Fill on every Leaf Fill surface, and use Leaf Ink when green must be text.",
+      "Do give every pressable block the solid lip (`ChunkyBorder`, or `chunkyCard` for cards) and let it sink when pressed.",
+      "Do open each root tab under the meadow band, with the app bar painted Grass, and keep text on the grass rather than the hill.",
+      "Do use illustrations for stat tiles, the hero card and empty states, and Material/Cupertino glyphs for every icon.",
+      "Do show a swatch only as a small identity dot.",
+      "Do take sizes from `AppTypography`, gaps from `AppSpacing` and corners from `AppRadii` (10/16/24, pill for chips), using the continuous `*Shape` getters.",
+      "Do keep chrome native in behaviour: `isCupertino(context)` picks the large-title nav bar, `CupertinoTabBar` and nav-bar add on iOS, the app bar, `NavigationBar` and FAB on Android; use `.adaptive` dialogs, switches and progress indicators.",
+      "Do honour Reduce Motion.",
+      "Do change `AppColors.dark` together with its Android, iOS widget and launch-screen mirrors."
+    ],
+    "donts": [
+      "Don't put white text on Leaf Fill; it fails contrast.",
+      "Don't use Streak Flame or the tints as text colours.",
+      "Don't colour priority amber or red; those two mean late.",
+      "Don't tint a card or surface with a swatch.",
+      "Don't replace an icon with an illustration, or put an illustration where a control's meaning depends on it.",
+      "Don't swap the native tab bar or nav bar for a custom widget; restyle around them.",
+      "Don't write a font-size, radius or spacing literal."
+    ]
+  }
+}

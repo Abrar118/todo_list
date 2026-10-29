@@ -123,18 +123,18 @@ struct WidgetTask: Decodable, Identifiable {
 
     var priorityLabel: String? {
         switch priority {
-        case "high": return "HIGH"
-        case "medium": return "MEDIUM"
-        case "low": return "LOW"
+        case "high": return "High"
+        case "medium": return "Medium"
+        case "low": return "Low"
         default: return nil
         }
     }
 
     var priorityColor: Color {
         switch priority {
-        case "high": return Color(red: 0.82, green: 0.40, blue: 0.40)
-        case "medium": return Color(red: 0.85, green: 0.65, blue: 0.33)
-        case "low": return Color(red: 0.50, green: 0.66, blue: 0.85)
+        case "high": return nudgePrimary
+        // Priority is ink, as in the app; red is reserved for lateness.
+        case "medium", "low": return nudgeSecondary
         default: return Color(white: 0.45)
         }
     }
@@ -176,11 +176,11 @@ private func loadFocus() -> FocusPayload {
 
 // MARK: - Palette
 
-private let nudgeBackground = Color(red: 0.043, green: 0.043, blue: 0.051)
-private let nudgeAccent = Color(red: 0.545, green: 0.486, blue: 0.973)
-private let nudgePrimary = Color(red: 0.961, green: 0.961, blue: 0.969)
-private let nudgeSecondary = Color(red: 0.627, green: 0.627, blue: 0.659)
-private let nudgeOverdue = Color(red: 0.82, green: 0.40, blue: 0.40)
+private let nudgeBackground = Color(red: 0.051, green: 0.098, blue: 0.071)
+private let nudgeAccent = Color(red: 0.525, green: 0.878, blue: 0.29)
+private let nudgePrimary = Color(red: 0.925, green: 0.957, blue: 0.937)
+private let nudgeSecondary = Color(red: 0.761, green: 0.82, blue: 0.784)
+private let nudgeOverdue = Color(red: 1.0, green: 0.541, blue: 0.494)
 
 // MARK: - Timeline
 
@@ -233,9 +233,8 @@ struct UpNextView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
-                Text("UP NEXT")
-                    .font(.system(size: 10, weight: .bold))
-                    .kerning(1.1)
+                Text("Up next")
+                    .font(.system(size: 13, weight: .semibold))
                     .foregroundColor(nudgeAccent)
                 Spacer()
                 if let task = entry.upNext, let label = task.priorityLabel {
@@ -346,7 +345,7 @@ struct FocusListView: View {
                                         ? task.deadlineLine(now: entry.date)
                                         : task.compactMetaLine(now: entry.date)
                                 )
-                                    .font(.system(size: 10))
+                                    .font(.system(size: 11))
                                     .foregroundColor(
                                         task.isOverdue(now: entry.date)
                                             ? nudgeOverdue : nudgeSecondary)

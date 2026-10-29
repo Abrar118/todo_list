@@ -12,6 +12,7 @@ import 'package:todo_list/services/home_widget_service.dart';
 import 'package:todo_list/state/app_state.dart';
 import 'package:todo_list/state/focus_timer_controller.dart';
 import 'package:todo_list/state/habit_controller.dart';
+import 'package:todo_list/data/app_settings.dart';
 import 'package:todo_list/state/goal_controller.dart';
 import 'package:todo_list/state/settings_controller.dart';
 import 'package:todo_list/ui/screens/task_editor_screen.dart';
@@ -26,7 +27,11 @@ Future<(AppState, SettingsController)> buildApp(
 }) async {
   final repo = InMemoryTaskRepository();
   final notifications = FakeNotificationService();
-  final settingsRepo = InMemorySettingsRepository()..permissionRequested = true;
+  // Flows run with Reduce Motion on: the mascot loops forever otherwise,
+  // so pumpAndSettle would never settle. Motion is not what these test.
+  final settingsRepo = InMemorySettingsRepository()
+    ..permissionRequested = true
+    ..settings = const AppSettings(reduceMotion: true);
   final settings = SettingsController(settingsRepo, notifications);
   await settings.load();
   final state = AppState(repo, notifications, settings);
@@ -54,17 +59,17 @@ void main() {
 
   testWidgets('empty Focus shows the calm empty state', (tester) async {
     await buildApp(tester);
-    expect(find.text('You are clear for now.'), findsOneWidget);
+    expect(find.text('Nothing is waiting on you'), findsOneWidget);
   });
 
   testWidgets('goals replaces completed in bottom navigation', (tester) async {
     await buildApp(tester);
 
-    expect(find.text('Goals'), findsOneWidget);
+    expect(find.byTooltip('Goals'), findsOneWidget);
     expect(find.text('Completed'), findsNothing);
-    await tester.tap(find.text('Goals'));
+    await tester.tap(find.byTooltip('Goals'));
     await tester.pumpAndSettle();
-    expect(find.text('Set your next direction.'), findsOneWidget);
+    expect(find.text('No goals yet'), findsOneWidget);
   });
 
   testWidgets('creates a persistent goal with checkpoint progress', (
@@ -72,7 +77,7 @@ void main() {
   ) async {
     final repository = InMemoryGoalRepository();
     await buildApp(tester, goalController: GoalController(repository));
-    await tester.tap(find.text('Goals'));
+    await tester.tap(find.byTooltip('Goals'));
     await tester.pumpAndSettle();
     await tester.tap(find.byTooltip('Add goal'));
     await tester.pumpAndSettle();
@@ -101,10 +106,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(repository.store.single.progress, 1);
-    expect(find.text('100'), findsOneWidget);
+    expect(find.text('100%'), findsOneWidget);
   });
 
-  testWidgets('goal detail uses the editorial metric and chart layout', (
+  testWidgets('goal detail shows progress, chart and checkpoints', (
     tester,
   ) async {
     final repository = InMemoryGoalRepository()
@@ -119,13 +124,13 @@ void main() {
         ),
       ];
     await buildApp(tester, goalController: GoalController(repository));
-    await tester.tap(find.text('Goals'));
+    await tester.tap(find.byTooltip('Goals'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Fix sleep schedule'));
     await tester.pumpAndSettle();
 
-    expect(find.text('40'), findsOneWidget);
-    expect(find.text('Your Goal'), findsOneWidget);
+    expect(find.text('40%'), findsNWidgets(2)); // headline and manual row
+    expect(find.text('Fix sleep schedule'), findsOneWidget);
     expect(find.byKey(const ValueKey('goal-progress-chart')), findsOneWidget);
     expect(find.text('Tracking progress'), findsOneWidget);
   });
@@ -146,22 +151,24 @@ void main() {
     expect(find.text('Call the plumber'), findsOneWidget);
   });
 
-  testWidgets('the center add action opens quick add from Habits', (
-    tester,
-  ) async {
+  testWidgets('each tab adds its own kind of thing', (tester) async {
     await buildApp(tester);
-    await tester.tap(find.text('Habits'));
-    await tester.pumpAndSettle();
-
     expect(find.byTooltip('Add task'), findsOneWidget);
-    await tester.tap(find.byTooltip('Add task'));
+
+    await tester.tap(find.byTooltip('Habits'));
     await tester.pumpAndSettle();
-    expect(find.text('Add something you cannot forget…'), findsOneWidget);
+    // Only the visible tab's FAB is hit-testable; the others stay offstage.
+    expect(find.byTooltip('Add habit').hitTestable(), findsOneWidget);
+    expect(find.byTooltip('Add task').hitTestable(), findsNothing);
+
+    await tester.tap(find.byTooltip('Goals'));
+    await tester.pumpAndSettle();
+    expect(find.byTooltip('Add goal').hitTestable(), findsOneWidget);
   });
 
   testWidgets('habit page separates daily and monthly habits', (tester) async {
     await buildApp(tester);
-    await tester.tap(find.text('Habits'));
+    await tester.tap(find.byTooltip('Habits'));
     await tester.pumpAndSettle();
 
     expect(find.text('Daily'), findsOneWidget);
@@ -216,13 +223,13 @@ void main() {
     );
     await tester.drag(find.byType(ListView).last, const Offset(0, -500));
     await tester.pumpAndSettle();
-    expect(find.text('LAST 7 DAYS'), findsNothing);
-    expect(find.text('MONTHLY PROGRESS'), findsOneWidget);
+    expect(find.text('Last 7 days'), findsNothing);
+    expect(find.text('Monthly progress'), findsOneWidget);
     expect(find.text('0%'), findsOneWidget);
     expect(find.byType(LinearProgressIndicator), findsOneWidget);
   });
 
-  testWidgets('center add action sits inside the navigation band', (
+  testWidgets('the add action sits above the navigation bar, not in it', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(390, 844);
@@ -231,12 +238,11 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
     await buildApp(tester);
 
+    // Tabs are sections, never actions: on Android the add action is the
+    // screen's FAB, floating clear of the navigation bar.
     final addRect = tester.getRect(find.byType(FloatingActionButton));
-    final focusRect = tester.getRect(find.byTooltip('Focus'));
-    final habitsRect = tester.getRect(find.byTooltip('Habits'));
-    expect(addRect.overlaps(habitsRect), isFalse);
-    expect(addRect.top, greaterThanOrEqualTo(focusRect.top));
-    expect(addRect.bottom, lessThanOrEqualTo(focusRect.bottom));
+    final navRect = tester.getRect(find.byType(NavigationBar));
+    expect(addRect.bottom, lessThanOrEqualTo(navRect.top));
   });
 
   testWidgets('settings opens from the Focus app bar', (tester) async {
@@ -251,7 +257,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Settings'));
     await tester.pumpAndSettle();
-    expect(find.text('NOTIFICATIONS'), findsOneWidget);
+    expect(find.text('Notifications'), findsOneWidget);
   });
 
   testWidgets('task editor background choice persists on the task', (
@@ -267,8 +273,22 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text('Edit task'), findsOneWidget);
-    expect(find.text('BACKGROUND'), findsOneWidget);
+    // The color row is collapsed: the least important choice in the editor.
+    await tester.scrollUntilVisible(
+      find.text('Color'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.ensureVisible(find.text('Color'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Color'));
+    await tester.pumpAndSettle();
     // Swatches carry their palette name as tooltip and semantics label.
+    await tester.scrollUntilVisible(
+      find.byTooltip('Mist'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
     await tester.tap(find.byTooltip('Mist'));
     await tester.pump(const Duration(milliseconds: 600));
 
@@ -305,8 +325,10 @@ void main() {
     await tester.tap(find.text('Done'));
     await tester.pumpAndSettle();
 
-    // Completing the parent with an incomplete subtask asks first.
-    await tester.tap(find.byType(Checkbox).first);
+    // The only task waiting sits on the pass. Completing it with an
+    // incomplete subtask asks first, once the ticket has been spiked.
+    await tester.tap(find.widgetWithText(FilledButton, 'Done'));
+    await tester.pump(const Duration(milliseconds: 700));
     await tester.pumpAndSettle();
     expect(
       find.text(
@@ -370,7 +392,7 @@ void main() {
     await state.createTask(title: 'Calendar task', dueDate: DateOnly.today());
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Calendar'));
+    await tester.tap(find.byTooltip('Calendar'));
     await tester.pumpAndSettle();
     expect(find.text('Calendar task'), findsOneWidget);
   });
@@ -458,7 +480,18 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Fix the sink'), findsOneWidget);
+    // The meadow header and the hero card push the rest below the fold.
+    await tester.scrollUntilVisible(
+      find.text('Quarterly report'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
     expect(find.text('Quarterly report'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.widgetWithText(ChoiceChip, '#home'),
+      -200,
+      scrollable: find.byType(Scrollable).first,
+    );
 
     await tester.tap(find.widgetWithText(ChoiceChip, '#home'));
     await tester.pumpAndSettle();
@@ -467,13 +500,18 @@ void main() {
 
     await tester.tap(find.widgetWithText(ChoiceChip, 'All'));
     await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.text('Quarterly report'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
     expect(find.text('Quarterly report'), findsOneWidget);
   });
 
   testWidgets('habit tracker adds and completes a daily habit', (tester) async {
     await buildApp(tester);
 
-    await tester.tap(find.text('Habits'));
+    await tester.tap(find.byTooltip('Habits'));
     await tester.pumpAndSettle();
     expect(find.text('No habits yet'), findsOneWidget);
 
@@ -493,12 +531,13 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Drink water'), findsOneWidget);
-    expect(find.text('0 of 1 complete today'), findsOneWidget);
+    expect(find.bySemanticsLabel('0/1 done today'), findsOneWidget);
 
     await tester.tap(find.byTooltip('Mark today complete'));
     await tester.pumpAndSettle();
-    expect(find.text('1 of 1 complete today'), findsOneWidget);
-    expect(find.text('1 day streak'), findsOneWidget);
+    expect(find.bySemanticsLabel('1/1 done today'), findsOneWidget);
+    expect(find.bySemanticsLabel('1 best streak'), findsOneWidget);
+    expect(find.bySemanticsLabel(RegExp('1 day streak')), findsOneWidget);
   });
 
   testWidgets('timer habit opens details and persists checkpoints', (
@@ -506,7 +545,7 @@ void main() {
   ) async {
     await buildApp(tester);
 
-    await tester.tap(find.text('Habits'));
+    await tester.tap(find.byTooltip('Habits'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Add habit'));
     await tester.pumpAndSettle();

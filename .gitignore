@@ -47,3 +47,6 @@ app.*.map.json
 
 # Kotlin compiler session/error scratch files, written during Gradle builds
 /android/.kotlin/
+
+# Impeccable review captures: local evidence for the finish review, not source.
+.impeccable/review/
